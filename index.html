@@ -3,71 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nash's Epic Gaming Page</title>
+  <title>Nash's Gaming Realm</title>
   <link rel="stylesheet" href="style.css">
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-  <div class="name-input-container">
-    <input type="text" id="nameInput" placeholder="Type your name..." class="name-box">
-  </div>
-  <div id="welcomeMessage" class="welcome-message"></div>
-  <header>
-    <h1>Welcome to Nash's Gaming Page</h1>
-    <p>The ultimate place for Fortnite, pugs, piano, and trampolines!</p>
-  </header>
-  <section id="about">
-    <h2>About Me</h2>
-    <p>Hi, I'm Nash, a Fortnite pro who also loves pugs, playing piano, and jumping on trampolines.</p>
-  </section>
-  <section id="fun-facts">
-    <h2>Fun Facts</h2>
-    <p>Did you know pugs are one of the oldest dog breeds, or that Fortnite had over 350 million players?</p>
-  </section>
-  <div class="side-dog">
-    <div class="dog-animation">
-      <span>🐕</span>
-      <span>🦮</span>
-      <span>🐕‍🦺</span>
-      <span>🐩</span>
+  <div class="mystical-overlay"></div>
+  
+  <nav class="floating-nav">
+    <div class="nav-container">
+      <a href="#home" class="nav-item">Home</a>
+      <a href="#about" class="nav-item">About</a>
+      <a href="#gaming" class="nav-item">Gaming</a>
+      <a href="#connect" class="nav-item">Connect</a>
     </div>
-  </div>
-  <div class="pug-container">
-    <button id="pugButton" class="pug-button">Click for Dog! 🐕</button>
-    <div id="pugImage" class="pug-image">
-      <div class="dog-animation">
-        <span>🐕</span>
-        <span>🦮</span>
-        <span>🐕‍🦺</span>
-        <span>🐩</span>
-      </div>
-      <p class="flashing-text">DOG!</p>
-    </div>
-  </div>
-  <nav>
-    <ul>
-      <li><a href="about.html">About Me</a></li>
-      <li><a href="fun-facts.html">Fun Facts</a></li>
-      <li><a href="rizz-test.html">Rizz Test</a></li>
-      <li><a href="gaming-sites.html">Gaming Sites</a></li>
-      <li><a href="fave-songs.html">Epic Music</a></li>
-      <li><a href="clans.html">Clans & Crews</a></li>
-      <li><a href="contact-me.html">Contact Me</a></li>
-    </ul>
   </nav>
-  <footer>
-    <p>Made by Nash with 🕹️ and ❤️</p>
+
+  <main>
+    <section id="hero" class="hero-section">
+      <div class="hero-content">
+        <h1 class="magical-text">Nash's Gaming Realm</h1>
+        <p class="hero-description">Enter a world of Fortnite, pugs, piano, and epic gaming adventures</p>
+      </div>
+    </section>
+
+    <div class="name-input-container">
+      <input type="text" id="nameInput" placeholder="Enter your name to join..." class="magical-input">
+      <div id="welcomeMessage" class="welcome-message"></div>
+    </div>
+
+    <section id="about" class="content-section">
+      <h2 class="section-title">The Legend</h2>
+      <p class="mystical-text">Deep in the digital realm, lives Nash, a legendary gamer with mastery over Fortnite, 
+      accompanied by loyal pugs and wielding the power of both piano keys and trampoline springs.</p>
+    </section>
+
+    <section id="gaming" class="content-section">
+      <div class="magical-grid">
+        <div class="grid-item">
+          <h3>Fortnite Pro</h3>
+          <p>Master of builds and edits</p>
+        </div>
+        <div class="grid-item">
+          <h3>Pug Master</h3>
+          <p>Guardian of the cutest dogs</p>
+        </div>
+        <div class="grid-item">
+          <h3>Piano Wizard</h3>
+          <p>Weaver of musical magic</p>
+        </div>
+        <div class="grid-item">
+          <h3>Trampoline King</h3>
+          <p>Defier of gravity</p>
+        </div>
+      </div>
+    </section>
+
+    <div id="chatPanel" class="chat-panel magical-panel">
+      <div class="chat-header">
+        <h3>💫 Magical Chat</h3>
+        <button onclick="toggleChat()" class="magical-button">_</button>
+      </div>
+      <div id="chatMessages" class="chat-messages"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Cast your message..." maxlength="100">
+        <button onclick="sendMessage()" class="magical-button">Send</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="magical-footer">
+    <p>Crafted with 🎮 and ✨ by Nash</p>
   </footer>
-  <div id="chatPanel" class="chat-panel">
-    <div class="chat-header">
-      <h3>💬 Live Chat</h3>
-      <button onclick="toggleChat()" class="chat-toggle">_</button>
-    </div>
-    <div id="chatMessages" class="chat-messages"></div>
-    <div class="chat-input-area">
-      <input type="text" id="chatInput" placeholder="Type a message..." maxlength="100">
-      <button onclick="sendMessage()">Send</button>
-    </div>
-  </div>
   <script>
     const pugButton = document.getElementById('pugButton');
     const pugImage = document.getElementById('pugImage');
