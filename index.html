@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nash's Epic Gaming Page</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="name-input-container">
+    <input type="text" id="nameInput" placeholder="Type your name..." class="name-box">
+  </div>
+  <div id="welcomeMessage" class="welcome-message"></div>
+  <header>
+    <h1>Welcome to Nash's Epic Gaming Page</h1>
+    <p>The ultimate place for Fortnite, pugs, piano, and trampolines!</p>
+  </header>
+  <section id="about">
+    <h2>About Me</h2>
+    <p>Hi, I'm Nash, a Fortnite pro who also loves pugs, playing piano, and jumping on trampolines.</p>
+  </section>
+  <section id="fun-facts">
+    <h2>Fun Facts</h2>
+    <p>Did you know pugs are one of the oldest dog breeds, or that Fortnite had over 350 million players?</p>
+  </section>
+  <div class="side-dog">
+    <div class="dog-animation">
+      <span>🐕</span>
+      <span>🦮</span>
+      <span>🐕‍🦺</span>
+      <span>🐩</span>
+    </div>
+  </div>
+  <div class="pug-container">
+    <button id="pugButton" class="pug-button">Click for Dog! 🐕</button>
+    <div id="pugImage" class="pug-image">
+      <div class="dog-animation">
+        <span>🐕</span>
+        <span>🦮</span>
+        <span>🐕‍🦺</span>
+        <span>🐩</span>
+      </div>
+      <p class="flashing-text">DOG!</p>
+    </div>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="about.html">About Me</a></li>
+      <li><a href="fun-facts.html">Fun Facts</a></li>
+      <li><a href="rizz-test.html">Rizz Test</a></li>
+      <li><a href="gaming-sites.html">Gaming Sites</a></li>
+      <li><a href="fave-songs.html">Epic Music</a></li>
+      <li><a href="clans.html">Clans & Crews</a></li>
+      <li><a href="contact-me.html">Contact Me</a></li>
+    </ul>
+  </nav>
+  <footer>
+    <p>Made by Nash with 🕹️ and ❤️</p>
+  </footer>
+  <div id="chatPanel" class="chat-panel">
+    <div class="chat-header">
+      <h3>💬 Live Chat</h3>
+      <button onclick="toggleChat()" class="chat-toggle">_</button>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Type a message..." maxlength="100">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+  <script>
+    const pugButton = document.getElementById('pugButton');
+    const pugImage = document.getElementById('pugImage');
+    const nameInput = document.getElementById('nameInput');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const pageTitles = {
+      'index.html': 'Nash\'s Gaming Page',
+      'about.html': 'About Me',
+      'fun-facts.html': 'Fun Facts',
+      'rizz-test.html': 'Rizz Test',
+      'memes.html': 'Epic Memes',
+      'gaming-sites.html': 'Gaming Sites',
+      'fave-songs.html': 'Epic Music',
+      'clans.html': 'Clans & Crews',
+      'contact-me.html': 'Contact Me'
+    };
+
+    pugButton.addEventListener('click', () => {
+      pugImage.style.display = 'block';
+      
+      // Play a bark sound (optional)
+      const bark = new Audio('https://www.soundjay.com/dog/sounds/dog-bark-1.mp3');
+      bark.play();
+      
+      // Hide pug after 2 seconds
+      setTimeout(() => {
+        pugImage.style.display = 'none';
+      }, 2000);
+    });
+
+    // Dev Tools Panel Creation based on user type
+    function createDevPanel(userType) {
+        const devPanel = document.createElement('div');
+        devPanel.id = 'devPanel';
+        devPanel.className = `dev-panel ${userType}-panel`;
+
+        if (userType === 'ultimate') { // Nash's full dev panel
+            devPanel.innerHTML = `
+                <h3>⚡ Ultimate Developer Console ⚡</h3>
+                <div class="dev-tabs">
+                    <button class="tab-btn active" onclick="switchDevTab('stats')">Stats</button>
+                    <button class="tab-btn" onclick="switchDevTab('users')">Users</button>
+                    <button class="tab-btn" onclick="switchDevTab('chat')">Chat</button>
+                    <button class="tab-btn" onclick="switchDevTab('system')">System</button>
+                </div>
+                
+                <div id="statsTab" class="dev-tab-content active">
+                    <h4>Site Statistics</h4>
+                    <div class="dev-stats">
+                        <p>👥 Active Users: <span id="activeUsers">1</span></p>
+                        <p>👁️ Page Views: <span id="pageViews">0</span></p>
+                        <p>⏰ Session Time: <span id="sessionTime">0:00</span></p>
+                        <p>📅 Last Visit: <span id="lastVisit">-</span></p>
+                    </div>
+                    <button onclick="resetStats()" class="dev-button">Reset Stats</button>
+                </div>
+
+                <div id="usersTab" class="dev-tab-content">
+                    <h4>User Management</h4>
+                    <div class="visitor-list">
+                        <h5>Recent Visitors:</h5>
+                        <ul id="visitorList"></ul>
+                    </div>
+                    <div class="banned-users-section">
+                        <h5>Banned Users:</h5>
+                        <ul id="bannedList"></ul>
+                    </div>
+                    <button onclick="clearVisitorList()" class="dev-button">Clear Visitors</button>
+                </div>
+
+                <div id="chatTab" class="dev-tab-content">
+                    <h4>Chat Controls</h4>
+                    <div class="chat-controls">
+                        <button onclick="clearChat()" class="dev-button">Clear Chat</button>
+                        <button onclick="toggleChatLock()" id="chatLockBtn" class="dev-button">Lock Chat</button>
+                        <div class="announcement-box">
+                            <input type="text" id="announceInput" placeholder="Announcement message...">
+                            <button onclick="makeAnnouncement()" class="dev-button">Announce</button>
+                        </div>
+                    </div>
+                    <div class="word-filter">
+                        <h5>Word Filter</h5>
+                        <input type="text" id="newBannedWord" placeholder="Add banned word...">
+                        <button onclick="addBannedWord()" class="dev-button">Add</button>
+                        <ul id="bannedWordsList"></ul>
+                    </div>
+                </div>
+
+                <div id="systemTab" class="dev-tab-content">
+                    <h4>System Controls</h4>
+                    <div class="system-controls">
+                        <button onclick="toggleAllAnimations()" class="dev-button">Toggle Animations</button>
+                        <button onclick="toggleDarkMode()" class="dev-button">Toggle Dark Mode</button>
+                        <button onclick="toggleMaintenanceMode()" class="dev-button warning">Maintenance Mode</button>
+                        <button onclick="clearLocalStorage()" class="dev-button warning">Clear All Data</button>
+                    </div>
+                    <div class="system-info">
+                        <p>🌐 Browser: <span id="browserInfo"></span></p>
+                        <p>💻 Screen: <span id="screenInfo"></span></p>
+                        <p>⚡ Performance: <span id="performanceInfo"></span></p>
+                    </div>
+                </div>
+            `;
+        } else if (userType === 'vip') { // Friends' basic dev panel - now without chat
+            devPanel.innerHTML = `
+                <h3>✨ VIP Console ✨</h3>
+                <div class="dev-tabs">
+                    <button class="tab-btn active" onclick="switchVIPTab('vipStats')">Stats</button>
+                    <button class="tab-btn" onclick="switchVIPTab('vipUsers')">Users</button>
+                </div>
+                
+                <div id="vipStatsTab" class="dev-tab-content active">
+                    <h4>Site Statistics</h4>
+                    <div class="dev-stats">
+                        <p>👥 Active Users: <span id="vipActiveUsers">1</span></p>
+                        <p>⏰ Session Time: <span id="vipSessionTime">0:00</span></p>
+                        <p>📊 Total Visitors: <span id="vipTotalVisitors">0</span></p>
+                    </div>
+                </div>
+
+                <div id="vipUsersTab" class="dev-tab-content">
+                    <h4>Recent Visitors</h4>
+                    <div class="visitor-list">
+                        <ul id="vipVisitorList"></ul>
+                    </div>
+                </div>
+            `;
+        }
+        
+        document.body.appendChild(devPanel);
+    }
+
+    // Dev Tools Functions
+    let isChatLocked = false;
+    let sessionStartTime = Date.now();
+    let isMaintenanceMode = false;
+
+    function switchDevTab(tabName) {
+        const panel = document.getElementById('devPanel');
+        const tabs = panel.getElementsByClassName('dev-tab-content');
+        const buttons = panel.getElementsByClassName('tab-btn');
+        
+        // Hide all tabs
+        for (let tab of tabs) {
+            tab.classList.remove('active');
+        }
+        // Deactivate all buttons
+        for (let btn of buttons) {
+            btn.classList.remove('active');
+        }
+        
+        // Show selected tab
+        const selectedTab = document.getElementById(`${tabName}Tab`);
+        if (selectedTab) {
+            selectedTab.classList.add('active');
+            event.target.classList.add('active');
+        }
+    }
+
+    function updateSessionTime() {
+        const sessionTime = document.getElementById('sessionTime');
+        if (sessionTime) {
+            const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            sessionTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }
+
+    function toggleChatLock() {
+        isChatLocked = !isChatLocked;
+        const btn = document.getElementById('chatLockBtn');
+        if (btn) {
+            btn.textContent = isChatLocked ? 'Unlock Chat' : 'Lock Chat';
+            btn.classList.toggle('active');
+            makeAnnouncement(`Chat has been ${isChatLocked ? 'locked' : 'unlocked'} by Admin`);
+        }
+    }
+
+    function toggleMaintenanceMode() {
+        isMaintenanceMode = !isMaintenanceMode;
+        document.body.classList.toggle('maintenance-mode');
+        makeAnnouncement(`Site ${isMaintenanceMode ? 'entering' : 'leaving'} maintenance mode`);
+    }
+
+    function toggleAllAnimations() {
+        document.body.classList.toggle('animations-disabled');
+    }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    function updateSystemInfo() {
+        const browserInfo = document.getElementById('browserInfo');
+        const screenInfo = document.getElementById('screenInfo');
+        const performanceInfo = document.getElementById('performanceInfo');
+        
+        if (browserInfo) browserInfo.textContent = navigator.userAgent;
+        if (screenInfo) screenInfo.textContent = `${window.innerWidth}x${window.innerHeight}`;
+        if (performanceInfo) performanceInfo.textContent = `${Math.round(performance.now())}ms`;
+    }
+
+    function clearLocalStorage() {
+        if (confirm('⚠️ This will clear all site data. Are you sure?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    function updateDevPanel() {
+        if (nameInput.value.toLowerCase() === 'nash') {
+            document.getElementById('devPanel').style.display = 'block';
+            updateSystemInfo();
+            updateSessionTime();
+        } else {
+            document.getElementById('devPanel').style.display = 'none';
+        }
+    }
+
+    // Make sure to call updateDevPanel when name changes
+    nameInput.addEventListener('input', function() {
+        const name = this.value;
+        localStorage.setItem('visitorName', name);
+        updateWelcome(name);
+        updateDevPanel();
+    });
+
+    // Initialize dev panel if name is already Nash
+    if (nameInput.value.toLowerCase() === 'nash') {
+        updateDevPanel();
+    }
+
+    function updateWelcome(name) {
+      let displayName = name;
+      let isVIP = false;
+      let userType = 'regular';
+
+      // Remove any existing panel
+      const existingPanel = document.getElementById('devPanel');
+      if (existingPanel) existingPanel.remove();
+
+      // Check for special names
+      if (name.toLowerCase() === 'nash') {
+        displayName = '⚡ Ultimate VIP Nash | Developer ⚡';
+        isVIP = true;
+        userType = 'ultimate';
+        createDevPanel('ultimate');
+      } else if (['andruis', 'brayden', 'damien', 'jude'].includes(name.toLowerCase())) {
+        const specialTitles = {
+          'andruis': '👑 Legendary Kaakaa King 👑',
+          'brayden': '🌟 Epic King Bob 🌟',
+          'damien': '💫 Mystic VIP Damien 💫',
+          'jude': '⚔️ Elite Warrior Jude ⚔️'
+        };
+        displayName = specialTitles[name.toLowerCase()];
+        isVIP = true;
+        userType = 'vip';
+        createDevPanel('vip');
+      } else {
+        document.body.classList.remove('vip-mode', 'ultimate-vip');
+        welcomeMessage.classList.remove('leader-welcome', 'ultimate-welcome');
+      }
+
+      if (name.trim() !== '') {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const pageTitle = pageTitles[currentPage];
+        welcomeMessage.textContent = `Welcome ${displayName} to ${pageTitle}!`;
+        welcomeMessage.style.display = 'block';
+
+        if (isVIP) {
+          welcomeMessage.classList.add('vip-welcome');
+          welcomeMessage.classList.remove('ultimate-welcome');
+        } else {
+          welcomeMessage.classList.remove('vip-welcome', 'ultimate-welcome');
+        }
+      } else {
+        welcomeMessage.style.display = 'none';
+      }
+
+      // Create appropriate dev panel
+      if (userType === 'admin') {
+        createDevPanel('admin');
+      } else if (userType === 'vip') {
+        createDevPanel('vip');
+      }
+    }
+
+    // Separate tab switching for VIP panel
+    function switchVIPTab(tabName) {
+        const panel = document.getElementById('devPanel');
+        const tabs = panel.getElementsByClassName('dev-tab-content');
+        const buttons = panel.getElementsByClassName('tab-btn');
+        
+        // Hide all tabs
+        Array.from(tabs).forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Deactivate all buttons
+        Array.from(buttons).forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Show selected tab
+        const selectedTab = document.getElementById(tabName + 'Tab');
+        if (selectedTab) {
+            selectedTab.classList.add('active');
+            // Find and activate the corresponding button
+            const activeButton = Array.from(buttons).find(btn => 
+                btn.textContent.toLowerCase().includes(tabName.replace('vip', '').toLowerCase())
+            );
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+    }
+
+    // VIP Announcement Function
+    function makeVIPAnnouncement() {
+        const message = document.getElementById('vipAnnounceInput').value;
+        if (message.trim()) {
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                const announcement = document.createElement('div');
+                announcement.className = 'chat-announcement vip-announcement';
+                const name = nameInput.value;
+                announcement.innerHTML = `
+                    <span class="vip-badge">✨ VIP</span> 
+                    <span class="vip-name">${name}</span>: 
+                    <span class="vip-message">${message}</span>
+                `;
+                chatMessages.appendChild(announcement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                document.getElementById('vipAnnounceInput').value = '';
+
+                // Add announcement effect
+                announcement.style.animation = 'vipAnnouncementSlide 0.5s ease-out';
+            }
+        }
+    }
+
+    // Add enter key support for VIP announcements
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const vipInput = document.getElementById('vipAnnounceInput');
+            if (vipInput && document.activeElement === vipInput) {
+                makeVIPAnnouncement();
+            }
+        }
+    });
+
+    // Update VIP session time
+    setInterval(() => {
+        const vipSessionTime = document.getElementById('vipSessionTime');
+        if (vipSessionTime) {
+            const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            vipSessionTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }, 1000);
+
+    // Chat System
+    const bannedWords = ['badword1', 'badword2']; // Add banned words here
+    const bannedUsers = new Set();
+    let isChatMinimized = false;
+
+    function toggleChat() {
+      const chatPanel = document.getElementById('chatPanel');
+      const toggleBtn = document.querySelector('.chat-toggle');
+      isChatMinimized = !isChatMinimized;
+      
+      if (isChatMinimized) {
+        chatPanel.classList.add('minimized');
+        toggleBtn.textContent = '□';
+      } else {
+        chatPanel.classList.remove('minimized');
+        toggleBtn.textContent = '_';
+      }
+    }
+
+    function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const message = chatInput.value.trim();
+      const currentName = nameInput.value.trim();
+
+      if (message && currentName) {
+        if (bannedUsers.has(currentName.toLowerCase())) {
+          alert('You have been banned from chat.');
+          return;
+        }
+
+        // Check for banned words
+        const containsBannedWord = bannedWords.some(word => 
+          message.toLowerCase().includes(word.toLowerCase())
+        );
+
+        if (containsBannedWord) {
+          bannedUsers.add(currentName.toLowerCase());
+          alert('You have been banned for using inappropriate language.');
+          return;
+        }
+
+        const chatMessages = document.getElementById('chatMessages');
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message';
+        
+        // Add VIP styling if applicable
+        let nameClass = '';
+        if (currentName.toLowerCase() === 'nash') {
+          nameClass = 'ultimate-vip-name';
+        } else if (['andruis', 'brayden', 'damien', 'jude'].includes(currentName.toLowerCase())) {
+          nameClass = 'vip-name';
+        }
+
+        messageElement.innerHTML = `
+          <span class="message-time">${new Date().toLocaleTimeString()}</span>
+          <span class="message-name ${nameClass}">${currentName}:</span>
+          <span class="message-text">${message}</span>
+        `;
+        
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatInput.value = '';
+      }
+    }
+
+    // Add enter key support for chat
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+
+    // Update panels periodically
+    setInterval(() => {
+        const name = nameInput.value.toLowerCase();
+        if (name === 'nash' || ['andruis', 'brayden', 'damien', 'jude'].includes(name)) {
+            updateSessionTime();
+            if (name === 'nash') {
+                updateSystemInfo();
+            }
+        }
+    }, 1000);
+
+    // Initialize panels if name is already set
+    const savedName = localStorage.getItem('visitorName');
+    if (savedName) {
+        nameInput.value = savedName;
+        updateWelcome(savedName);
+    }
+
+    // Server (Node.js)
+    const express = require('express');
+    const app = express();
+    const http = require('http').createServer(app);
+    const io = require('socket.io')(http);
+
+    io.on('connection', (socket) => {
+      socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+      });
+    });
+
+    // Client (Browser)
+    const socket = io();
+  </script>
+</body>
+</html>
+
+    
+ 

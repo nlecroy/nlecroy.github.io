@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clans & Crews - Nash's Gaming Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Me</a></li>
+                <li><a href="fun-facts.html">Fun Facts</a></li>
+                <li><a href="rizz-test.html">Rizz Test</a></li>
+                <li><a href="memes.html">Epic Memes</a></li>
+                <li><a href="gaming-sites.html">Gaming Sites</a></li>
+                <li><a href="fave-songs.html">Epic Music</a></li>
+                <li><a href="clans.html">Clans & Crews</a></li>
+                <li><a href="contact-me.html">Contact Me</a></li>
+            </ul>
+        </nav>
+        <h1>My Epic Clans & Crews <span class="emoji">👑</span></h1>
+    </header>
+
+    <section>
+        <div class="clan-container">
+            <div class="clan-box" onclick="toggleFacts(this)">
+                <h3>The Leather Crew 🧥</h3>
+                <p>Proud member of this epic gaming squad! 🎮</p>
+                <div class="hidden-facts">
+                    <h4>Epic Facts:</h4>
+                    <ul>
+                        <li>We all wear leather jackets</li>
+                        <li>Looking epic while gaming</li>
+                        <li>Pure gaming energy</li>
+                        <li>Coolest crew in town</li>
+                        <li>Leather jackets = instant wins</li>
+                        <li>Click to see less ⬆️</li>
+                    </ul>
+                </div>
+                <p class="click-hint">Click for more facts! ⬇️</p>
+            </div>
+
+            <div id="kaakaaBox" class="clan-box" onclick="toggleFacts(this)">
+                <h3>The Kaakaa Clan 👑</h3>
+                <p id="kaakaaLeader">Led by our legendary King Andruis! 🏆</p>
+                <div class="hidden-facts">
+                    <h4>Epic Facts:</h4>
+                    <ul>
+                        <li>King Andruis leads the way</li>
+                        <li>Epic gamers unite</li>
+                        <li>Unstoppable team</li>
+                        <li>Gaming legends</li>
+                        <li>Following our king to victory</li>
+                        <li>Click to see less ⬆️</li>
+                    </ul>
+                </div>
+                <p class="click-hint">Click for more facts! ⬇️</p>
+            </div>
+
+            <div class="clan-box" onclick="toggleFacts(this)">
+                <h3>The Bobs 📚</h3>
+                <p>School squad led by King Brayden C! 👑</p>
+                <div class="hidden-facts">
+                    <h4>Epic Facts:</h4>
+                    <ul>
+                        <li>King Brayden C leads the way</li>
+                        <li>We all wear cool eye rings</li>
+                        <li>School crew forever</li>
+                        <li>Epic friends</li>
+                        <li>Always together</li>
+                        <li>Click to see less ⬆️</li>
+                    </ul>
+                </div>
+                <p class="click-hint">Click for more facts! ⬇️</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
+    </footer>
+
+    <script>
+        function toggleFacts(box) {
+            const facts = box.querySelector('.hidden-facts');
+            const hint = box.querySelector('.click-hint');
+            
+            if (facts.style.display === 'none' || facts.style.display === '') {
+                facts.style.display = 'block';
+                hint.style.display = 'none';
+                box.classList.add('expanded');
+            } else {
+                facts.style.display = 'none';
+                hint.style.display = 'block';
+                box.classList.remove('expanded');
+            }
+        }
+
+        function updateWelcome(name) {
+            let displayName = name;
+            let isVIP = false;
+
+            // Check for special names
+            if (name.toLowerCase() === 'andruis') {
+                displayName = '👑 Kaakaa King 👑';
+                isVIP = true;
+                document.body.classList.add('vip-mode');
+                // Special message for Andruis in Kaakaa Clan
+                const kaakaaLeader = document.getElementById('kaakaaLeader');
+                if (kaakaaLeader) {
+                    kaakaaLeader.innerHTML = '👑 Welcome back, mighty leader of the Kaakaa Clan! 👑<br>Your kingdom awaits, King Andruis!';
+                    kaakaaLeader.classList.add('leader-welcome');
+                }
+                const kaakaaBox = document.getElementById('kaakaaBox');
+                if (kaakaaBox) {
+                    kaakaaBox.classList.add('leader-box');
+                }
+            } else if (name.toLowerCase() === 'brayden') {
+                displayName = '👑 King Bob 👑';
+                isVIP = true;
+                document.body.classList.add('vip-mode');
+            } else if (name.toLowerCase() === 'damien') {
+                displayName = '👑 VIP Damien 👑';
+                isVIP = true;
+                document.body.classList.add('vip-mode');
+            } else if (name.toLowerCase() === 'jude') {
+                displayName = '👑 Epic Jude 👑';
+                isVIP = true;
+                document.body.classList.add('vip-mode');
+            } else {
+                document.body.classList.remove('vip-mode');
+                // Reset Kaakaa Clan text if not Andruis
+                const kaakaaLeader = document.getElementById('kaakaaLeader');
+                if (kaakaaLeader) {
+                    kaakaaLeader.innerHTML = 'Led by our legendary King Andruis! 🏆';
+                    kaakaaLeader.classList.remove('leader-welcome');
+                }
+                const kaakaaBox = document.getElementById('kaakaaBox');
+                if (kaakaaBox) {
+                    kaakaaBox.classList.remove('leader-box');
+                }
+            }
+        }
+    </script>
+</body>
+</html> 
