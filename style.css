@@ -48,6 +48,11 @@ body {
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
+.welcome-message.vip {
+    color: #00ffff;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+}
+
 .chat-panel {
     position: fixed;
     right: 20px;
@@ -114,6 +119,15 @@ body {
     padding: 5px;
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.1);
+}
+
+.chat-announcement {
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 5px;
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
+    text-align: center;
 }
 
 .message-time {
