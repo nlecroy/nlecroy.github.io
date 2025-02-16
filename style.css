@@ -25,97 +25,88 @@ body {
     z-index: 1;
 }
 
-.floating-nav {
+.name-input-container {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
+    text-align: center;
+}
+
+.magical-input {
     background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--magical-primary);
     border-radius: 20px;
     padding: 10px 20px;
-    backdrop-filter: blur(10px);
-}
-
-.nav-container {
-    display: flex;
-    gap: 20px;
-}
-
-.nav-item {
     color: var(--magical-text);
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 15px;
+    font-size: 16px;
+    outline: none;
     transition: all 0.3s ease;
 }
 
-.nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    text-shadow: 0 0 10px var(--magical-primary);
+.magical-input:focus {
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
-.hero-section {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+.welcome-message {
+    margin-top: 10px;
+    font-size: 18px;
+    color: var(--magical-text);
 }
 
-.hero-content {
-    z-index: 2;
-}
-
-.magical-text {
-    font-size: 4em;
-    background: linear-gradient(45deg, var(--magical-primary), var(--magical-secondary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-    animation: floatText 3s ease-in-out infinite;
-}
-
-.content-section {
-    padding: 100px 20px;
-    text-align: center;
-    position: relative;
-}
-
-.magical-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-.grid-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 20px;
-    transition: all 0.3s ease;
-}
-
-.grid-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-}
-
-.magical-panel {
+.chat-panel {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 300px;
+    height: 400px;
     background: rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(0, 255, 255, 0.3);
+    border: 1px solid var(--magical-primary);
     border-radius: 20px;
-    backdrop-filter: blur(10px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.chat-header {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--magical-primary);
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.chat-input-area {
+    padding: 10px;
+    border-top: 1px solid var(--magical-primary);
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input-area input {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--magical-primary);
+    border-radius: 10px;
+    padding: 5px 10px;
+    color: var(--magical-text);
+    outline: none;
 }
 
 .magical-button {
     background: linear-gradient(45deg, var(--magical-primary), var(--magical-secondary));
     border: none;
-    border-radius: 15px;
-    padding: 8px 16px;
+    border-radius: 10px;
+    padding: 5px 15px;
     color: var(--magical-text);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -123,12 +114,42 @@ body {
 
 .magical-button:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
-@keyframes floatText {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+.chat-message {
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
 }
 
-/* Add more magical styles as needed */
+.message-time {
+    font-size: 0.8em;
+    color: #666;
+    margin-right: 5px;
+}
+
+.message-name {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.message-text {
+    color: var(--magical-text);
+}
+
+/* Dev Panel Styles */
+.dev-panel {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid var(--magical-primary);
+    border-radius: 20px;
+    padding: 20px;
+    color: var(--magical-text);
+    z-index: 1000;
+}
+
+/* Keep all your other existing styles */

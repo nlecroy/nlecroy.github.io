@@ -3,78 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nash's Gaming Realm</title>
+  <title>Nash's Site</title>
   <link rel="stylesheet" href="style.css">
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
   <div class="mystical-overlay"></div>
   
-  <nav class="floating-nav">
-    <div class="nav-container">
-      <a href="#home" class="nav-item">Home</a>
-      <a href="#about" class="nav-item">About</a>
-      <a href="#gaming" class="nav-item">Gaming</a>
-      <a href="#connect" class="nav-item">Connect</a>
+  <div class="name-input-container">
+    <input type="text" id="nameInput" placeholder="Enter your name..." class="magical-input">
+    <div id="welcomeMessage" class="welcome-message"></div>
+  </div>
+
+  <div id="chatPanel" class="chat-panel">
+    <div class="chat-header">
+      <h3>💬 Live Chat</h3>
+      <button onclick="toggleChat()" class="chat-toggle">_</button>
     </div>
-  </nav>
-
-  <main>
-    <section id="hero" class="hero-section">
-      <div class="hero-content">
-        <h1 class="magical-text">Nash's Gaming Realm</h1>
-        <p class="hero-description">Enter a world of Fortnite, pugs, piano, and epic gaming adventures</p>
-      </div>
-    </section>
-
-    <div class="name-input-container">
-      <input type="text" id="nameInput" placeholder="Enter your name to join..." class="magical-input">
-      <div id="welcomeMessage" class="welcome-message"></div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Type your message..." maxlength="100">
+      <button onclick="sendMessage()" class="magical-button">Send</button>
     </div>
+  </div>
 
-    <section id="about" class="content-section">
-      <h2 class="section-title">The Legend</h2>
-      <p class="mystical-text">Deep in the digital realm, lives Nash, a legendary gamer with mastery over Fortnite, 
-      accompanied by loyal pugs and wielding the power of both piano keys and trampoline springs.</p>
-    </section>
-
-    <section id="gaming" class="content-section">
-      <div class="magical-grid">
-        <div class="grid-item">
-          <h3>Fortnite Pro</h3>
-          <p>Master of builds and edits</p>
-        </div>
-        <div class="grid-item">
-          <h3>Pug Master</h3>
-          <p>Guardian of the cutest dogs</p>
-        </div>
-        <div class="grid-item">
-          <h3>Piano Wizard</h3>
-          <p>Weaver of musical magic</p>
-        </div>
-        <div class="grid-item">
-          <h3>Trampoline King</h3>
-          <p>Defier of gravity</p>
-        </div>
-      </div>
-    </section>
-
-    <div id="chatPanel" class="chat-panel magical-panel">
-      <div class="chat-header">
-        <h3>💫 Magical Chat</h3>
-        <button onclick="toggleChat()" class="magical-button">_</button>
-      </div>
-      <div id="chatMessages" class="chat-messages"></div>
-      <div class="chat-input-area">
-        <input type="text" id="chatInput" placeholder="Cast your message..." maxlength="100">
-        <button onclick="sendMessage()" class="magical-button">Send</button>
-      </div>
-    </div>
-  </main>
-
-  <footer class="magical-footer">
-    <p>Crafted with 🎮 and ✨ by Nash</p>
-  </footer>
   <script>
     const pugButton = document.getElementById('pugButton');
     const pugImage = document.getElementById('pugImage');
