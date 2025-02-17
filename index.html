@@ -28,8 +28,6 @@
   </div>
 
   <script>
-    const pugButton = document.getElementById('pugButton');
-    const pugImage = document.getElementById('pugImage');
     const nameInput = document.getElementById('nameInput');
     const welcomeMessage = document.getElementById('welcomeMessage');
     const pageTitles = {
@@ -43,19 +41,6 @@
       'clans.html': 'Clans & Crews',
       'contact-me.html': 'Contact Me'
     };
-
-    pugButton.addEventListener('click', () => {
-      pugImage.style.display = 'block';
-      
-      // Play a bark sound (optional)
-      const bark = new Audio('https://www.soundjay.com/dog/sounds/dog-bark-1.mp3');
-      bark.play();
-      
-      // Hide pug after 2 seconds
-      setTimeout(() => {
-        pugImage.style.display = 'none';
-      }, 2000);
-    });
 
     // Dev Tools Panel Creation based on user type
     function createDevPanel(userType) {
