@@ -6,6 +6,11 @@
     <title>Tech Rizz Test</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="rizz-test-style.css">
+    <script>
+        function testClick() {
+            alert('Button clicked!');
+        }
+    </script>
 </head>
 <body class="rizz-test-page">
     <div class="matrix-overlay"></div>
@@ -45,13 +50,8 @@
                     </div>
                     
                     <div class="options" id="options-container">
-                        <button onclick="alert('Button clicked!'); startTest();" class="cyber-button mega-button">
-                            <span class="btn-text">START RIZZ CALIBRATION</span>
-                            <span class="btn-glitch"></span>
-                            <div class="button-effects">
-                                <div class="effect-1"></div>
-                                <div class="effect-2"></div>
-                            </div>
+                        <button style="padding: 20px; font-size: 24px; background: #00ffff; color: black; cursor: pointer;" onclick="testClick()">
+                            CLICK ME - START RIZZ TEST
                         </button>
                     </div>
                 </div>
