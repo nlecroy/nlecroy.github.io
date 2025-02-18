@@ -3,147 +3,171 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nash's Site</title>
+  <title>Nash's Gaming Realm</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="mystical-overlay"></div>
+  <div class="doom-flames"></div>
+  <div class="gaming-particles"></div>
   
+  <!-- Gaming title -->
+  <div class="gaming-title">
+    <h1>Nash's Gaming Realm</h1>
+    <div class="title-glow"></div>
+  </div>
+
   <div class="name-input-container">
     <input type="text" id="nameInput" placeholder="Enter your name..." class="magical-input">
     <div id="welcomeMessage" class="welcome-message"></div>
   </div>
 
-  <div id="chatPanel" class="chat-panel">
-    <div class="chat-header">
-      <h3>💬 Live Chat</h3>
-      <button onclick="toggleChat()" class="chat-toggle">_</button>
-    </div>
-    <div id="chatMessages" class="chat-messages"></div>
-    <div class="chat-input-area">
-      <input type="text" id="chatInput" placeholder="Type your message..." maxlength="100">
-      <button onclick="sendMessage()" class="magical-button">Send</button>
-    </div>
+  <!-- Pug button and image -->
+  <button id="pugButton" class="floating-pug-btn">🐶</button>
+  <img id="pugImage" src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif" class="pug-animation" style="display: none;">
+  
+  <!-- Animated navigation -->
+  <nav class="nav-links">
+    <a href="index.html" class="glowing-link">Gaming Page</a>
+    <a href="about.html" class="glowing-link">About Me</a>
+    <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
+    <a href="rizz-test.html" class="glowing-link">Rizz Test</a>
+    <a href="memes.html" class="glowing-link">Epic Memes</a>
+    <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
+    <a href="fave-songs.html" class="glowing-link">Epic Music</a>
+    <a href="clans.html" class="glowing-link">Clans & Crews</a>
+    <a href="contact-me.html" class="glowing-link">Contact Me</a>
+  </nav>
+
+  <!-- Floating gaming icons -->
+  <div class="floating-icons">
+    <div class="game-icon" onclick="showGameMessage('🎮 Game On!')">🎮</div>
+    <div class="game-icon" onclick="showGameMessage('🎲 Roll the Dice!')">🎲</div>
+    <div class="game-icon" onclick="showGameMessage('🏆 Victory!')">🏆</div>
+    <div class="game-icon" onclick="showGameMessage('⚔️ Battle Time!')">⚔️</div>
   </div>
 
   <script>
     const nameInput = document.getElementById('nameInput');
     const welcomeMessage = document.getElementById('welcomeMessage');
-    const pageTitles = {
-      'index.html': 'Nash\'s Gaming Page',
-      'about.html': 'About Me',
-      'fun-facts.html': 'Fun Facts',
-      'rizz-test.html': 'Rizz Test',
-      'memes.html': 'Epic Memes',
-      'gaming-sites.html': 'Gaming Sites',
-      'fave-songs.html': 'Epic Music',
-      'clans.html': 'Clans & Crews',
-      'contact-me.html': 'Contact Me'
+    const pugButton = document.getElementById('pugButton');
+    const pugImage = document.getElementById('pugImage');
+
+    // Special friends list with their titles and effects
+    const specialFriends = {
+        'nash': {
+            title: '⚡ Ultimate VIP Nash | Developer ⚡',
+            effect: 'ultimate-vip'
+        },
+        'andruis': {
+            title: '👑 Legendary Kaakaa King 👑',
+            effect: 'legendary'
+        },
+        'brayden': {
+            title: '🌟 Epic King Bob 🌟',
+            effect: 'epic'
+        },
+        'damien': {
+            title: '💫 Mystic VIP Damien 💫',
+            effect: 'mystic'
+        },
+        'jude': {
+            title: '⚔️ Elite Warrior Jude ⚔️',
+            effect: 'elite'
+        }
     };
 
-    // Dev Tools Panel Creation based on user type
-    function createDevPanel(userType) {
-        const devPanel = document.createElement('div');
-        devPanel.id = 'devPanel';
-        devPanel.className = `dev-panel ${userType}-panel`;
-
-        if (userType === 'ultimate') { // Nash's full dev panel
-            devPanel.innerHTML = `
-                <h3>⚡ Ultimate Developer Console ⚡</h3>
-                <div class="dev-tabs">
-                    <button class="tab-btn active" onclick="switchDevTab('stats')">Stats</button>
-                    <button class="tab-btn" onclick="switchDevTab('users')">Users</button>
-                    <button class="tab-btn" onclick="switchDevTab('chat')">Chat</button>
-                    <button class="tab-btn" onclick="switchDevTab('system')">System</button>
-                </div>
-                
-                <div id="statsTab" class="dev-tab-content active">
-                    <h4>Site Statistics</h4>
-                    <div class="dev-stats">
-                        <p>👥 Active Users: <span id="activeUsers">1</span></p>
-                        <p>👁️ Page Views: <span id="pageViews">0</span></p>
-                        <p>⏰ Session Time: <span id="sessionTime">0:00</span></p>
-                        <p>📅 Last Visit: <span id="lastVisit">-</span></p>
-                    </div>
-                    <button onclick="resetStats()" class="dev-button">Reset Stats</button>
-                </div>
-
-                <div id="usersTab" class="dev-tab-content">
-                    <h4>User Management</h4>
-                    <div class="visitor-list">
-                        <h5>Recent Visitors:</h5>
-                        <ul id="visitorList"></ul>
-                    </div>
-                    <div class="banned-users-section">
-                        <h5>Banned Users:</h5>
-                        <ul id="bannedList"></ul>
-                    </div>
-                    <button onclick="clearVisitorList()" class="dev-button">Clear Visitors</button>
-                </div>
-
-                <div id="chatTab" class="dev-tab-content">
-                    <h4>Chat Controls</h4>
-                    <div class="chat-controls">
-                        <button onclick="clearChat()" class="dev-button">Clear Chat</button>
-                        <button onclick="toggleChatLock()" id="chatLockBtn" class="dev-button">Lock Chat</button>
-                        <div class="announcement-box">
-                            <input type="text" id="announceInput" placeholder="Announcement message...">
-                            <button onclick="makeAnnouncement()" class="dev-button">Announce</button>
-                        </div>
-                    </div>
-                    <div class="word-filter">
-                        <h5>Word Filter</h5>
-                        <input type="text" id="newBannedWord" placeholder="Add banned word...">
-                        <button onclick="addBannedWord()" class="dev-button">Add</button>
-                        <ul id="bannedWordsList"></ul>
-                    </div>
-                </div>
-
-                <div id="systemTab" class="dev-tab-content">
-                    <h4>System Controls</h4>
-                    <div class="system-controls">
-                        <button onclick="toggleAllAnimations()" class="dev-button">Toggle Animations</button>
-                        <button onclick="toggleDarkMode()" class="dev-button">Toggle Dark Mode</button>
-                        <button onclick="toggleMaintenanceMode()" class="dev-button warning">Maintenance Mode</button>
-                        <button onclick="clearLocalStorage()" class="dev-button warning">Clear All Data</button>
-                    </div>
-                    <div class="system-info">
-                        <p>🌐 Browser: <span id="browserInfo"></span></p>
-                        <p>💻 Screen: <span id="screenInfo"></span></p>
-                        <p>⚡ Performance: <span id="performanceInfo"></span></p>
-                    </div>
-                </div>
-            `;
-        } else if (userType === 'vip') { // Friends' basic dev panel
-            devPanel.innerHTML = `
-                <h3>✨ VIP Console ✨</h3>
-                <div class="dev-tabs">
-                    <button class="tab-btn active" onclick="switchVIPTab('vipStats')">Stats</button>
-                    <button class="tab-btn" onclick="switchVIPTab('vipUsers')">Users</button>
-                </div>
-                
-                <div id="vipStatsTab" class="dev-tab-content active">
-                    <h4>Site Statistics</h4>
-                    <div class="dev-stats">
-                        <p>👥 Active Users: <span id="vipActiveUsers">1</span></p>
-                        <p>⏰ Session Time: <span id="vipSessionTime">0:00</span></p>
-                        <p>📊 Total Visitors: <span id="vipTotalVisitors">0</span></p>
-                    </div>
-                </div>
-
-                <div id="vipUsersTab" class="dev-tab-content">
-                    <h4>Recent Visitors</h4>
-                    <div class="visitor-list">
-                        <ul id="vipVisitorList"></ul>
-                    </div>
-                </div>
-            `;
-        }
-        
-        document.body.appendChild(devPanel);
+    // Load saved name
+    const savedName = localStorage.getItem('visitorName');
+    if (savedName) {
+        nameInput.value = savedName;
+        updateWelcome(savedName);
     }
 
-    // Rest of your original JavaScript...
+    nameInput.addEventListener('input', function() {
+        const name = this.value;
+        localStorage.setItem('visitorName', name);
+        updateWelcome(name);
+    });
+
+    function updateWelcome(name) {
+        const lowerName = name.toLowerCase();
+        const friend = specialFriends[lowerName];
+        
+        if (friend) {
+            welcomeMessage.textContent = `Welcome, ${friend.title}`;
+            welcomeMessage.className = `welcome-message ${friend.effect}`;
+            showSpecialEffect(friend.effect);
+        } else {
+            welcomeMessage.textContent = `Welcome, ${name}!`;
+            welcomeMessage.className = 'welcome-message';
+        }
+    }
+
+    function showSpecialEffect(effect) {
+        const sound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+        sound.play();
+        
+        // Create floating particles
+        for (let i = 0; i < 10; i++) {
+            createSpecialParticle(effect);
+        }
+    }
+
+    function createSpecialParticle(effect) {
+        const particle = document.createElement('div');
+        particle.className = `special-particle ${effect}`;
+        particle.style.left = Math.random() * 100 + 'vw';
+        document.body.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 1500);
+    }
+
+    pugButton.addEventListener('click', () => {
+      pugImage.style.display = 'block';
+      pugImage.classList.add('pug-enter');
+      
+      const bark = new Audio('https://www.soundjay.com/dog/sounds/dog-bark-1.mp3');
+      bark.play();
+      
+      setTimeout(() => {
+        pugImage.classList.remove('pug-enter');
+        pugImage.classList.add('pug-exit');
+        setTimeout(() => {
+          pugImage.style.display = 'none';
+          pugImage.classList.remove('pug-exit');
+        }, 500);
+      }, 2000);
+    });
+
+    // Add particle effect
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + 'vw';
+      document.querySelector('.gaming-particles').appendChild(particle);
+      
+      setTimeout(() => particle.remove(), 1500);
+    }
+
+    setInterval(createParticle, 100);
+
+    function showGameMessage(message) {
+        // Create floating message
+        const floatingMsg = document.createElement('div');
+        floatingMsg.className = 'floating-message';
+        floatingMsg.textContent = message;
+        document.body.appendChild(floatingMsg);
+
+        // Play click sound
+        const clickSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+        clickSound.play();
+
+        // Remove message after animation
+        setTimeout(() => {
+            floatingMsg.remove();
+        }, 1000);
+    }
   </script>
 </body>
 </html>

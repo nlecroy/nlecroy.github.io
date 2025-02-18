@@ -1,0 +1,194 @@
+/* Arcade overlay */
+.arcade-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(
+            45deg, 
+            rgba(0, 0, 0, 0.9),
+            rgba(0, 255, 255, 0.1)
+        );
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Scanlines effect */
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.03) 50%,
+        rgba(0, 0, 0, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 2;
+    animation: scanlines 0.1s linear infinite;
+}
+
+/* Arcade header */
+.arcade-header {
+    text-align: center;
+    margin-top: 50px;
+    z-index: 1000;
+    position: relative;
+}
+
+.pixel-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 3em;
+    color: #00ff00;
+    text-shadow: 
+        0 0 10px #00ff00,
+        0 0 20px #00ff00;
+    animation: pixelPulse 2s infinite;
+}
+
+.insert-coin {
+    font-family: 'Press Start 2P', cursive;
+    color: #ffff00;
+    margin-top: 20px;
+    animation: blink 1s infinite;
+}
+
+/* Arcade cabinet */
+.arcade-cabinet {
+    position: relative;
+    width: 80%;
+    max-width: 800px;
+    margin: 50px auto;
+    background: #222;
+    border: 10px solid #444;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 
+        0 0 30px rgba(0, 255, 255, 0.3),
+        inset 0 0 50px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.fact-screen {
+    background: #000;
+    border: 5px solid #666;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.fact-card {
+    background: rgba(0, 255, 0, 0.1);
+    border: 2px solid #00ff00;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    animation: factAppear 0.5s ease-out both;
+}
+
+.fact-number {
+    font-family: 'Press Start 2P', cursive;
+    color: #ff0000;
+    margin-right: 15px;
+    font-size: 1.2em;
+}
+
+.fact-text {
+    color: #00ff00;
+    font-size: 1.1em;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+/* Cabinet controls */
+.cabinet-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.joystick {
+    width: 40px;
+    height: 40px;
+    background: #000;
+    border: 3px solid #444;
+    border-radius: 50%;
+    position: relative;
+}
+
+.joystick::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: #ff0000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid #444;
+}
+
+.button.red { background: #ff0000; }
+.button.blue { background: #0000ff; }
+
+/* Pixel pugs */
+.pixel-pugs {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.pixel-pug {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    margin: 10px;
+    animation: pixelBounce 1s infinite;
+}
+
+/* Animations */
+@keyframes scanlines {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 4px; }
+}
+
+@keyframes pixelPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes factAppear {
+    from {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pixelBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+} 

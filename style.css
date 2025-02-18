@@ -1,9 +1,11 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     background-color: #1a1a1a;
     color: white;
+    overflow-x: hidden;
+    min-height: 100vh;
 }
 
 .mystical-overlay {
@@ -19,7 +21,7 @@ body {
 
 .name-input-container {
     position: fixed;
-    top: 20px;
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
@@ -27,25 +29,29 @@ body {
 }
 
 .magical-input {
-    padding: 10px 20px;
+    padding: 15px 25px;
     border: 2px solid #00ffff;
-    border-radius: 20px;
+    border-radius: 25px;
     background: rgba(0, 0, 0, 0.7);
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     outline: none;
     transition: all 0.3s ease;
+    text-align: center;
+    width: 250px;
 }
 
 .magical-input:focus {
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    transform: scale(1.05);
 }
 
 .welcome-message {
-    margin-top: 10px;
-    font-size: 18px;
+    margin-top: 15px;
+    font-size: 24px;
     color: #fff;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: all 0.3s ease;
 }
 
 .welcome-message.vip {
@@ -235,4 +241,362 @@ body {
     border: 1px solid #00ffff;
     border-radius: 5px;
     color: white;
+}
+
+/* Add this to your existing CSS */
+.nav-links {
+    position: fixed;
+    top: 150px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 1000;
+}
+
+.glowing-link {
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00ffff;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.glowing-link:hover {
+    background: rgba(0, 255, 255, 0.1);
+    transform: translateX(10px) scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    letter-spacing: 2px;
+}
+
+/* Pug Button */
+.floating-pug-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 24px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00ffff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-pug-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+/* Pug Animation */
+.pug-animation {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 200px;
+    z-index: 999;
+}
+
+.pug-enter {
+    animation: pugEnter 0.5s ease-out;
+}
+
+.pug-exit {
+    animation: pugExit 0.5s ease-in;
+}
+
+/* DOOM Eternal Effects */
+.doom-flames {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(0deg, rgba(255, 87, 34, 0.3), transparent);
+    z-index: 1;
+    animation: flicker 3s infinite;
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pugEnter {
+    from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes pugExit {
+    from { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to { transform: translateX(-50%) translateY(100px); opacity: 0; }
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.5; }
+}
+
+/* Gaming glow effect for all interactive elements */
+.nav-links a, .magical-button, .magical-input {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-links a::after, .magical-button::after, .magical-input::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(0, 255, 255, 0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    animation: glowSweep 3s linear infinite;
+}
+
+@keyframes glowSweep {
+    0% { transform: rotate(45deg) translateX(-100%); }
+    100% { transform: rotate(45deg) translateX(100%); }
+}
+
+/* Add more gaming-related hover effects */
+.nav-links a:hover {
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    letter-spacing: 2px;
+}
+
+.magical-button:hover {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Gaming title */
+.gaming-title {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1000;
+}
+
+.gaming-title h1 {
+    font-size: 3em;
+    margin: 0;
+    background: linear-gradient(45deg, #00ffff, #ff00ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: titlePulse 2s infinite;
+}
+
+/* Particle effects */
+.gaming-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: #00ffff;
+    border-radius: 50%;
+    animation: particleFall 1.5s linear;
+}
+
+/* Floating gaming icons */
+.floating-icons {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1000;
+}
+
+.game-icon {
+    font-size: 2em;
+    animation: iconFloat 3s ease-in-out infinite;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid transparent;
+    border-radius: 50%;
+}
+
+.game-icon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    text-shadow: 0 0 20px #00ffff;
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+.game-icon:active {
+    transform: scale(0.95);
+}
+
+/* Keep existing animations and add new ones */
+@keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes particleFall {
+    0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* Add rainbow effect to links on hover */
+.glowing-link:hover {
+    animation: rainbowBorder 2s linear infinite;
+}
+
+@keyframes rainbowBorder {
+    0% { border-color: #ff0000; }
+    20% { border-color: #ff00ff; }
+    40% { border-color: #00ff00; }
+    60% { border-color: #00ffff; }
+    80% { border-color: #0000ff; }
+    100% { border-color: #ff0000; }
+}
+
+/* Add floating message animation */
+.floating-message {
+    position: fixed;
+    right: 100px;
+    top: 50%;
+    color: #00ffff;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    pointer-events: none;
+    animation: floatAndFade 1s ease-out forwards;
+    z-index: 1000;
+}
+
+@keyframes floatAndFade {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+}
+
+/* Special friend effects */
+.welcome-message.ultimate-vip {
+    color: #00ffff;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+    animation: ultimateGlow 2s infinite;
+}
+
+.welcome-message.legendary {
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    animation: legendaryGlow 2s infinite;
+}
+
+.welcome-message.epic {
+    color: #ff00ff;
+    text-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+    animation: epicGlow 2s infinite;
+}
+
+.welcome-message.mystic {
+    color: #9400d3;
+    text-shadow: 0 0 20px rgba(148, 0, 211, 0.8);
+    animation: mysticGlow 2s infinite;
+}
+
+.welcome-message.elite {
+    color: #ff4500;
+    text-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+    animation: eliteGlow 2s infinite;
+}
+
+/* Special particle effects */
+.special-particle {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFall 1.5s linear;
+}
+
+.special-particle.ultimate-vip { background: #00ffff; }
+.special-particle.legendary { background: #ffd700; }
+.special-particle.epic { background: #ff00ff; }
+.special-particle.mystic { background: #9400d3; }
+.special-particle.elite { background: #ff4500; }
+
+/* Special animations */
+@keyframes ultimateGlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); text-shadow: 0 0 30px #00ffff; }
+}
+
+@keyframes legendaryGlow {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); text-shadow: 0 0 30px #ffd700; }
+}
+
+@keyframes epicGlow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); text-shadow: 0 0 30px #ff00ff; }
+}
+
+@keyframes mysticGlow {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; text-shadow: 0 0 30px #9400d3; }
+}
+
+@keyframes eliteGlow {
+    0%, 100% { transform: scale(1) translateX(0); }
+    50% { transform: scale(1.1) translateX(10px); text-shadow: 0 0 30px #ff4500; }
 }

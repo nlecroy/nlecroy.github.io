@@ -3,135 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epic Rizz Test - Nash's Gaming Page</title>
+    <title>Tech Rizz Test</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="rizz-test-style.css">
 </head>
-<body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Me</a></li>
-                <li><a href="fun-facts.html">Fun Facts</a></li>
-                <li><a href="memes.html">Epic Memes</a></li>
-                <li><a href="gaming-sites.html">Gaming Sites</a></li>
-                <li><a href="fave-songs.html">Epic Music</a></li>
-                <li><a href="clans.html">Clans & Crews</a></li>
-                <li><a href="contact-me.html">Contact Me</a></li>
-            </ul>
-        </nav>
-        <h1>The Epic Rizz Test <span class="emoji">😎</span></h1>
-    </header>
+<body class="rizz-test-page">
+    <div class="matrix-overlay"></div>
+    <div class="cyber-grid"></div>
+    <div class="tech-particles"></div>
 
-    <section>
-        <h2>Test Your Rizz Level <span class="controller-emoji">🎮</span></h2>
-        <form id="rizzTest">
-            <div class="question">
-                <h3>1. What's your go-to gaming catchphrase?</h3>
-                <input type="radio" name="q1" value="1"> "GG EZ" <br>
-                <input type="radio" name="q1" value="2"> "Let's get this bread gamers!" <br>
-                <input type="radio" name="q1" value="3"> "Time to rise and grind!" <br>
-                <input type="radio" name="q1" value="4"> "Watch and learn!" <br>
-            </div>
-
-            <div class="question">
-                <h3>2. How do you make someone laugh?</h3>
-                <input type="radio" name="q2" value="1"> Tell dad jokes <br>
-                <input type="radio" name="q2" value="2"> Share funny memes <br>
-                <input type="radio" name="q2" value="3"> Do funny dances <br>
-                <input type="radio" name="q2" value="4"> Tell epic stories <br>
-            </div>
-
-            <div class="question">
-                <h3>3. What's your style?</h3>
-                <input type="radio" name="q3" value="1"> Casual and comfy <br>
-                <input type="radio" name="q3" value="2"> Gaming merch all day <br>
-                <input type="radio" name="q3" value="3"> Trendy and cool <br>
-                <input type="radio" name="q3" value="4"> Unique and creative <br>
-            </div>
-
-            <div class="question">
-                <h3>4. How do you handle a challenge?</h3>
-                <input type="radio" name="q4" value="1"> Keep trying until I succeed <br>
-                <input type="radio" name="q4" value="2"> Ask friends for help <br>
-                <input type="radio" name="q4" value="3"> Research and make a plan <br>
-                <input type="radio" name="q4" value="4"> Find creative solutions <br>
-            </div>
-
-            <div class="question">
-                <h3>5. What's your favorite way to spend free time?</h3>
-                <input type="radio" name="q5" value="1"> Gaming with friends <br>
-                <input type="radio" name="q5" value="2"> Making TikToks <br>
-                <input type="radio" name="q5" value="3"> Learning new skills <br>
-                <input type="radio" name="q5" value="4"> Creating content <br>
-            </div>
-
-            <div class="question">
-                <h3>6. How do you react to winning?</h3>
-                <input type="radio" name="q6" value="1"> Quiet celebration <br>
-                <input type="radio" name="q6" value="2"> Victory dance <br>
-                <input type="radio" name="q6" value="3"> Congratulate everyone <br>
-                <input type="radio" name="q6" value="4"> Share the moment online <br>
-            </div>
-
-            <button type="submit" id="submitBtn">Calculate My Rizz Level</button>
-        </form>
-
-        <div id="result" style="display: none;">
-            <h2>Your Rizz Score: <span id="score"></span></h2>
-            <p id="message"></p>
+    <div class="cyber-header">
+        <div class="glitch-text mega-text" data-text="RIZZ CALIBRATION">RIZZ CALIBRATION</div>
+        <div class="cyber-subtitle">SYSTEM v2.0.24 - MAXIMUM POWER</div>
+        <div class="power-lines">
+            <div class="power-line"></div>
+            <div class="power-line"></div>
         </div>
-    </section>
+    </div>
 
-    <footer>
-        <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
-    </footer>
+    <div class="test-container">
+        <div class="cyber-terminal mega-terminal">
+            <div class="terminal-header">
+                <span class="terminal-title">RIZZ_TEST.exe</span>
+                <div class="terminal-controls">
+                    <span class="control"></span>
+                    <span class="control"></span>
+                    <span class="control"></span>
+                </div>
+            </div>
+            
+            <div class="terminal-content">
+                <div class="loading-bar">
+                    <div class="progress"></div>
+                    <div class="loading-text">INITIALIZING RIZZ PROTOCOLS...</div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question-number" id="question-number">QUESTION 1/6</div>
+                    <div class="question mega-text" id="question-display">
+                        > INITIALIZING RIZZ TEST...
+                    </div>
+                    
+                    <div class="options" id="options-container">
+                        <button onclick="alert('Button clicked!'); startTest();" class="cyber-button mega-button">
+                            <span class="btn-text">START RIZZ CALIBRATION</span>
+                            <span class="btn-glitch"></span>
+                            <div class="button-effects">
+                                <div class="effect-1"></div>
+                                <div class="effect-2"></div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="system-stats">
+                    <div class="stat">
+                        <span class="stat-label">CPU</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill"></div>
+                        </div>
+                        <span class="stat-value">99%</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">RAM</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill"></div>
+                        </div>
+                        <span class="stat-value">16GB</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">RIZZ</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill"></div>
+                        </div>
+                        <span class="stat-value">∞</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cyber-decorations">
+            <div class="tech-circle pulsing"></div>
+            <div class="tech-circle pulsing"></div>
+            <div class="tech-hexagon rotating"></div>
+            <div class="tech-hexagon rotating"></div>
+            <div class="energy-beam"></div>
+            <div class="energy-beam"></div>
+        </div>
+    </div>
+
+    <div class="progress-tracker">
+        <div class="progress-node" data-question="1"></div>
+        <div class="progress-node" data-question="2"></div>
+        <div class="progress-node" data-question="3"></div>
+        <div class="progress-node" data-question="4"></div>
+        <div class="progress-node" data-question="5"></div>
+        <div class="progress-node" data-question="6"></div>
+    </div>
+
+    <nav class="nav-links">
+        <a href="index.html" class="glowing-link">Gaming Page</a>
+        <a href="about.html" class="glowing-link">About Me</a>
+        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
+        <a href="rizz-test.html" class="glowing-link active">Rizz Test</a>
+        <a href="memes.html" class="glowing-link">Epic Memes</a>
+        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
+        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
+        <a href="clans.html" class="glowing-link">Clans & Crews</a>
+        <a href="contact-me.html" class="glowing-link">Contact Me</a>
+    </nav>
 
     <script>
-        document.getElementById('rizzTest').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Test function to make sure JavaScript is working
+        function startTest() {
+            alert("Test starting!");
+            const questionDisplay = document.getElementById('question-display');
+            const optionsContainer = document.getElementById('options-container');
             
-            let score = 0;
-            const answers = {
-                q1: document.querySelector('input[name="q1"]:checked')?.value,
-                q2: document.querySelector('input[name="q2"]:checked')?.value,
-                q3: document.querySelector('input[name="q3"]:checked')?.value,
-                q4: document.querySelector('input[name="q4"]:checked')?.value,
-                q5: document.querySelector('input[name="q5"]:checked')?.value,
-                q6: document.querySelector('input[name="q6"]:checked')?.value
-            };
+            // Display first question
+            questionDisplay.innerHTML = "SCENARIO_1: You're in a gaming tournament and spot someone cute. Your opening line is:";
+            
+            // Clear and add new buttons
+            optionsContainer.innerHTML = `
+                <button onclick="selectAnswer(0)" class="cyber-button option-button">
+                    <span class="btn-text">Are you a rare gaming PC? Because you're looking absolutely legendary! 🎮</span>
+                </button>
+                <button onclick="selectAnswer(1)" class="cyber-button option-button">
+                    <span class="btn-text">You must be a high-refresh-rate monitor because I can't take my eyes off you! 👀</span>
+                </button>
+                <button onclick="selectAnswer(2)" class="cyber-button option-button">
+                    <span class="btn-text">Want to join my squad? I've got room for an epic player like you! 🏆</span>
+                </button>
+                <button onclick="selectAnswer(3)" class="cyber-button option-button">
+                    <span class="btn-text">ERROR 404: Pickup line not found, but you're stunning anyway! 💫</span>
+                </button>
+            `;
+        }
 
-            // Check if all questions are answered
-            if (!answers.q1 || !answers.q2 || !answers.q3 || !answers.q4 || !answers.q5 || !answers.q6) {
-                alert('Please answer all questions!');
-                return;
-            }
-
-            // Calculate score (convert from 24 max to 100 scale)
-            score = Object.values(answers).reduce((sum, value) => sum + parseInt(value), 0);
-            score = Math.round((score / 24) * 100); // Convert to 100 scale
-
-            // Show result
-            const resultDiv = document.getElementById('result');
-            const scoreSpan = document.getElementById('score');
-            const messageP = document.getElementById('message');
-
-            scoreSpan.textContent = score + "/100";
-
-            if (score <= 25) {
-                messageP.textContent = "No rizz detected! Time to level up your game! 😅";
-            } else if (score <= 50) {
-                messageP.textContent = "Basic rizz energy. Keep practicing! 😊";
-            } else if (score <= 75) {
-                messageP.textContent = "Solid rizz game! You're getting there! 😎";
-            } else if (score <= 90) {
-                messageP.textContent = "High-tier rizz! Almost legendary status! ⭐";
-            } else {
-                messageP.textContent = "MAXIMUM RIZZ ACHIEVED! You're absolutely legendary! 🏆✨";
-            }
-
-            resultDiv.style.display = 'block';
-        });
+        function selectAnswer(choice) {
+            alert("Answer " + choice + " selected!");
+            // Add more functionality here
+        }
     </script>
 </body>
 </html> 
