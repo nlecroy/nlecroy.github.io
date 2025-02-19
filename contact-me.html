@@ -45,5 +45,29 @@
     <footer>
         <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
     </footer>
+
+    <!-- Add this JavaScript to handle the secret link -->
+    <script>
+        function checkForSecret() {
+            const nameInput = document.getElementById('name');
+            const secretLink = document.getElementById('secret-link');
+            
+            if (nameInput.value.toLowerCase() === 'big hfbd club') {
+                secretLink.style.display = 'block';
+            } else {
+                secretLink.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- Add this to your form -->
+    <input type="text" id="name" name="name" placeholder="Your Name" oninput="checkForSecret()" required>
+
+    <!-- Add this at the bottom of your body -->
+    <div id="secret-link" style="display: none; position: fixed; bottom: 0; width: 100%; text-align: center; background: #000; padding: 10px;">
+        <a href="bob-news.html" style="color: #00ffff; text-decoration: none; font-size: 1.2em; text-shadow: 0 0 10px #00ffff;">
+            🔒 BOB NEWS 🔒
+        </a>
+    </div>
 </body>
 </html> 
