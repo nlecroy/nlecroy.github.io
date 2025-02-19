@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Gaming Clans & Crews</title>
+    <title>Epic Gaming Clans</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body {
             background: #000;
             color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: 'Arial', sans-serif;
         }
 
         .clan-background {
@@ -19,33 +18,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
-                url('https://images.unsplash.com/photo-1542751371-adc38448a05e');
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                        url('https://images.unsplash.com/photo-1542751371-adc38448a05e');
             background-size: cover;
             z-index: -1;
         }
 
-        .clan-title {
+        h1 {
             text-align: center;
-            font-size: 4em;
-            margin: 20px 0;
             color: #ff4d00;
+            font-size: 3em;
             text-transform: uppercase;
-            letter-spacing: 5px;
             text-shadow: 0 0 20px #ff4d00;
-            animation: titlePulse 3s infinite;
+            animation: glow 2s infinite;
         }
 
-        .clan-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        .clan-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 30px;
             padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
+            margin-left: 150px;
         }
 
         .clan-card {
@@ -53,9 +47,16 @@
             border: 2px solid #ff4d00;
             border-radius: 15px;
             padding: 20px;
-            transition: all 0.3s;
+            width: 300px;
+            transition: transform 0.3s;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+        }
+
+        .clan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
         }
 
         .clan-card::before {
@@ -65,243 +66,120 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(255, 77, 0, 0.1),
-                transparent
-            );
+            background: linear-gradient(45deg, transparent, rgba(255, 77, 0, 0.1), transparent);
             transform: rotate(45deg);
-            animation: shimmer 3s infinite;
+            animation: shine 3s infinite;
         }
 
-        .clan-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 30px rgba(255, 77, 0, 0.3);
-        }
-
-        .clan-name {
-            font-size: 2em;
+        .clan-card h2 {
             color: #ff4d00;
-            margin-bottom: 15px;
+            font-size: 1.8em;
+            text-align: center;
+            margin: 10px 0;
             text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
         }
 
-        .clan-description {
+        .clan-card p {
             color: #ff8533;
-            font-size: 1.1em;
-            margin-bottom: 20px;
             line-height: 1.5;
-        }
-
-        .clan-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat {
-            background: rgba(255, 77, 0, 0.2);
-            padding: 10px;
-            border-radius: 10px;
             text-align: center;
         }
 
-        .stat-label {
-            font-size: 0.9em;
-            color: #ff8533;
-        }
-
-        .stat-value {
-            font-size: 1.2em;
+        .clan-leader {
             color: #ff4d00;
             font-weight: bold;
-        }
-
-        .join-button {
-            background: #ff4d00;
-            color: #000;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            display: block;
-            width: 100%;
+        }
+
+        .clan-symbol {
+            font-size: 3em;
             text-align: center;
-            text-decoration: none;
+            margin: 10px 0;
+            animation: float 3s infinite;
         }
 
-        .join-button:hover {
-            background: #ff8533;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        @keyframes titlePulse {
+        @keyframes glow {
             0%, 100% { text-shadow: 0 0 20px #ff4d00; }
             50% { text-shadow: 0 0 40px #ff4d00, 0 0 60px #ff4d00; }
         }
 
-        /* Keep the existing nav-links styles */
-        .nav-links {
-            position: fixed;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 9999;
-            background: linear-gradient(90deg, 
-                rgba(0, 0, 0, 0.95), 
-                rgba(255, 77, 0, 0.1)
-            );
-            padding: 20px;
-            border-radius: 20px;
-            border: 2px solid #ff4d00;
-            box-shadow: 
-                0 0 20px rgba(255, 77, 0, 0.3),
-                inset 0 0 15px rgba(255, 77, 0, 0.2);
-            backdrop-filter: blur(5px);
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
         }
 
-        /* ... rest of nav styles ... */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar a {
+            color: #ff4d00;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .sidebar a:hover {
+            background-color: #ff4d00;
+            color: black;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
     <div class="clan-background"></div>
+    
+    <h1>⚔️ Epic Gaming Clans ⚔️</h1>
 
-    <h1 class="clan-title">⚔️ Elite Gaming Clans ⚔️</h1>
-
-    <div class="clan-grid">
+    <div class="clan-container">
         <div class="clan-card">
-            <h2 class="clan-name">🔥 DOOM Slayers</h2>
-            <p class="clan-description">Elite squad of demon hunters. Masters of the BFG and champions of the arena. No demon stands a chance.</p>
-            <div class="clan-stats">
-                <div class="stat">
-                    <div class="stat-label">Members</div>
-                    <div class="stat-value">666</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Wins</div>
-                    <div class="stat-value">∞</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Rank</div>
-                    <div class="stat-value">S+</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Power</div>
-                    <div class="stat-value">9999</div>
-                </div>
-            </div>
-            <a href="#" class="join-button">Join The Hunt</a>
+            <div class="clan-symbol">👑</div>
+            <h2>The Bobs</h2>
+            <p>Led by our legendary leader <span class="clan-leader">Brayden (King Bob)</span></p>
+            <p>Members wear special rings with eyes as our symbol. The most elite gaming force!</p>
         </div>
 
         <div class="clan-card">
-            <h2 class="clan-name">💀 Shadow Raiders</h2>
-            <p class="clan-description">Stealth specialists and night stalkers. Masters of tactical operations and strategic warfare.</p>
-            <div class="clan-stats">
-                <div class="stat">
-                    <div class="stat-label">Members</div>
-                    <div class="stat-value">420</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Wins</div>
-                    <div class="stat-value">1337</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Rank</div>
-                    <div class="stat-value">S</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Power</div>
-                    <div class="stat-value">8888</div>
-                </div>
-            </div>
-            <a href="#" class="join-button">Infiltrate Now</a>
+            <div class="clan-symbol">🦅</div>
+            <h2>Kaakaa Clan</h2>
+            <p>Led by the mighty <span class="clan-leader">Andruis</span></p>
+            <p>An unstoppable gaming force that strikes fear into our opponents!</p>
         </div>
 
         <div class="clan-card">
-            <h2 class="clan-name">⚡ Speed Demons</h2>
-            <p class="clan-description">Fast-paced warriors who strike like lightning. Masters of quick-scoping and rush tactics.</p>
-            <div class="clan-stats">
-                <div class="stat">
-                    <div class="stat-label">Members</div>
-                    <div class="stat-value">777</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Wins</div>
-                    <div class="stat-value">9001</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Rank</div>
-                    <div class="stat-value">A+</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Power</div>
-                    <div class="stat-value">7777</div>
-                </div>
-            </div>
-            <a href="#" class="join-button">Race In</a>
-        </div>
-
-        <div class="clan-card">
-            <h2 class="clan-name">🎯 Elite Snipers</h2>
-            <p class="clan-description">Long-range specialists with deadly accuracy. One shot, one kill - no exceptions.</p>
-            <div class="clan-stats">
-                <div class="stat">
-                    <div class="stat-label">Members</div>
-                    <div class="stat-value">360</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Wins</div>
-                    <div class="stat-value">4200</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Rank</div>
-                    <div class="stat-value">A</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Power</div>
-                    <div class="stat-value">6666</div>
-                </div>
-            </div>
-            <a href="#" class="join-button">Take Aim</a>
+            <div class="clan-symbol">🧥</div>
+            <h2>Leather Crew</h2>
+            <p>The coolest crew in gaming!</p>
+            <p>Recognized by our signature leather jackets. Style and skill combined!</p>
         </div>
     </div>
 
-    <nav class="nav-links">
-        <a href="index.html" class="glowing-link">Gaming Page</a>
-        <a href="about.html" class="glowing-link">About Me</a>
-        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-        <a href="memes.html" class="glowing-link">Epic Memes</a>
-        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-        <a href="clans.html" class="glowing-link">Clans & Crews</a>
-        <a href="contact-me.html" class="glowing-link">Contact Me</a>
-    </nav>
-
-    <script>
-        // Add hover sound effect
-        const hoverSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
-        document.querySelectorAll('.clan-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                hoverSound.currentTime = 0;
-                hoverSound.volume = 0.2;
-                hoverSound.play();
-            });
-        });
-    </script>
+    <div class="sidebar">
+        <a href="index.html">Gaming Page</a>
+        <a href="about.html">About Me</a>
+        <a href="fun-facts.html">Fun Facts</a>
+        <a href="memes.html">Epic Memes</a>
+        <a href="gaming-sites.html">Gaming Sites</a>
+        <a href="fave-songs.html">Epic Music</a>
+        <a href="clans.html">Clans & Crews</a>
+        <a href="contact-me.html">Contact Me</a>
+    </div>
 </body>
 </html> 
