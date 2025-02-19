@@ -1,116 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Epic Gaming Clans</title>
-    <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .clan-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
-                        url('https://images.unsplash.com/photo-1542751371-adc38448a05e');
-            background-size: cover;
-            z-index: -1;
+            background-color: black;
+            color: #ff4d00;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
         h1 {
             text-align: center;
             color: #ff4d00;
-            font-size: 3em;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px #ff4d00;
-            animation: glow 2s infinite;
+            text-shadow: 0 0 10px #ff4d00;
         }
 
-        .clan-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            padding: 20px;
-            margin-left: 150px;
-        }
-
-        .clan-card {
-            background: rgba(255, 77, 0, 0.1);
-            border: 2px solid #ff4d00;
-            border-radius: 15px;
-            padding: 20px;
-            width: 300px;
-            transition: transform 0.3s;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
-        }
-
-        .clan-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
-        }
-
-        .clan-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 77, 0, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        .clan-card h2 {
-            color: #ff4d00;
-            font-size: 1.8em;
-            text-align: center;
+        p {
+            color: white;
             margin: 10px 0;
-            text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
-        }
-
-        .clan-card p {
-            color: #ff8533;
-            line-height: 1.5;
-            text-align: center;
-        }
-
-        .clan-leader {
-            color: #ff4d00;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .clan-symbol {
-            font-size: 3em;
-            text-align: center;
-            margin: 10px 0;
-            animation: float 3s infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 20px #ff4d00; }
-            50% { text-shadow: 0 0 40px #ff4d00, 0 0 60px #ff4d00; }
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
         }
 
         .sidebar {
@@ -124,6 +33,9 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            border: 2px solid #ff4d00;
+            box-shadow: 0 0 20px #ff4d00;
+            animation: glow 2s infinite;
         }
 
         .sidebar a {
@@ -134,42 +46,39 @@
             transition: all 0.3s;
             text-align: center;
             font-weight: bold;
+            text-shadow: 0 0 10px #ff4d00;
+            border: 1px solid transparent;
         }
 
         .sidebar a:hover {
             background-color: #ff4d00;
             color: black;
             transform: scale(1.1);
+            box-shadow: 0 0 15px #ff4d00;
+            border: 1px solid #ff4d00;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px #ff4d00;
+            }
+            50% {
+                box-shadow: 0 0 40px #ff4d00;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="clan-background"></div>
-    
-    <h1>⚔️ Epic Gaming Clans ⚔️</h1>
+    <h1>Epic Gaming Clans</h1>
 
-    <div class="clan-container">
-        <div class="clan-card">
-            <div class="clan-symbol">👑</div>
-            <h2>The Bobs</h2>
-            <p>Led by our legendary leader <span class="clan-leader">Brayden (King Bob)</span></p>
-            <p>Members wear special rings with eyes as our symbol. The most elite gaming force!</p>
-        </div>
+    <h2>The Bobs</h2>
+    <p>Led by our legendary leader Brayden (King Bob). Members wear special rings with eyes as our symbol.</p>
 
-        <div class="clan-card">
-            <div class="clan-symbol">🦅</div>
-            <h2>Kaakaa Clan</h2>
-            <p>Led by the mighty <span class="clan-leader">Andruis</span></p>
-            <p>An unstoppable gaming force that strikes fear into our opponents!</p>
-        </div>
+    <h2>Kaakaa Clan</h2>
+    <p>Led by the mighty Andruis. An unstoppable gaming force!</p>
 
-        <div class="clan-card">
-            <div class="clan-symbol">🧥</div>
-            <h2>Leather Crew</h2>
-            <p>The coolest crew in gaming!</p>
-            <p>Recognized by our signature leather jackets. Style and skill combined!</p>
-        </div>
-    </div>
+    <h2>Leather Crew</h2>
+    <p>We wear leather jackets. The coolest crew around!</p>
 
     <div class="sidebar">
         <a href="index.html">Gaming Page</a>
@@ -177,7 +86,7 @@
         <a href="fun-facts.html">Fun Facts</a>
         <a href="memes.html">Epic Memes</a>
         <a href="gaming-sites.html">Gaming Sites</a>
-        <a href="fave-songs.html">Epic Music</a>
+        <a href="epic-music.html">Epic Music</a>
         <a href="clans.html">Clans & Crews</a>
         <a href="contact-me.html">Contact Me</a>
     </div>
