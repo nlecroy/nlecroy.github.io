@@ -1,7 +1,8 @@
 /* Base styles */
 .rizz-test-page {
     background: #000;
-    color: #00ff00;
+    color: #00ffff;
+    min-height: 100vh;
     overflow: hidden;
 }
 
@@ -31,117 +32,87 @@
     z-index: 2;
 }
 
-/* Mega text styles */
-.mega-text {
-    font-size: 3em;
-    text-shadow: 0 0 10px #00ffff;
-    letter-spacing: 5px;
-    animation: textPulse 2s infinite;
-}
-
-/* Terminal styles */
-.mega-terminal {
-    width: 90%;
-    max-width: 1000px;
-    margin: 20px auto;
+/* Cyber terminal */
+.cyber-terminal {
     background: rgba(0,0,0,0.8);
     border: 2px solid #00ffff;
     border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 800px;
     box-shadow: 0 0 20px rgba(0,255,255,0.3);
-    overflow: hidden;
 }
 
-/* Loading bar */
-.loading-bar {
+/* Cyber button */
+.cyber-button {
+    background: transparent;
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    padding: 15px 30px;
+    margin: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.cyber-button:hover {
+    background: rgba(0,255,255,0.1);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0,255,255,0.5);
+}
+
+.btn-glow {
+    position: absolute;
     width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(0,255,255,0.3), transparent);
+    top: 0;
+    left: -100%;
+    animation: buttonGlow 2s infinite;
+}
+
+/* Progress bar */
+.progress-bar {
+    width: 80%;
     height: 20px;
     background: rgba(0,255,255,0.1);
-    margin: 20px 0;
-    position: relative;
+    border: 2px solid #00ffff;
+    margin: 20px auto;
+    border-radius: 10px;
     overflow: hidden;
 }
 
 .progress {
-    width: 100%;
+    width: 0%;
     height: 100%;
     background: #00ffff;
-    animation: loadProgress 2s ease-in-out infinite;
+    transition: width 0.5s ease;
 }
 
-/* Button styles */
-.mega-button {
-    padding: 15px 30px;
-    font-size: 1.2em;
-    background: transparent;
-    border: 2px solid #00ffff;
-    color: #00ffff;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.button-effects {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.effect-1, .effect-2 {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,255,255,0.2);
-    animation: buttonEffect 2s infinite;
-}
-
-/* Progress tracker */
-.progress-tracker {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+/* Mega text styles */
+.mega-text {
+    font-size: 2em;
+    text-shadow: 0 0 10px #00ffff;
     margin: 20px 0;
 }
 
-.progress-node {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #00ffff;
-    border-radius: 50%;
-    transition: all 0.3s;
+/* Option styles */
+.option {
+    width: 100%;
+    margin: 10px 0;
+    text-align: left;
 }
 
-.progress-node.completed {
-    background: #00ffff;
-    box-shadow: 0 0 10px #00ffff;
+/* Results styles */
+.results {
+    text-align: center;
 }
 
-/* Cyber decorations */
-.tech-circle {
-    width: 50px;
-    height: 50px;
-    border: 2px solid #00ffff;
-    border-radius: 50%;
-    position: absolute;
-}
-
-.tech-hexagon {
-    width: 60px;
-    height: 60px;
-    background: transparent;
-    border: 2px solid #00ffff;
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    position: absolute;
-}
-
-.energy-beam {
-    width: 2px;
-    height: 100px;
-    background: #00ffff;
-    position: absolute;
-    filter: blur(2px);
+.result-text {
+    font-size: 2em;
+    margin: 20px 0;
+    animation: textPulse 2s infinite;
 }
 
 /* Animations */
@@ -155,86 +126,7 @@
     100% { transform: translateY(50px); }
 }
 
-@keyframes loadProgress {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-@keyframes buttonEffect {
-    0% { transform: translateX(-100%) rotate(45deg); }
-    100% { transform: translateX(100%) rotate(45deg); }
-}
-
-@keyframes pulsing {
-    0%, 100% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(1.2); opacity: 1; }
-}
-
-@keyframes rotating {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* System stats */
-.system-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding: 20px;
-}
-
-.stat {
-    text-align: center;
-}
-
-.stat-bar {
-    width: 100%;
-    height: 10px;
-    background: rgba(0,255,255,0.1);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.stat-fill {
-    width: 0%;
-    height: 100%;
-    background: #00ffff;
-    animation: fillBar 1s forwards;
-}
-
-@keyframes fillBar {
-    to { width: 100%; }
-}
-
-/* Question transitions */
-.fade-out {
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.3s;
-}
-
-.fade-in {
-    opacity: 1;
-    transform: translateY(0);
-    transition: all 0.3s;
-}
-
-/* Hover effects */
-.cyber-button:hover {
-    background: rgba(0,255,255,0.1);
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(0,255,255,0.5);
-}
-
-.cyber-button:hover .btn-glitch {
-    animation: glitch 0.3s infinite;
-}
-
-@keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+@keyframes buttonGlow {
+    0% { left: -100%; }
+    100% { left: 100%; }
 } 

@@ -3,14 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech Rizz Test</title>
+    <title>EPIC RIZZ TEST</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="rizz-test-style.css">
-    <script>
-        function testClick() {
-            alert('Button clicked!');
-        }
-    </script>
 </head>
 <body class="rizz-test-page">
     <div class="matrix-overlay"></div>
@@ -18,18 +13,14 @@
     <div class="tech-particles"></div>
 
     <div class="cyber-header">
-        <div class="glitch-text mega-text" data-text="RIZZ CALIBRATION">RIZZ CALIBRATION</div>
-        <div class="cyber-subtitle">SYSTEM v2.0.24 - MAXIMUM POWER</div>
-        <div class="power-lines">
-            <div class="power-line"></div>
-            <div class="power-line"></div>
-        </div>
+        <div class="glitch-text mega-text">ULTIMATE RIZZ TEST</div>
+        <div class="cyber-subtitle">⚡ POWER LEVEL SCANNER v2.0.24 ⚡</div>
     </div>
 
     <div class="test-container">
-        <div class="cyber-terminal mega-terminal">
+        <div class="cyber-terminal">
             <div class="terminal-header">
-                <span class="terminal-title">RIZZ_TEST.exe</span>
+                <span class="terminal-title">RIZZ_CALIBRATION.exe</span>
                 <div class="terminal-controls">
                     <span class="control"></span>
                     <span class="control"></span>
@@ -38,112 +29,131 @@
             </div>
             
             <div class="terminal-content">
-                <div class="loading-bar">
-                    <div class="progress"></div>
-                    <div class="loading-text">INITIALIZING RIZZ PROTOCOLS...</div>
+                <div id="question-display" class="mega-text">
+                    PREPARE FOR RIZZ EVALUATION
                 </div>
                 
-                <div class="question-container">
-                    <div class="question-number" id="question-number">QUESTION 1/6</div>
-                    <div class="question mega-text" id="question-display">
-                        > INITIALIZING RIZZ TEST...
-                    </div>
-                    
-                    <div class="options" id="options-container">
-                        <button style="padding: 20px; font-size: 24px; background: #00ffff; color: black; cursor: pointer;" onclick="testClick()">
-                            CLICK ME - START RIZZ TEST
-                        </button>
-                    </div>
-                </div>
-
-                <div class="system-stats">
-                    <div class="stat">
-                        <span class="stat-label">CPU</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill"></div>
-                        </div>
-                        <span class="stat-value">99%</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">RAM</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill"></div>
-                        </div>
-                        <span class="stat-value">16GB</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">RIZZ</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill"></div>
-                        </div>
-                        <span class="stat-value">∞</span>
-                    </div>
+                <div id="options-container">
+                    <button onclick="startQuiz()" class="cyber-button">
+                        <span class="btn-glow"></span>
+                        <span class="btn-text">INITIATE RIZZ SEQUENCE</span>
+                    </button>
                 </div>
             </div>
         </div>
-
-        <div class="cyber-decorations">
-            <div class="tech-circle pulsing"></div>
-            <div class="tech-circle pulsing"></div>
-            <div class="tech-hexagon rotating"></div>
-            <div class="tech-hexagon rotating"></div>
-            <div class="energy-beam"></div>
-            <div class="energy-beam"></div>
-        </div>
     </div>
 
-    <div class="progress-tracker">
-        <div class="progress-node" data-question="1"></div>
-        <div class="progress-node" data-question="2"></div>
-        <div class="progress-node" data-question="3"></div>
-        <div class="progress-node" data-question="4"></div>
-        <div class="progress-node" data-question="5"></div>
-        <div class="progress-node" data-question="6"></div>
+    <div class="progress-bar">
+        <div class="progress" id="progress-fill"></div>
     </div>
-
-    <nav class="nav-links">
-        <a href="index.html" class="glowing-link">Gaming Page</a>
-        <a href="about.html" class="glowing-link">About Me</a>
-        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-        <a href="rizz-test.html" class="glowing-link active">Rizz Test</a>
-        <a href="memes.html" class="glowing-link">Epic Memes</a>
-        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-        <a href="clans.html" class="glowing-link">Clans & Crews</a>
-        <a href="contact-me.html" class="glowing-link">Contact Me</a>
-    </nav>
 
     <script>
-        // Test function to make sure JavaScript is working
-        function startTest() {
-            alert("Test starting!");
+        const questions = [
+            {
+                question: "A wild GAMER appears! Your first move is:",
+                options: [
+                    "Are you a rare drop? Because you're legendary! 🎮",
+                    "Is your name WiFi? Because I'm feeling a connection! 📡",
+                    "Want to join my party? I need a healer for my heart! 💖",
+                    "You must be a gaming PC because you're looking super hot! 🔥"
+                ]
+            },
+            {
+                question: "During a gaming tournament, you spot someone cute:",
+                options: [
+                    "Want to be Player 2 in my game of life? 🎮",
+                    "Are you a save point? Because I've been looking for you! 💾",
+                    "You must be an epic loot drop, because you're precious! 💎",
+                    "Is this seat taken? I'm looking for my next victory royale! 👑"
+                ]
+            },
+            {
+                question: "In Discord, someone compliments your gaming skills:",
+                options: [
+                    "Thanks! Want to see my other impressive skills? 😎",
+                    "You're pretty skilled yourself! Duo queue sometime? 🎮",
+                    "I'm even better at getting phone numbers! 📱",
+                    "GG! Want to be my Player 2? 💫"
+                ]
+            },
+            {
+                question: "At a LAN party, someone needs help with their setup:",
+                options: [
+                    "I'll debug your PC, but you've already crashed my heart! 💻",
+                    "Let me help - I'm good with hardware and software! 🔧",
+                    "Your setup might need work, but you're already perfect! ✨",
+                    "Mind if I slide in like your PCIe into the motherboard? 🎯"
+                ]
+            },
+            {
+                question: "FINAL BOSS LEVEL - Your ultimate rizz line:",
+                options: [
+                    "Are you DOOM? Because you're Eternal in my heart! 🔥",
+                    "You must be a 3090 Ti because you're top tier! 💎",
+                    "Want to be the root directory of my heart? 💻",
+                    "You've unlocked the achievement: My Heart! 🏆"
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        function startQuiz() {
+            showQuestion(0);
+            updateProgress();
+        }
+
+        function showQuestion(index) {
             const questionDisplay = document.getElementById('question-display');
             const optionsContainer = document.getElementById('options-container');
             
-            // Display first question
-            questionDisplay.innerHTML = "SCENARIO_1: You're in a gaming tournament and spot someone cute. Your opening line is:";
+            questionDisplay.innerHTML = questions[index].question;
+            optionsContainer.innerHTML = '';
             
-            // Clear and add new buttons
-            optionsContainer.innerHTML = `
-                <button onclick="selectAnswer(0)" class="cyber-button option-button">
-                    <span class="btn-text">Are you a rare gaming PC? Because you're looking absolutely legendary! 🎮</span>
-                </button>
-                <button onclick="selectAnswer(1)" class="cyber-button option-button">
-                    <span class="btn-text">You must be a high-refresh-rate monitor because I can't take my eyes off you! 👀</span>
-                </button>
-                <button onclick="selectAnswer(2)" class="cyber-button option-button">
-                    <span class="btn-text">Want to join my squad? I've got room for an epic player like you! 🏆</span>
-                </button>
-                <button onclick="selectAnswer(3)" class="cyber-button option-button">
-                    <span class="btn-text">ERROR 404: Pickup line not found, but you're stunning anyway! 💫</span>
-                </button>
-            `;
+            questions[index].options.forEach((option, i) => {
+                const button = document.createElement('button');
+                button.className = 'cyber-button option';
+                button.innerHTML = `
+                    <span class="btn-glow"></span>
+                    <span class="btn-text">${option}</span>
+                `;
+                button.onclick = () => selectAnswer(i);
+                optionsContainer.appendChild(button);
+            });
         }
 
-        function selectAnswer(choice) {
-            alert("Answer " + choice + " selected!");
-            // Add more functionality here
+        function selectAnswer(optionIndex) {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion(currentQuestion);
+                updateProgress();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = document.getElementById('progress-fill');
+            const percentage = (currentQuestion / questions.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        function showResults() {
+            const questionDisplay = document.getElementById('question-display');
+            const optionsContainer = document.getElementById('options-container');
+            
+            questionDisplay.innerHTML = 'RIZZ LEVEL: MAXIMUM POWER';
+            optionsContainer.innerHTML = `
+                <div class="results">
+                    <div class="result-text">🏆 LEGENDARY RIZZ ACHIEVED 🏆</div>
+                    <button onclick="startQuiz()" class="cyber-button">
+                        <span class="btn-glow"></span>
+                        <span class="btn-text">RECALIBRATE</span>
+                    </button>
+                </div>
+            `;
         }
     </script>
 </body>
-</html> 
+</html>
