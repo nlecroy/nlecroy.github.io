@@ -3,9 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fun Facts - Arcade Edition</title>
+    <title>Fun Facts - Nash's Gaming Page</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="fun-facts-style.css">
+    <style>
+        .nav-links {
+            position: fixed;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 2;
+            background: linear-gradient(90deg, 
+                rgba(0, 0, 0, 0.95), 
+                rgba(255, 77, 0, 0.1)
+            );
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #ff4d00;
+            box-shadow: 
+                0 0 20px rgba(255, 77, 0, 0.3),
+                inset 0 0 15px rgba(255, 77, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-links::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff4d00, transparent, #ff4d00);
+            border-radius: 20px;
+            z-index: -1;
+            animation: borderGlow 3s infinite;
+            opacity: 0.6;
+        }
+
+        .nav-links::after {
+            content: '≡ MENU';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff4d00;
+            font-size: 0.8em;
+            text-shadow: 0 0 10px rgba(255, 77, 0, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .nav-links a {
+            font-size: 0.8em;
+            padding: 10px 20px;
+            white-space: nowrap;
+            position: relative;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 77, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .glowing-link {
+            color: #ff4d00;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 77, 0, 0.5);
+            display: flex;
+            align-items: center;
+        }
+
+        .glowing-link:hover {
+            color: #ff8533;
+            text-shadow: 
+                0 0 10px rgba(255, 77, 0, 0.8),
+                0 0 20px rgba(255, 77, 0, 0.4);
+            transform: translateX(5px) scale(1.05);
+            background: rgba(255, 77, 0, 0.2);
+            border-color: #ff4d00;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0.3;
+                box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+            }
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+            }
+        }
+    </style>
 </head>
 <body class="fun-facts-page">
     <div class="arcade-overlay"></div>
@@ -132,8 +225,7 @@
     <nav class="nav-links">
         <a href="index.html" class="glowing-link">Gaming Page</a>
         <a href="about.html" class="glowing-link">About Me</a>
-        <a href="fun-facts.html" class="glowing-link active">Fun Facts</a>
-        <a href="rizz-test.html" class="glowing-link">Rizz Test</a>
+        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
         <a href="memes.html" class="glowing-link">Epic Memes</a>
         <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
         <a href="fave-songs.html" class="glowing-link">Epic Music</a>

@@ -46,13 +46,23 @@
         <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
     </footer>
 
-    <!-- Add this JavaScript to handle the secret link -->
+    <!-- Add this at the top of your form section -->
+    <input type="text" id="name" name="name" placeholder="Your Name" oninput="checkForSecret()" required>
+
+    <!-- Add this script right before the closing </body> tag -->
     <script>
+        // Debug function to check if script is running
+        console.log("Script loaded");
+
         function checkForSecret() {
             const nameInput = document.getElementById('name');
             const secretLink = document.getElementById('secret-link');
             
-            if (nameInput.value.toLowerCase() === 'big hfbd club') {
+            // Debug log to see what's being typed
+            console.log("Input value:", nameInput.value);
+            
+            if (nameInput.value.toLowerCase() === 'big head club') {
+                console.log("Secret activated!");
                 secretLink.style.display = 'block';
             } else {
                 secretLink.style.display = 'none';
@@ -60,14 +70,50 @@
         }
     </script>
 
-    <!-- Add this to your form -->
-    <input type="text" id="name" name="name" placeholder="Your Name" oninput="checkForSecret()" required>
-
-    <!-- Add this at the bottom of your body -->
-    <div id="secret-link" style="display: none; position: fixed; bottom: 0; width: 100%; text-align: center; background: #000; padding: 10px;">
-        <a href="bob-news.html" style="color: #00ffff; text-decoration: none; font-size: 1.2em; text-shadow: 0 0 10px #00ffff;">
-            🔒 BOB NEWS 🔒
+    <!-- Make sure this div is present at the bottom of your body -->
+    <div id="secret-link" style="display: none; position: fixed; bottom: 0; width: 100%; text-align: center; background: linear-gradient(to right, #000000, #1a0000); padding: 15px; z-index: 9999;">
+        <a href="bob-news.html" class="fire-link">
+            🔥 BOB NEWS 🔥
         </a>
     </div>
+
+    <style>
+    .fire-link {
+        color: #ff4d00;
+        text-decoration: none;
+        font-size: 1.5em;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        padding: 10px 20px;
+        border: 2px solid #ff4d00;
+        background: rgba(255, 77, 0, 0.1);
+        position: relative;
+        transition: all 0.3s;
+        animation: fireGlow 2s infinite;
+    }
+
+    .fire-link:hover {
+        background: rgba(255, 77, 0, 0.2);
+        transform: scale(1.1);
+        box-shadow: 0 0 20px #ff4d00;
+    }
+
+    @keyframes fireGlow {
+        0%, 100% { text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00; }
+        50% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00, 0 0 40px #ff4d00; }
+    }
+    </style>
+
+    <nav class="nav-links">
+        <a href="index.html" class="glowing-link">Gaming Page</a>
+        <a href="about.html" class="glowing-link">About Me</a>
+        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
+        <a href="memes.html" class="glowing-link">Epic Memes</a>
+        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
+        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
+        <a href="clans.html" class="glowing-link">Clans & Crews</a>
+        <a href="contact-me.html" class="glowing-link">Contact Me</a>
+    </nav>
 </body>
 </html> 

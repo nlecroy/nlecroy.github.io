@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation Jeff Takedown: Phase 3</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .detail-page {
+            background: #000;
+            color: #ff4d00;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .detail-header {
+            text-align: center;
+            padding: 40px 0;
+            animation: glitchText 3s infinite;
+        }
+
+        .detail-title {
+            font-size: 3em;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin: 0;
+        }
+
+        .detail-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 77, 0, 0.1);
+            border: 2px solid #ff4d00;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #ff4d00;
+            text-decoration: none;
+            font-size: 1.2em;
+            text-shadow: 0 0 10px rgba(255,77,0,0.5);
+        }
+
+        .fire-particles {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #ff4d00;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: rise 3s infinite;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-50vh) scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes glitchText {
+            0% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+            25% { text-shadow: -2px 2px #ff0000, 2px -2px #00ff00; }
+            50% { text-shadow: 2px -2px #ff0000, -2px 2px #00ff00; }
+            75% { text-shadow: -2px -2px #ff0000, 2px 2px #00ff00; }
+            100% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+        }
+    </style>
+</head>
+<body class="detail-page">
+    <div class="fire-particles"></div>
+
+    <div class="detail-header">
+        <h1 class="detail-title">Operation Jeff Takedown: Phase 3</h1>
+    </div>
+
+    <div class="detail-content">
+        <p>Phase 3 of Operation Jeff Takedown is underway, and King Bob's strategic brilliance is shining through. With each passing day, Jeff's defenses are crumbling, and Bob's influence is growing stronger.</p>
+        <p>The operation has been meticulously planned, with each phase executed flawlessly. Bob's forces are relentless, and victory seems inevitable as they close in on their target.</p>
+        <p>Stay tuned for more updates on the progress of this epic operation and the ultimate showdown!</p>
+    </div>
+
+    <a href="bob-news.html" class="back-link">← Back to Bob News</a>
+
+    <script>
+        // Create fire-like particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.bottom = '0';
+            document.querySelector('.fire-particles').appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 3000);
+        }
+
+        setInterval(createParticle, 100);
+    </script>
+</body>
+</html> 

@@ -3,100 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epic Memes - Nash's Gaming Page</title>
+    <title>🔥 EPIC MEMES 🔥</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #000;
+            color: #ff4d00;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .doom-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                url('https://images.alphacoders.com/115/1151800.jpg');
+            background-size: cover;
+            z-index: -1;
+        }
+
+        .fire-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(transparent, #ff4d00);
+            opacity: 0.3;
+            z-index: 0;
+            animation: fireFlicker 3s infinite;
+        }
+
+        .meme-title {
+            text-align: center;
+            font-size: 4em;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: glitchText 3s infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meme-card {
+            background: rgba(255, 77, 0, 0.1);
+            border: 2px solid #ff4d00;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .meme-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+        }
+
+        .meme-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .meme-card:hover .meme-image {
+            transform: scale(1.1);
+        }
+
+        .meme-caption {
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #ff4d00;
+            text-shadow: 0 0 10px rgba(255,77,0,0.5);
+        }
+
+        .floating-pug {
+            position: fixed;
+            width: 100px;
+            animation: float 3s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fireFlicker {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes glitchText {
+            0% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+            25% { text-shadow: -2px 2px #ff0000, 2px -2px #00ff00; }
+            50% { text-shadow: 2px -2px #ff0000, -2px 2px #00ff00; }
+            75% { text-shadow: -2px -2px #ff0000, 2px 2px #00ff00; }
+            100% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+        }
+
+        .nav-links {
+            position: fixed;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 2;
+            background: linear-gradient(90deg, 
+                rgba(0, 0, 0, 0.95), 
+                rgba(255, 77, 0, 0.1)
+            );
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #ff4d00;
+            box-shadow: 
+                0 0 20px rgba(255, 77, 0, 0.3),
+                inset 0 0 15px rgba(255, 77, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-links::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff4d00, transparent, #ff4d00);
+            border-radius: 20px;
+            z-index: -1;
+            animation: borderGlow 3s infinite;
+            opacity: 0.6;
+        }
+
+        .nav-links::after {
+            content: '≡ MENU';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff4d00;
+            font-size: 0.8em;
+            text-shadow: 0 0 10px rgba(255, 77, 0, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .nav-links a {
+            font-size: 0.8em;
+            padding: 10px 20px;
+            white-space: nowrap;
+            position: relative;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 77, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .glowing-link {
+            color: #ff4d00;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 77, 0, 0.5);
+            display: flex;
+            align-items: center;
+        }
+
+        .glowing-link:hover {
+            color: #ff8533;
+            text-shadow: 
+                0 0 10px rgba(255, 77, 0, 0.8),
+                0 0 20px rgba(255, 77, 0, 0.4);
+            transform: translateX(5px) scale(1.05);
+            background: rgba(255, 77, 0, 0.2);
+            border-color: #ff4d00;
+        }
+
+        .glowing-link::before {
+            content: '▸';
+            position: absolute;
+            left: 5px;
+            opacity: 0;
+            transition: all 0.3s;
+            color: #ff4d00;
+        }
+
+        .glowing-link:hover::before {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
+        .glowing-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 77, 0, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .glowing-link:hover::after {
+            left: 100%;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0.3;
+                box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+            }
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Me</a></li>
-                <li><a href="fun-facts.html">Fun Facts</a></li>
-                <li><a href="rizz-test.html">Rizz Test</a></li>
-                <li><a href="gaming-sites.html">Gaming Sites</a></li>
-                <li><a href="fave-songs.html">Epic Music</a></li>
-                <li><a href="clans.html">Clans & Crews</a></li>
-                <li><a href="contact-me.html">Contact Me</a></li>
-            </ul>
-        </nav>
-        <h1>Epic Gaming Memes <span class="emoji">😎</span></h1>
-    </header>
+    <div class="doom-background"></div>
+    <div class="fire-overlay"></div>
 
-    <section class="meme-gallery">
-        <h2>Clean Gaming Memes <span class="controller-emoji">🎮</span></h2>
-        
-        <div class="meme-container">
-            <div class="meme-box">
-                <h3>When Mom Says "Pause Your Online Game"</h3>
-                <p>Mom: Just pause it!<br>
-                Me: That's not how this works!<br>
-                Mom: 🤔<br>
-                Me: 😅</p>
-            </div>
+    <h1 class="meme-title">🔥 EPIC MEMES 🔥</h1>
 
-            <div class="meme-box">
-                <h3>Gaming Logic</h3>
-                <p>Fall 100 feet: No damage<br>
-                Step on a pebble: ❌ GAME OVER ❌</p>
-            </div>
+    <nav class="nav-links">
+        <a href="index.html" class="glowing-link">Gaming Page</a>
+        <a href="about.html" class="glowing-link">About Me</a>
+        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
+        <a href="memes.html" class="glowing-link">Epic Memes</a>
+        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
+        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
+        <a href="clans.html" class="glowing-link">Clans & Crews</a>
+        <a href="contact-me.html" class="glowing-link">Contact Me</a>
+    </nav>
 
-            <div class="meme-box">
-                <h3>Fortnite Dance Moves IRL</h3>
-                <p>Me at school: *does default dance*<br>
-                Everyone else: 👀<br>
-                Me: 🕺</p>
-            </div>
-
-            <div class="meme-box">
-                <h3>DOOM Guy's To-Do List</h3>
-                <p>✅ RIP<br>
-                ✅ TEAR<br>
-                ✅ Repeat</p>
-            </div>
-
-            <div class="meme-box">
-                <h3>Gaming With Pugs</h3>
-                <p>Pug: *sits on keyboard*<br>
-                Me: But I was winning!<br>
-                Pug: 🐕 Mission accomplished</p>
-            </div>
-
-            <div class="meme-box">
-                <h3>Piano Gaming</h3>
-                <p>Tries to play DOOM music on piano<br>
-                Actually plays Mary Had a Little Lamb<br>
-                Close enough! 🎹</p>
-            </div>
-
-            <div class="meme-box">
-                <h3>Trampoline Pro Gamer</h3>
-                <p>Me: *does backflip on trampoline*<br>
-                Also me: I learned this from Fortnite<br>
-                Mom: 😨</p>
-            </div>
-
-            <div class="meme-box">
-                <h3>Gaming Homework</h3>
-                <p>Teacher: Did you do your homework?<br>
-                Me: I got a Victory Royale instead!<br>
-                Teacher: That's not...<br>
-                Me: Worth it! 😎</p>
-            </div>
-
-            <div class="meme-box">
-                <h3>Responsibilities? I Am Plant Now</h3>
-                <p>Dog: *sits in flower pot*<br>
-                "am plant"<br>
-                "no bork today"<br>
-                "am doin a grow"<br>
-                "photosynthesis" 🌱🐕</p>
-            </div>
+    <div class="meme-grid">
+        <div class="meme-card">
+            <img src="https://media.giphy.com/media/ZZkCo8zKWtt2ZgozfX/giphy.gif" alt="Gaming Time" class="meme-image">
+            <div class="meme-caption">Gaming Time! 🎮</div>
         </div>
-    </section>
+        <div class="meme-card">
+            <img src="https://media.giphy.com/media/SQgbkziuGrNxS/giphy.gif" alt="DOOM Guy" class="meme-image">
+            <div class="meme-caption">DOOM Guy Vibes 🔥</div>
+        </div>
+        <div class="meme-card">
+            <img src="https://media.giphy.com/media/ZZTL1YLKZ48URCoC6B/giphy.gif" alt="DOOM Slayer" class="meme-image">
+            <div class="meme-caption">DOOM Slayer Mode 😈</div>
+        </div>
+        <div class="meme-card">
+            <img src="https://media.giphy.com/media/2tOsjtp4xFgD6pc48U/giphy.gif" alt="DOOM Action" class="meme-image">
+            <div class="meme-caption">RIP AND TEAR 💀</div>
+        </div>
+    </div>
 
-    <footer>
-        <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
-    </footer>
+    <!-- Floating pugs -->
+    <img src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif" class="floating-pug" style="top: 20%; left: 10%;">
+    <img src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif" class="floating-pug" style="top: 60%; right: 10%;">
+
+    <script>
+        // Add click sound effect to meme cards
+        document.querySelectorAll('.meme-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const sound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+                sound.play();
+                card.style.transform = 'scale(1.1)';
+                setTimeout(() => card.style.transform = 'scale(1)', 200);
+            });
+        });
+
+        // Create floating particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: #ff4d00;
+                pointer-events: none;
+                left: ${Math.random() * 100}vw;
+                top: -10px;
+                opacity: 0.7;
+                animation: fall ${Math.random() * 2 + 1}s linear forwards;
+                z-index: 1;
+            `;
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 3000);
+        }
+
+        setInterval(createParticle, 50);
+
+        // Add falling particle animation
+        document.styleSheets[0].insertRule(`
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `, 0);
+    </script>
 </body>
 </html> 

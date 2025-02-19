@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 BOB NEWS 🔥</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .bob-news-page {
+            background: #000;
+            color: #ff4d00;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(255,77,0,0.1) 1px, transparent 1px) 0 0 / 50px 50px,
+                linear-gradient(rgba(255,77,0,0.1) 1px, transparent 1px) 0 0 / 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: 1;
+        }
+
+        .fire-header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .fire-title {
+            font-size: 4em;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin: 0;
+            animation: glitchText 3s infinite;
+        }
+
+        .news-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .news-item {
+            background: rgba(255, 77, 0, 0.1);
+            border: 2px solid #ff4d00;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .news-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,77,0,0.2), transparent);
+            animation: shine 3s infinite;
+        }
+
+        .news-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+        }
+
+        .news-title {
+            font-size: 2em;
+            margin: 10px 0;
+            color: #ff4d00;
+            text-shadow: 0 0 10px rgba(255,77,0,0.5);
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes glitchText {
+            0% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+            25% { text-shadow: -2px 2px #ff0000, 2px -2px #00ff00; }
+            50% { text-shadow: 2px -2px #ff0000, -2px 2px #00ff00; }
+            75% { text-shadow: -2px -2px #ff0000, 2px 2px #00ff00; }
+            100% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+        }
+
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+    </style>
+</head>
+<body class="bob-news-page">
+    <div class="cyber-grid"></div>
+
+    <div class="fire-header">
+        <h1 class="fire-title">🔥 BOB NEWS NETWORK 🔥</h1>
+        <p>CLASSIFIED INTEL - AUTHORIZED ACCESS ONLY</p>
+    </div>
+
+    <div class="news-container">
+        <article class="news-item" onclick="location.href='king-bob-song.html'">
+            <h2 class="news-title">🎵 KING BOB DROPS NEW HIT: "BALLOON"</h2>
+            <p>The legendary King Bob has released his latest masterpiece! The track "Balloon" is already breaking all streaming records. Critics are calling it "revolutionary" and "the future of music." 🎶</p>
+        </article>
+
+        <article class="news-item" onclick="location.href='duck-army-alliance.html'">
+            <h2 class="news-title">🦆 DUCK ARMY ALLIANCE CONFIRMED</h2>
+            <p>BREAKING NEWS: Bob's forces have officially joined with the legendary Duck Army! This unprecedented alliance has sent shockwaves through the gaming world. The combined power level is off the charts! 🚀</p>
+        </article>
+
+        <article class="news-item" onclick="location.href='operation-jeff-takedown.html'">
+            <h2 class="news-title">⚔️ OPERATION JEFF TAKEDOWN: PHASE 3</h2>
+            <p>Intel reports confirm that Bob's strategic masterplan is working! Jeff's defenses are crumbling as Bob's influence grows stronger by the day. Victory is inevitable! 💥</p>
+        </article>
+    </div>
+
+    <nav class="nav-links">
+        <a href="index.html" class="glowing-link">RETURN TO BASE</a>
+    </nav>
+
+    <script>
+        // Add particle effects
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: #ff4d00;
+                pointer-events: none;
+                left: ${Math.random() * 100}vw;
+                top: -10px;
+                opacity: 0.7;
+                animation: fall ${Math.random() * 2 + 1}s linear forwards;
+            `;
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 3000);
+        }
+
+        setInterval(createParticle, 50);
+
+        document.styleSheets[0].insertRule(`
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `, 0);
+    </script>
+</body>
+</html> 
