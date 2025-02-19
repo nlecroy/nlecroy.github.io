@@ -3,9 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nash's Gaming Realm</title>
+  <title>🎮 Epic Gaming Page 🎮</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    body {
+      background-color: black;
+      color: #ff4d00;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #ff4d00;
+      text-shadow: 0 0 20px #ff4d00;
+      font-size: 50px;
+      animation: glow 2s infinite;
+      margin-top: 160px;
+      margin-bottom: 120px;
+    }
+
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 20px #ff4d00; }
+      50% { text-shadow: 0 0 40px #ff4d00; }
+    }
+
+    .content-container {
+      margin-left: 250px;
+      padding: 20px;
+      max-width: 900px;
+      margin-right: auto;
+      margin-top: 120px;
+    }
+
+    .game-box {
+      border: 3px solid #ff4d00;
+      border-radius: 15px;
+      padding: 30px;
+      margin: 100px auto;
+      background: rgba(0, 0, 0, 0.9);
+      box-shadow: 0 0 30px #ff4d00;
+      transition: all 0.3s;
+      max-width: 700px;
+    }
+
+    .game-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 30px #ff4d00;
+    }
+
+    .game-title {
+      font-size: 35px;
+      margin-bottom: 20px;
+      color: #ff4d00;
+      text-shadow: 0 0 10px #ff4d00;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .game-emoji {
+      font-size: 40px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .game-description {
+      font-size: 20px;
+      line-height: 1.6;
+      margin: 20px 0;
+      color: white;
+      text-shadow: 0 0 5px #ff4d00;
+    }
+
+    .epic-quote {
+      font-size: 28px;
+      margin: 40px auto;
+      max-width: 700px;
+      text-align: center;
+      color: #ff4d00;
+      text-shadow: 0 0 10px #ff4d00;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .achievement {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 8px;
+      background: linear-gradient(45deg, #ff4d00, #ff8533);
+      color: black;
+      border-radius: 20px;
+      font-weight: bold;
+      box-shadow: 0 0 10px #ff4d00;
+    }
+
     /* Add these styles to your existing styles */
     .nav-links {
         position: fixed;
@@ -141,7 +242,7 @@
   
   <!-- Gaming title -->
   <div class="gaming-title">
-    <h1>Nash's Gaming Realm</h1>
+    <h1>🏆 Epic Gaming Hub 🏆</h1>
     <div class="title-glow"></div>
   </div>
 
@@ -172,6 +273,44 @@
     <div class="game-icon" onclick="showGameMessage('🎲 Roll the Dice!')">🎲</div>
     <div class="game-icon" onclick="showGameMessage('🏆 Victory!')">🏆</div>
     <div class="game-icon" onclick="showGameMessage('⚔️ Battle Time!')">⚔️</div>
+  </div>
+
+  <div class="content-container">
+    <div class="game-box">
+      <div class="game-title">
+        <span class="game-emoji">⚔️</span>
+        Fortnite Master
+      </div>
+      <p class="game-description">
+        My main game! Ready for epic Victory Royales and insane builds. 
+        Join me in battle and let's dominate the island!
+      </p>
+      <div>
+        <span class="achievement">🎯 Pro Builder</span>
+        <span class="achievement">🏆 Victory Expert</span>
+        <span class="achievement">⚡ Quick Editor</span>
+      </div>
+    </div>
+
+    <div class="epic-quote">
+      "Gaming isn't just a hobby, it's an epic adventure! 🎮"
+    </div>
+
+    <div class="game-box">
+      <div class="game-title">
+        <span class="game-emoji">🎮</span>
+        Gaming Schedule
+      </div>
+      <p class="game-description">
+        Catch me online every weekday from 3PM to 4PM EST!
+        Ready for epic gaming sessions and Victory Royales!
+      </p>
+      <div>
+        <span class="achievement">⏰ Daily Player</span>
+        <span class="achievement">🤝 Team Player</span>
+        <span class="achievement">🎯 Skilled Gamer</span>
+      </div>
+    </div>
   </div>
 
   <script>
