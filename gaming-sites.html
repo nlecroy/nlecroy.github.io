@@ -3,79 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epic Gaming Sites - Nash's Gaming Page</title>
+    <title>TOP SECRET: Gaming Sites</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        .classified-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.7)),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            z-index: -1;
+        }
+
+        .terminal-header {
+            text-align: center;
+            margin: 20px 0;
+            animation: glitch 2s infinite;
+        }
+
+        .terminal-header h1 {
+            color: #00ff00;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #00ff00;
+            margin: 0;
+        }
+
+        .terminal-header p {
+            color: #ff0000;
+            margin: 5px 0;
+        }
+
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .site-card {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .site-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .site-card::before {
+            content: 'CLASSIFIED';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff0000;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .site-title {
+            font-size: 1.5em;
+            color: #00ff00;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .site-description {
+            color: #00cc00;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .access-button {
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .access-button:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .nav-links {
+            position: fixed;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+            background: linear-gradient(90deg, 
+                rgba(0, 0, 0, 0.95), 
+                rgba(255, 77, 0, 0.1)
+            );
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #ff4d00;
+            box-shadow: 
+                0 0 20px rgba(255, 77, 0, 0.3),
+                inset 0 0 15px rgba(255, 77, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-links::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff4d00, transparent, #ff4d00);
+            border-radius: 20px;
+            z-index: -1;
+            animation: borderGlow 3s infinite;
+            opacity: 0.6;
+        }
+
+        .nav-links::after {
+            content: '≡ MENU';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff4d00;
+            font-size: 0.8em;
+            text-shadow: 0 0 10px rgba(255, 77, 0, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .nav-links a {
+            font-size: 0.8em;
+            padding: 10px 20px;
+            white-space: nowrap;
+            position: relative;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 77, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .glowing-link {
+            color: #ff4d00;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 77, 0, 0.5);
+            display: flex;
+            align-items: center;
+        }
+
+        .glowing-link:hover {
+            color: #ff8533;
+            text-shadow: 
+                0 0 10px rgba(255, 77, 0, 0.8),
+                0 0 20px rgba(255, 77, 0, 0.4);
+            transform: translateX(5px) scale(1.05);
+            background: rgba(255, 77, 0, 0.2);
+            border-color: #ff4d00;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0.3;
+                box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+            }
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+            }
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+            25% { text-shadow: -2px 2px #ff0000, 2px -2px #00ff00; }
+            50% { text-shadow: 2px -2px #ff0000, -2px 2px #00ff00; }
+            75% { text-shadow: -2px -2px #ff0000, 2px 2px #00ff00; }
+            100% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
+        }
+
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 50%,
+                rgba(0, 255, 0, 0.025) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .static-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMABA+AAAACHRSTlMzMzMzMzMzM85JBgUAAAABYktHRAH/Ai3eAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QUcCDsxNYLZPAAAAEJJREFUKM9jYBgFgwEwMzJCGcwQBhsDAwMzhMECYbBC1LFCGGwQBjuEwQFhcEIYXBAGN4TBA2HwQhh8EAY/BMICAJqXBdc7+DNzAAAAAElFTkSuQmCC');
+            opacity: 0.03;
+            z-index: 2;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <nav class="nav-links">
-                <a href="index.html" class="glowing-link">Gaming Page</a>
-                <a href="about.html" class="glowing-link">About Me</a>
-                <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-                <a href="memes.html" class="glowing-link">Epic Memes</a>
-                <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-                <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-                <a href="clans.html" class="glowing-link">Clans & Crews</a>
-                <a href="contact-me.html" class="glowing-link">Contact Me</a>
-            </nav>
-        </nav>
-        <h1>Epic Gaming Sites <span class="controller-emoji">🎮</span></h1>
-    </header>
+    <div class="classified-overlay"></div>
+    <div class="scan-line"></div>
+    <div class="static-effect"></div>
 
-    <section class="games-gallery">
-        <h2>Awesome Browser Games <span class="emoji">🚀</span></h2>
-        
-        <div class="games-container">
-            <div class="game-box">
-                <h3>CrazyGames</h3>
-                <p>My Top Picks:</p>
-                <ul>
-                    <li>Shell Shockers (Epic egg FPS!) 🥚</li>
-                    <li>Stabfish 2 (Best underwater battle!) 🐟</li>
-                    <li>1v1.LOL (Like Fortnite but in browser!) 🏗️</li>
-                </ul>
-                <a href="https://www.crazygames.com" target="_blank" class="game-link">Play on CrazyGames</a>
-            </div>
+    <div class="terminal-header">
+        <h1>⚡ CLASSIFIED GAMING SITES ⚡</h1>
+        <p>ACCESS LEVEL: TOP SECRET</p>
+        <p>ENCRYPTION: ENABLED</p>
+    </div>
 
-            <div class="game-box">
-                <h3>Poki</h3>
-                <p>Awesome Games Here:</p>
-                <ul>
-                    <li>Subway Surfers (Classic endless runner!) 🏃</li>
-                    <li>Minecraft Classic (Free browser version!) ⛏️</li>
-                    <li>Among Us (Browser version!) 👨‍🚀</li>
-                </ul>
-                <a href="https://poki.com" target="_blank" class="game-link">Play on Poki</a>
-            </div>
-
-            <div class="game-box">
-                <h3>Game Tips</h3>
-                <p>Pro Gamer Advice:</p>
-                <ul>
-                    <li>Shell Shockers: Always keep moving! 🏃</li>
-                    <li>Stabfish 2: Use the boost wisely! 🚀</li>
-                    <li>Remember to take breaks every hour! ⏰</li>
-                    <li>Stay hydrated while gaming! 🥤</li>
-                </ul>
-            </div>
-
-            <div class="game-box">
-                <h3>DOOM Fan Corner 🔥</h3>
-                <p>Epic DOOM Moments:</p>
-                <ul>
-                    <li>Mancubus = Most annoying enemy! 👿</li>
-                    <li>BFG 9000 = Best weapon ever! 🚀</li>
-                    <li>Rip and tear until it's done! ⚔️</li>
-                    <li>DOOM Guy is unstoppable! 💪</li>
-                    <li>Epic metal soundtrack! 🎸</li>
-                </ul>
-            </div>
+    <div class="sites-grid">
+        <div class="site-card">
+            <h2 class="site-title">🎮 Cool Math Games</h2>
+            <p class="site-description">Secure gaming hub with over 1000+ strategic operations. Perfect for covert gaming missions.</p>
+            <a href="https://www.coolmathgames.com" class="access-button" target="_blank">INITIATE ACCESS ></a>
         </div>
-    </section>
 
-    <footer>
-        <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
-    </footer>
+        <div class="site-card">
+            <h2 class="site-title">🎯 Poki</h2>
+            <p class="site-description">High-security gaming facility. Multiple entry points available. Stealth mode recommended.</p>
+            <a href="https://poki.com" class="access-button" target="_blank">BREACH SECURITY ></a>
+        </div>
+
+        <div class="site-card">
+            <h2 class="site-title">🚀 Crazy Games</h2>
+            <p class="site-description">Advanced gaming arsenal. Multiple tactical options available. Proceed with caution.</p>
+            <a href="https://www.crazygames.com" class="access-button" target="_blank">DEPLOY GAMES ></a>
+        </div>
+
+        <div class="site-card">
+            <h2 class="site-title">🎲 Game Top</h2>
+            <p class="site-description">Underground gaming network. Encrypted connection required. Mission success rate: HIGH</p>
+            <a href="https://www.gametop.com" class="access-button" target="_blank">INFILTRATE NOW ></a>
+        </div>
+    </div>
+
+    <nav class="nav-links">
+        <a href="index.html" class="glowing-link">Gaming Page</a>
+        <a href="about.html" class="glowing-link">About Me</a>
+        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
+        <a href="memes.html" class="glowing-link">Epic Memes</a>
+        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
+        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
+        <a href="clans.html" class="glowing-link">Clans & Crews</a>
+        <a href="contact-me.html" class="glowing-link">Contact Me</a>
+    </nav>
+
+    <script>
+        // Add terminal typing sound effect
+        function playTypeSound() {
+            const audio = new Audio('https://www.soundjay.com/button/button-3.mp3');
+            audio.volume = 0.1;
+            audio.play();
+        }
+
+        // Add hover effects with sound
+        document.querySelectorAll('.site-card').forEach(card => {
+            card.addEventListener('mouseenter', playTypeSound);
+        });
+    </script>
 </body>
 </html> 
