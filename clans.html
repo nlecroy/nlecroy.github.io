@@ -3,147 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clans & Crews - Nash's Gaming Page</title>
+    <title>Elite Gaming Clans & Crews</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .clan-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                url('https://images.unsplash.com/photo-1542751371-adc38448a05e');
+            background-size: cover;
+            z-index: -1;
+        }
+
+        .clan-title {
+            text-align: center;
+            font-size: 4em;
+            margin: 20px 0;
+            color: #ff4d00;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px #ff4d00;
+            animation: titlePulse 3s infinite;
+        }
+
+        .clan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .clan-card {
+            background: rgba(255, 77, 0, 0.1);
+            border: 2px solid #ff4d00;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .clan-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 77, 0, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        .clan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.3);
+        }
+
+        .clan-name {
+            font-size: 2em;
+            color: #ff4d00;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+        }
+
+        .clan-description {
+            color: #ff8533;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .clan-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: rgba(255, 77, 0, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #ff8533;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            color: #ff4d00;
+            font-weight: bold;
+        }
+
+        .join-button {
+            background: #ff4d00;
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .join-button:hover {
+            background: #ff8533;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 20px #ff4d00; }
+            50% { text-shadow: 0 0 40px #ff4d00, 0 0 60px #ff4d00; }
+        }
+
+        /* Keep the existing nav-links styles */
+        .nav-links {
+            position: fixed;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+            background: linear-gradient(90deg, 
+                rgba(0, 0, 0, 0.95), 
+                rgba(255, 77, 0, 0.1)
+            );
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #ff4d00;
+            box-shadow: 
+                0 0 20px rgba(255, 77, 0, 0.3),
+                inset 0 0 15px rgba(255, 77, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        /* ... rest of nav styles ... */
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Me</a></li>
-                <li><a href="fun-facts.html">Fun Facts</a></li>
-                <li><a href="rizz-test.html">Rizz Test</a></li>
-                <li><a href="memes.html">Epic Memes</a></li>
-                <li><a href="gaming-sites.html">Gaming Sites</a></li>
-                <li><a href="fave-songs.html">Epic Music</a></li>
-                <li><a href="clans.html">Clans & Crews</a></li>
-                <li><a href="contact-me.html">Contact Me</a></li>
-            </ul>
-        </nav>
-        <h1>My Epic Clans & Crews <span class="emoji">👑</span></h1>
-    </header>
+    <div class="clan-background"></div>
 
-    <section>
-        <div class="clan-container">
-            <div class="clan-box" onclick="toggleFacts(this)">
-                <h3>The Leather Crew 🧥</h3>
-                <p>Proud member of this epic gaming squad! 🎮</p>
-                <div class="hidden-facts">
-                    <h4>Epic Facts:</h4>
-                    <ul>
-                        <li>We all wear leather jackets</li>
-                        <li>Looking epic while gaming</li>
-                        <li>Pure gaming energy</li>
-                        <li>Coolest crew in town</li>
-                        <li>Leather jackets = instant wins</li>
-                        <li>Click to see less ⬆️</li>
-                    </ul>
-                </div>
-                <p class="click-hint">Click for more facts! ⬇️</p>
-            </div>
+    <h1 class="clan-title">⚔️ Elite Gaming Clans ⚔️</h1>
 
-            <div id="kaakaaBox" class="clan-box" onclick="toggleFacts(this)">
-                <h3>The Kaakaa Clan 👑</h3>
-                <p id="kaakaaLeader">Led by our legendary King Andruis! 🏆</p>
-                <div class="hidden-facts">
-                    <h4>Epic Facts:</h4>
-                    <ul>
-                        <li>King Andruis leads the way</li>
-                        <li>Epic gamers unite</li>
-                        <li>Unstoppable team</li>
-                        <li>Gaming legends</li>
-                        <li>Following our king to victory</li>
-                        <li>Click to see less ⬆️</li>
-                    </ul>
+    <div class="clan-grid">
+        <div class="clan-card">
+            <h2 class="clan-name">🔥 DOOM Slayers</h2>
+            <p class="clan-description">Elite squad of demon hunters. Masters of the BFG and champions of the arena. No demon stands a chance.</p>
+            <div class="clan-stats">
+                <div class="stat">
+                    <div class="stat-label">Members</div>
+                    <div class="stat-value">666</div>
                 </div>
-                <p class="click-hint">Click for more facts! ⬇️</p>
-            </div>
-
-            <div class="clan-box" onclick="toggleFacts(this)">
-                <h3>The Bobs 📚</h3>
-                <p>School squad led by King Brayden C! 👑</p>
-                <div class="hidden-facts">
-                    <h4>Epic Facts:</h4>
-                    <ul>
-                        <li>King Brayden C leads the way</li>
-                        <li>We all wear cool eye rings</li>
-                        <li>School crew forever</li>
-                        <li>Epic friends</li>
-                        <li>Always together</li>
-                        <li>Click to see less ⬆️</li>
-                    </ul>
+                <div class="stat">
+                    <div class="stat-label">Wins</div>
+                    <div class="stat-value">∞</div>
                 </div>
-                <p class="click-hint">Click for more facts! ⬇️</p>
+                <div class="stat">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value">S+</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Power</div>
+                    <div class="stat-value">9999</div>
+                </div>
             </div>
+            <a href="#" class="join-button">Join The Hunt</a>
         </div>
-    </section>
 
-    <footer>
-        <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
-    </footer>
+        <div class="clan-card">
+            <h2 class="clan-name">💀 Shadow Raiders</h2>
+            <p class="clan-description">Stealth specialists and night stalkers. Masters of tactical operations and strategic warfare.</p>
+            <div class="clan-stats">
+                <div class="stat">
+                    <div class="stat-label">Members</div>
+                    <div class="stat-value">420</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Wins</div>
+                    <div class="stat-value">1337</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value">S</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Power</div>
+                    <div class="stat-value">8888</div>
+                </div>
+            </div>
+            <a href="#" class="join-button">Infiltrate Now</a>
+        </div>
+
+        <div class="clan-card">
+            <h2 class="clan-name">⚡ Speed Demons</h2>
+            <p class="clan-description">Fast-paced warriors who strike like lightning. Masters of quick-scoping and rush tactics.</p>
+            <div class="clan-stats">
+                <div class="stat">
+                    <div class="stat-label">Members</div>
+                    <div class="stat-value">777</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Wins</div>
+                    <div class="stat-value">9001</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value">A+</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Power</div>
+                    <div class="stat-value">7777</div>
+                </div>
+            </div>
+            <a href="#" class="join-button">Race In</a>
+        </div>
+
+        <div class="clan-card">
+            <h2 class="clan-name">🎯 Elite Snipers</h2>
+            <p class="clan-description">Long-range specialists with deadly accuracy. One shot, one kill - no exceptions.</p>
+            <div class="clan-stats">
+                <div class="stat">
+                    <div class="stat-label">Members</div>
+                    <div class="stat-value">360</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Wins</div>
+                    <div class="stat-value">4200</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value">A</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Power</div>
+                    <div class="stat-value">6666</div>
+                </div>
+            </div>
+            <a href="#" class="join-button">Take Aim</a>
+        </div>
+    </div>
+
+    <nav class="nav-links">
+        <a href="index.html" class="glowing-link">Gaming Page</a>
+        <a href="about.html" class="glowing-link">About Me</a>
+        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
+        <a href="memes.html" class="glowing-link">Epic Memes</a>
+        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
+        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
+        <a href="clans.html" class="glowing-link">Clans & Crews</a>
+        <a href="contact-me.html" class="glowing-link">Contact Me</a>
+    </nav>
 
     <script>
-        function toggleFacts(box) {
-            const facts = box.querySelector('.hidden-facts');
-            const hint = box.querySelector('.click-hint');
-            
-            if (facts.style.display === 'none' || facts.style.display === '') {
-                facts.style.display = 'block';
-                hint.style.display = 'none';
-                box.classList.add('expanded');
-            } else {
-                facts.style.display = 'none';
-                hint.style.display = 'block';
-                box.classList.remove('expanded');
-            }
-        }
-
-        function updateWelcome(name) {
-            let displayName = name;
-            let isVIP = false;
-
-            // Check for special names
-            if (name.toLowerCase() === 'andruis') {
-                displayName = '👑 Kaakaa King 👑';
-                isVIP = true;
-                document.body.classList.add('vip-mode');
-                // Special message for Andruis in Kaakaa Clan
-                const kaakaaLeader = document.getElementById('kaakaaLeader');
-                if (kaakaaLeader) {
-                    kaakaaLeader.innerHTML = '👑 Welcome back, mighty leader of the Kaakaa Clan! 👑<br>Your kingdom awaits, King Andruis!';
-                    kaakaaLeader.classList.add('leader-welcome');
-                }
-                const kaakaaBox = document.getElementById('kaakaaBox');
-                if (kaakaaBox) {
-                    kaakaaBox.classList.add('leader-box');
-                }
-            } else if (name.toLowerCase() === 'brayden') {
-                displayName = '👑 King Bob 👑';
-                isVIP = true;
-                document.body.classList.add('vip-mode');
-            } else if (name.toLowerCase() === 'damien') {
-                displayName = '👑 VIP Damien 👑';
-                isVIP = true;
-                document.body.classList.add('vip-mode');
-            } else if (name.toLowerCase() === 'jude') {
-                displayName = '👑 Epic Jude 👑';
-                isVIP = true;
-                document.body.classList.add('vip-mode');
-            } else {
-                document.body.classList.remove('vip-mode');
-                // Reset Kaakaa Clan text if not Andruis
-                const kaakaaLeader = document.getElementById('kaakaaLeader');
-                if (kaakaaLeader) {
-                    kaakaaLeader.innerHTML = 'Led by our legendary King Andruis! 🏆';
-                    kaakaaLeader.classList.remove('leader-welcome');
-                }
-                const kaakaaBox = document.getElementById('kaakaaBox');
-                if (kaakaaBox) {
-                    kaakaaBox.classList.remove('leader-box');
-                }
-            }
-        }
+        // Add hover sound effect
+        const hoverSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+        document.querySelectorAll('.clan-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                hoverSound.currentTime = 0;
+                hoverSound.volume = 0.2;
+                hoverSound.play();
+            });
+        });
     </script>
 </body>
 </html> 

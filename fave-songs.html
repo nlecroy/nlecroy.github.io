@@ -3,87 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epic Music - Nash's Gaming Page</title>
+    <title>🎵 EPIC MUSIC VAULT 🎵</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .music-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                url('https://images.unsplash.com/photo-1614149162883-504ce4d13909');
+            background-size: cover;
+            z-index: -1;
+        }
+
+        .visualizer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(transparent, #ff4d00);
+            opacity: 0.3;
+            animation: visualize 3s infinite;
+        }
+
+        .music-title {
+            text-align: center;
+            font-size: 4em;
+            margin: 20px 0;
+            color: #ff4d00;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: pulseText 3s infinite;
+            text-shadow: 0 0 20px #ff4d00;
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .song-card {
+            background: rgba(255, 77, 0, 0.1);
+            border: 2px solid #ff4d00;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .song-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+        }
+
+        .song-title {
+            font-size: 1.5em;
+            color: #ff4d00;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+        }
+
+        .song-artist {
+            color: #ff8533;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .song-genre {
+            background: rgba(255, 77, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .play-button {
+            background: #ff4d00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .play-button:hover {
+            background: #ff8533;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+        }
+
+        .equalizer {
+            display: flex;
+            gap: 5px;
+            height: 30px;
+            align-items: flex-end;
+            margin-top: 15px;
+        }
+
+        .bar {
+            width: 4px;
+            background: #ff4d00;
+            animation: equalize 1s infinite;
+        }
+
+        @keyframes equalize {
+            0%, 100% { height: 10px; }
+            50% { height: 30px; }
+        }
+
+        @keyframes visualize {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes pulseText {
+            0%, 100% { text-shadow: 0 0 20px #ff4d00; }
+            50% { text-shadow: 0 0 40px #ff4d00; }
+        }
+
+        /* Keep the existing nav-links styles */
+        .nav-links {
+            position: fixed;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+            background: linear-gradient(90deg, 
+                rgba(0, 0, 0, 0.95), 
+                rgba(255, 77, 0, 0.1)
+            );
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #ff4d00;
+            box-shadow: 
+                0 0 20px rgba(255, 77, 0, 0.3),
+                inset 0 0 15px rgba(255, 77, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        /* ... rest of nav styles ... */
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <nav class="nav-links">
-                <a href="index.html" class="glowing-link">Gaming Page</a>
-                <a href="about.html" class="glowing-link">About Me</a>
-                <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-                <a href="memes.html" class="glowing-link">Epic Memes</a>
-                <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-                <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-                <a href="clans.html" class="glowing-link">Clans & Crews</a>
-                <a href="contact-me.html" class="glowing-link">Contact Me</a>
-            </nav>
-        </nav>
-        <h1>My Epic Music Collection <span class="emoji">🎵</span></h1>
-    </header>
+    <div class="music-background"></div>
+    <div class="visualizer"></div>
 
-    <section class="music-gallery">
-        <h2>Favorite Songs <span class="music-emoji">🎧</span></h2>
-        
-        <div class="music-container">
-            <div class="music-box">
-                <h3>Big Dawgs</h3>
-                <p>Epic gaming energy! 🐕</p>
-                <div class="song-details">
-                    <p>Perfect for:</p>
-                    <ul>
-                        <li>Gaming sessions</li>
-                        <li>Workout motivation</li>
-                        <li>Getting hyped</li>
-                    </ul>
-                </div>
-            </div>
+    <h1 class="music-title">🎵 Epic Music Vault 🎵</h1>
 
-            <div class="music-box">
-                <h3>Godzilla - Eminem ft. Juice WRLD</h3>
-                <p>Super fast rap skills! 🔥</p>
-                <div class="song-details">
-                    <p>Known for:</p>
-                    <ul>
-                        <li>Incredible speed</li>
-                        <li>Amazing lyrics</li>
-                        <li>Epic beat</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="music-box">
-                <h3>More Eminem Favorites</h3>
-                <p>The GOAT 🐐</p>
-                <div class="song-details">
-                    <p>Top Picks:</p>
-                    <ul>
-                        <li>Rap God</li>
-                        <li>Lose Yourself</li>
-                        <li>Not Afraid</li>
-                        <li>The Real Slim Shady</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="music-box">
-                <h3>Perfect For Gaming</h3>
-                <p>Music + Gaming = WIN 🎮</p>
-                <div class="song-details">
-                    <p>Best for:</p>
-                    <ul>
-                        <li>Epic gaming moments</li>
-                        <li>Victory celebrations</li>
-                        <li>Streaming background</li>
-                    </ul>
-                </div>
+    <div class="music-grid">
+        <div class="song-card">
+            <h2 class="song-title">The Only Thing They Fear Is You</h2>
+            <p class="song-artist">Mick Gordon</p>
+            <span class="song-genre">DOOM Soundtrack 🔥</span>
+            <a href="https://www.youtube.com/watch?v=T12ygsp9Mvg" target="_blank" class="play-button">Play Now</a>
+            <div class="equalizer">
+                <div class="bar" style="animation-delay: 0s"></div>
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
             </div>
         </div>
-    </section>
 
-    <footer>
-        <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
-    </footer>
+        <div class="song-card">
+            <h2 class="song-title">BFG Division</h2>
+            <p class="song-artist">Mick Gordon</p>
+            <span class="song-genre">DOOM Soundtrack 🤘</span>
+            <a href="https://www.youtube.com/watch?v=QHRuTYtSbJQ" target="_blank" class="play-button">Play Now</a>
+            <div class="equalizer">
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+                <div class="bar" style="animation-delay: 0.5s"></div>
+                <div class="bar" style="animation-delay: 0.6s"></div>
+            </div>
+        </div>
+
+        <div class="song-card">
+            <h2 class="song-title">Rip & Tear</h2>
+            <p class="song-artist">Mick Gordon</p>
+            <span class="song-genre">DOOM Soundtrack 💀</span>
+            <a href="https://www.youtube.com/watch?v=zZMg9ryeWOw" target="_blank" class="play-button">Play Now</a>
+            <div class="equalizer">
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+                <div class="bar" style="animation-delay: 0.5s"></div>
+            </div>
+        </div>
+
+        <div class="song-card">
+            <h2 class="song-title">At DOOM's Gate</h2>
+            <p class="song-artist">Mick Gordon</p>
+            <span class="song-genre">DOOM Soundtrack 🎸</span>
+            <a href="https://www.youtube.com/watch?v=BSsfjHCFosw" target="_blank" class="play-button">Play Now</a>
+            <div class="equalizer">
+                <div class="bar" style="animation-delay: 0s"></div>
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-links">
+        <a href="index.html" class="glowing-link">Gaming Page</a>
+        <a href="about.html" class="glowing-link">About Me</a>
+        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
+        <a href="memes.html" class="glowing-link">Epic Memes</a>
+        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
+        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
+        <a href="clans.html" class="glowing-link">Clans & Crews</a>
+        <a href="contact-me.html" class="glowing-link">Contact Me</a>
+    </nav>
+
+    <script>
+        // Add click sound and animation to play buttons
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const sound = new Audio('https://www.soundjay.com/button/button-1.mp3');
+                sound.play();
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => button.style.transform = 'scale(1)', 200);
+            });
+        });
+
+        // Randomize equalizer bar heights
+        setInterval(() => {
+            document.querySelectorAll('.bar').forEach(bar => {
+                bar.style.height = Math.random() * 30 + 5 + 'px';
+            });
+        }, 100);
+    </script>
 </body>
-</html> 
+</html>
