@@ -7,50 +7,57 @@
   <link rel="stylesheet" href="style.css">
   <style>
     body {
-      background-color: black;
-      color: #ff4d00;
-      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
       margin: 0;
       padding: 20px;
+      background: url('https://example.com/your-background-image.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #ff4d00;
+      font-family: Arial, sans-serif;
     }
 
     h1 {
-      text-align: center;
       color: #ff4d00;
-      text-shadow: 0 0 20px #ff4d00;
       font-size: 50px;
-      animation: glow 2s infinite;
       margin-top: 160px;
-      margin-bottom: 120px;
+      margin-bottom: 60px;
+      text-align: center;
+      animation: bounce 1s infinite;
     }
 
-    @keyframes glow {
-      0%, 100% { text-shadow: 0 0 20px #ff4d00; }
-      50% { text-shadow: 0 0 40px #ff4d00; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     .content-container {
-      margin-left: 250px;
       padding: 20px;
       max-width: 900px;
-      margin-right: auto;
-      margin-top: 120px;
+      margin-top: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .game-box {
       border: 3px solid #ff4d00;
       border-radius: 15px;
       padding: 30px;
-      margin: 100px auto;
-      background: rgba(0, 0, 0, 0.9);
+      margin: 50px 0;
+      background: rgba(0, 0, 0, 0.8);
       box-shadow: 0 0 30px #ff4d00;
       transition: all 0.3s;
       max-width: 700px;
+      width: 100%;
+      animation: fadeIn 0.5s;
     }
 
-    .game-box:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 30px #ff4d00;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .game-title {
@@ -61,6 +68,12 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
     .game-emoji {
@@ -68,22 +81,17 @@
       animation: bounce 2s infinite;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
     .game-description {
       font-size: 20px;
       line-height: 1.6;
-      margin: 20px 0;
+      margin: 15px 0;
       color: white;
       text-shadow: 0 0 5px #ff4d00;
     }
 
     .epic-quote {
       font-size: 28px;
-      margin: 40px auto;
+      margin: 30px 0;
       max-width: 700px;
       text-align: center;
       color: #ff4d00;
@@ -105,6 +113,11 @@
       border-radius: 20px;
       font-weight: bold;
       box-shadow: 0 0 10px #ff4d00;
+    }
+
+    .pug-image {
+      width: 100px;
+      margin: 10px;
     }
 
     /* Add these styles to your existing styles */
@@ -243,7 +256,6 @@
   <!-- Gaming title -->
   <div class="gaming-title">
     <h1>🏆 Epic Gaming Hub 🏆</h1>
-    <div class="title-glow"></div>
   </div>
 
   <div class="name-input-container">
@@ -290,6 +302,7 @@
         <span class="achievement">🏆 Victory Expert</span>
         <span class="achievement">⚡ Quick Editor</span>
       </div>
+      <img src="https://example.com/fortnite-image.jpg" alt="Fortnite" class="pug-image">
     </div>
 
     <div class="epic-quote">
@@ -298,18 +311,28 @@
 
     <div class="game-box">
       <div class="game-title">
-        <span class="game-emoji">🎮</span>
-        Gaming Schedule
+        <span class="game-emoji">💀</span>
+        Doom Slayer
       </div>
       <p class="game-description">
-        Catch me online every weekday from 3PM to 4PM EST!
-        Ready for epic gaming sessions and Victory Royales!
+        Unleash chaos in the world of Doom! Ready to slay demons and conquer hell.
       </p>
       <div>
-        <span class="achievement">⏰ Daily Player</span>
-        <span class="achievement">🤝 Team Player</span>
-        <span class="achievement">🎯 Skilled Gamer</span>
+        <span class="achievement">🔥 Demon Hunter</span>
+        <span class="achievement">⚔️ Slayer of the Damned</span>
       </div>
+      <img src="https://example.com/doom-image.jpg" alt="Doom" class="pug-image">
+    </div>
+
+    <div class="game-box">
+      <div class="game-title">
+        <span class="game-emoji">🐶</span>
+        Pug Lover
+      </div>
+      <p class="game-description">
+        Because every gamer needs a cute pug companion! 🐾
+      </p>
+      <img src="https://example.com/pug-image.jpg" alt="Pug" class="pug-image">
     </div>
   </div>
 
