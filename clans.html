@@ -1,25 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Epic Gaming Clans</title>
+    <title>🔥 Epic Gaming Clans 🔥</title>
     <style>
         body {
             background-color: black;
+            background-image: url('https://media.giphy.com/media/12yMg2IFifP3nW/giphy.gif');
+            background-size: 100px;
             color: #ff4d00;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
+            cursor: url('https://cur.cursors-4u.net/games/gam-14/gam1340.cur'), auto;
         }
 
         h1 {
             text-align: center;
             color: #ff4d00;
+            text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00, 0 0 30px #ff4d00;
+            font-size: 60px;
+            animation: rainbow 3s infinite;
+            margin-bottom: 40px;
+        }
+
+        @keyframes rainbow {
+            0% { color: #ff4d00; text-shadow: 0 0 20px #ff4d00; }
+            25% { color: #ffff00; text-shadow: 0 0 20px #ffff00; }
+            50% { color: #00ff00; text-shadow: 0 0 20px #00ff00; }
+            75% { color: #00ffff; text-shadow: 0 0 20px #00ffff; }
+            100% { color: #ff4d00; text-shadow: 0 0 20px #ff4d00; }
+        }
+
+        .clan-container {
+            margin-left: 200px;
+            padding: 20px;
+        }
+
+        .clan-box {
+            border: 3px solid #ff4d00;
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px #ff4d00;
+            max-width: 600px;
+            background: linear-gradient(45deg, rgba(0,0,0,0.9), rgba(255,77,0,0.1), rgba(0,0,0,0.9));
+            transform-style: preserve-3d;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: borderGlow 2s infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { border-color: #ff4d00; }
+            50% { border-color: #ffff00; }
+        }
+
+        .clan-box:hover {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: 0 0 50px #ff4d00;
+        }
+
+        .clan-emoji {
+            font-size: 60px;
+            margin-right: 15px;
+            display: inline-block;
+            animation: bounce 1s infinite;
+            filter: drop-shadow(0 0 10px #ff4d00);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        h2 {
+            color: #ff4d00;
             text-shadow: 0 0 10px #ff4d00;
+            font-size: 35px;
+            display: inline-block;
+            margin: 10px 0;
         }
 
         p {
             color: white;
-            margin: 10px 0;
+            margin: 15px 0;
+            font-size: 20px;
+            text-shadow: 0 0 5px #ff4d00;
+            line-height: 1.5;
         }
 
         .sidebar {
@@ -27,68 +95,99 @@
             top: 50%;
             transform: translateY(-50%);
             left: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
+            background: linear-gradient(45deg, rgba(0,0,0,0.9), rgba(255,77,0,0.2));
+            padding: 25px;
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            border: 2px solid #ff4d00;
-            box-shadow: 0 0 20px #ff4d00;
-            animation: glow 2s infinite;
+            gap: 15px;
+            border: 3px solid #ff4d00;
+            box-shadow: 0 0 30px #ff4d00;
+            animation: sidebarGlow 3s infinite;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes sidebarGlow {
+            0%, 100% { box-shadow: 0 0 30px #ff4d00; }
+            50% { box-shadow: 0 0 50px #ff4d00; }
         }
 
         .sidebar a {
             color: #ff4d00;
             text-decoration: none;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: 10px;
             transition: all 0.3s;
             text-align: center;
             font-weight: bold;
+            font-size: 18px;
             text-shadow: 0 0 10px #ff4d00;
-            border: 1px solid transparent;
+            border: 2px solid transparent;
+            background: rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
         }
 
         .sidebar a:hover {
-            background-color: #ff4d00;
+            background: #ff4d00;
             color: black;
-            transform: scale(1.1);
-            box-shadow: 0 0 15px #ff4d00;
-            border: 1px solid #ff4d00;
+            transform: scale(1.1) translateX(10px);
+            box-shadow: 0 0 20px #ff4d00;
+            border-color: #ff4d00;
+            letter-spacing: 2px;
         }
 
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 20px #ff4d00;
-            }
-            50% {
-                box-shadow: 0 0 40px #ff4d00;
-            }
+        .sidebar a[href="clans.html"] {
+            background: #ff4d00;
+            color: black;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #ff4d00;
+            border: 2px solid #ff4d00;
+            animation: selectedPage 2s infinite;
+        }
+
+        @keyframes selectedPage {
+            0%, 100% { transform: scale(1.1); }
+            50% { transform: scale(1.15); }
         }
     </style>
 </head>
 <body>
-    <h1>Epic Gaming Clans</h1>
+    <h1>⚔️ Epic Gaming Clans ⚔️</h1>
 
-    <h2>The Bobs</h2>
-    <p>Led by our legendary leader Brayden (King Bob). Members wear special rings with eyes as our symbol.</p>
+    <div class="clan-container">
+        <div class="clan-box">
+            <span class="clan-emoji">👑</span>
+            <h2>The Bobs</h2>
+            <p>Led by our legendary leader Brayden (King Bob)</p>
+            <p>Members wear special rings with eyes as our symbol. The most elite gaming force!</p>
+        </div>
 
-    <h2>Kaakaa Clan</h2>
-    <p>Led by the mighty Andruis. An unstoppable gaming force!</p>
+        <div class="clan-box">
+            <span class="clan-emoji">🦅</span>
+            <h2>Kaakaa Clan</h2>
+            <p>Led by the mighty Andruis</p>
+            <p>An unstoppable gaming force that strikes fear into our opponents!</p>
+        </div>
 
-    <h2>Leather Crew</h2>
-    <p>We wear leather jackets. The coolest crew around!</p>
+        <div class="clan-box">
+            <span class="clan-emoji">🧥</span>
+            <h2>Leather Crew</h2>
+            <p>The coolest crew in gaming!</p>
+            <p>Recognized by our signature leather jackets. Style and skill combined!</p>
+        </div>
+    </div>
 
     <div class="sidebar">
-        <a href="index.html">Gaming Page</a>
-        <a href="about.html">About Me</a>
-        <a href="fun-facts.html">Fun Facts</a>
-        <a href="memes.html">Epic Memes</a>
-        <a href="gaming-sites.html">Gaming Sites</a>
-        <a href="epic-music.html">Epic Music</a>
-        <a href="clans.html">Clans & Crews</a>
-        <a href="contact-me.html">Contact Me</a>
+        <a href="index.html">🎮 Gaming Page</a>
+        <a href="about.html">👤 About Me</a>
+        <a href="fun-facts.html">🎯 Fun Facts</a>
+        <a href="memes.html">😎 Epic Memes</a>
+        <a href="gaming-sites.html">🌐 Gaming Sites</a>
+        <a href="epic-music.html">🎵 Epic Music</a>
+        <a href="clans.html">⚔️ Clans & Crews ⚔️</a>
+        <a href="contact-me.html">📧 Contact Me</a>
     </div>
 </body>
 </html> 

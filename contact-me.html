@@ -1,119 +1,236 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Me - Nash's Gaming Page</title>
-    <link rel="stylesheet" href="style.css">
+    <title>📧 Contact Me 📧</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        body {
+            background-color: black;
+            color: #ff4d00;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff4d00;
+            text-shadow: 0 0 20px #ff4d00;
+            font-size: 40px;
+            margin-bottom: 30px;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px #ff4d00; }
+            50% { text-shadow: 0 0 40px #ff4d00; }
+        }
+
+        .contact-container {
+            margin-left: 200px;
+            max-width: 800px;
+            margin: 0 auto;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .contact-box {
+            border: 2px solid #ff4d00;
+            border-radius: 15px;
+            padding: 30px;
+            background: rgba(255, 77, 0, 0.1);
+            box-shadow: 0 0 20px #ff4d00;
+            margin-bottom: 30px;
+        }
+
+        .contact-method {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ff4d00;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .contact-method:hover {
+            background: rgba(255, 77, 0, 0.2);
+            transform: translateX(10px);
+            box-shadow: 0 0 20px #ff4d00;
+        }
+
+        .contact-icon {
+            font-size: 30px;
+            margin-right: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .contact-info {
+            color: white;
+        }
+
+        .contact-info h3 {
+            color: #ff4d00;
+            margin: 0;
+            text-shadow: 0 0 10px #ff4d00;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #000000, #ff4d00);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #ff4d00;
+            box-shadow: 0 0 30px #ff4d00;
+            z-index: 1000;
+            animation: popIn 0.5s ease-out;
+            text-align: center;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .popup h2 {
+            color: #ff4d00;
+            text-shadow: 0 0 10px #ff4d00;
+        }
+
+        .popup p {
+            color: white;
+            margin: 10px 0;
+        }
+
+        .popup button {
+            background: #ff4d00;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .popup button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ff4d00;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Me</a></li>
-                <li><a href="fun-facts.html">Fun Facts</a></li>
-                <li><a href="rizz-test.html">Rizz Test</a></li>
-                <li><a href="memes.html">Epic Memes</a></li>
-                <li><a href="gaming-sites.html">Gaming Sites</a></li>
-                <li><a href="fave-songs.html">Epic Music</a></li>
-                <li><a href="clans.html">Clans & Crews</a></li>
-            </ul>
-        </nav>
-        <h1>Contact Me <span class="controller-emoji">🎮</span></h1>
-    </header>
+    <h1>📧 Contact The Epic Gamer 📧</h1>
 
-    <section>
-        <h2>Send Your Rizz Level and Memes! <span class="emoji">😎</span></h2>
-        
-        <div class="contact-info">
-            <p>Share your epic rizz test results and gaming memes with me!</p>
-            <p>My Messenger Kids: <span class="highlight">horn-rock-leaf-tape</span></p>
+    <div class="contact-container">
+        <div class="contact-box">
+            <a href="mailto:nashlecroy@gmail.com" class="contact-method">
+                <span class="contact-icon">📧</span>
+                <div class="contact-info">
+                    <h3>Email</h3>
+                    <p>Send me an epic message at: nashlecroy@gmail.com</p>
+                </div>
+            </a>
+
+            <div onclick="showPopup('gamingPopup')" class="contact-method">
+                <span class="contact-icon">🎮</span>
+                <div class="contact-info">
+                    <h3>Gaming</h3>
+                    <p>Join me in some epic gaming adventures!</p>
+                </div>
+            </div>
+
+            <div onclick="showPopup('hoursPopup')" class="contact-method">
+                <span class="contact-icon">🎯</span>
+                <div class="contact-info">
+                    <h3>Gaming Hours</h3>
+                    <p>I'm usually gaming from 3PM to 4PM EST</p>
+                </div>
+            </div>
+
+            <div onclick="showPopup('teamPopup')" class="contact-method">
+                <span class="contact-icon">🏆</span>
+                <div class="contact-info">
+                    <h3>Game With Me</h3>
+                    <p>Looking for epic gamers to join my adventures!</p>
+                </div>
+            </div>
         </div>
-
-        <div class="meme-zone">
-            <h3>What to Send <span class="emoji">📬</span></h3>
-            <ul>
-                <li>Your Rizz Test Score <span class="emoji">🏆</span></li>
-                <li>Gaming Memes <span class="emoji">😂</span></li>
-                <li>DOOM Screenshots <span class="emoji">🔥</span></li>
-                <li>Fortnite Victory Royales <span class="emoji">👑</span></li>
-            </ul>
-        </div>
-    </section>
-
-    <footer>
-        <p>Made by Nash with <span class="controller-emoji">🎮</span> and ❤️</p>
-    </footer>
-
-    <!-- Add this at the top of your form section -->
-    <input type="text" id="name" name="name" placeholder="Your Name" oninput="checkForSecret()" required>
-
-    <!-- Add this script right before the closing </body> tag -->
-    <script>
-        // Debug function to check if script is running
-        console.log("Script loaded");
-
-        function checkForSecret() {
-            const nameInput = document.getElementById('name');
-            const secretLink = document.getElementById('secret-link');
-            
-            // Debug log to see what's being typed
-            console.log("Input value:", nameInput.value);
-            
-            if (nameInput.value.toLowerCase() === 'big head club') {
-                console.log("Secret activated!");
-                secretLink.style.display = 'block';
-            } else {
-                secretLink.style.display = 'none';
-            }
-        }
-    </script>
-
-    <!-- Make sure this div is present at the bottom of your body -->
-    <div id="secret-link" style="display: none; position: fixed; bottom: 0; width: 100%; text-align: center; background: linear-gradient(to right, #000000, #1a0000); padding: 15px; z-index: 9999;">
-        <a href="bob-news.html" class="fire-link">
-            🔥 BOB NEWS 🔥
-        </a>
     </div>
 
-    <style>
-    .fire-link {
-        color: #ff4d00;
-        text-decoration: none;
-        font-size: 1.5em;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        padding: 10px 20px;
-        border: 2px solid #ff4d00;
-        background: rgba(255, 77, 0, 0.1);
-        position: relative;
-        transition: all 0.3s;
-        animation: fireGlow 2s infinite;
-    }
+    <div class="overlay" id="overlay"></div>
 
-    .fire-link:hover {
-        background: rgba(255, 77, 0, 0.2);
-        transform: scale(1.1);
-        box-shadow: 0 0 20px #ff4d00;
-    }
+    <div class="popup" id="gamingPopup">
+        <h2>🎮 Epic Gaming Time! 🎮</h2>
+        <p>Ready to join the ultimate gaming adventure?</p>
+        <p>My Main Game:</p>
+        <p>⚔️ Fortnite</p>
+        <p>Let's get those Victory Royales! 🏆</p>
+        <button onclick="closePopup('gamingPopup')">Let's Drop In!</button>
+    </div>
 
-    @keyframes fireGlow {
-        0%, 100% { text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00; }
-        50% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00, 0 0 40px #ff4d00; }
-    }
-    </style>
+    <div class="popup" id="hoursPopup">
+        <h2>🕒 Gaming Schedule 🕒</h2>
+        <p>Join me for epic Fortnite sessions!</p>
+        <p>🎮 Weekdays: 3PM - 4PM EST</p>
+        <p>🏆 Best time to catch me in the Battle Bus!</p>
+        <button onclick="closePopup('hoursPopup')">Got it!</button>
+    </div>
 
-    <nav class="nav-links">
-        <a href="index.html" class="glowing-link">Gaming Page</a>
-        <a href="about.html" class="glowing-link">About Me</a>
-        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-        <a href="memes.html" class="glowing-link">Epic Memes</a>
-        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-        <a href="clans.html" class="glowing-link">Clans & Crews</a>
-        <a href="contact-me.html" class="glowing-link">Contact Me</a>
-    </nav>
+    <div class="popup" id="teamPopup">
+        <h2>🏆 Join My Squad 🏆</h2>
+        <p>Looking for Fortnite players who:</p>
+        <p>🎯 Know how to build</p>
+        <p>🎮 Have good teamwork</p>
+        <p>⚔️ Ready for Victory Royales</p>
+        <button onclick="closePopup('teamPopup')">Let's Drop Together!</button>
+    </div>
+
+    <div class="sidebar">
+        <a href="index.html">Gaming Page</a>
+        <a href="about.html">About Me</a>
+        <a href="fun-facts.html">Fun Facts</a>
+        <a href="memes.html">Epic Memes</a>
+        <a href="gaming-sites.html">Gaming Sites</a>
+        <a href="epic-music.html">Epic Music</a>
+        <a href="clans.html">Clans & Crews</a>
+        <a href="contact-me.html">Contact Me</a>
+    </div>
+
+    <script>
+        function showPopup(popupId) {
+            document.getElementById(popupId).style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
 </body>
 </html> 
