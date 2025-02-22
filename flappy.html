@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOOM Bird</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+            font-family: "Impact", sans-serif;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 400px;
+            height: 600px;
+        }
+
+        #gameCanvas {
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff0000;
+            font-size: 40px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        #startMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff0000;
+            font-size: 24px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: none;
+            color: #000;
+            text-decoration: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 100;
+            clip-path: polygon(
+                0 0,
+                90% 0,
+                100% 30%,
+                100% 100%,
+                10% 100%,
+                0 70%
+            );
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← BACK TO HELL</a>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div id="score">0</div>
+        <div id="startMessage">PRESS SPACE TO START<br>SPACE/CLICK TO JUMP</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const startMessage = document.getElementById('startMessage');
+
+        // Game variables
+        let bird = {
+            x: 50,
+            y: 300,
+            velocity: 0,
+            gravity: 0.5,
+            jump: -8,
+            size: 30
+        };
+
+        let pipes = [];
+        let score = 0;
+        let gameStarted = false;
+        let gameOver = false;
+        const pipeWidth = 50;
+        const pipeGap = 150;
+        const pipeSpeed = 2;
+
+        // Load images
+        const birdImg = new Image();
+        birdImg.src = 'https://raw.githubusercontent.com/nlecroy/nlecroy.github.io/main/assets/cacodemon.png';
+
+        // Game functions
+        function jump() {
+            if (gameOver) {
+                resetGame();
+                return;
+            }
+            if (!gameStarted) {
+                gameStarted = true;
+                startMessage.style.display = 'none';
+                gameLoop();
+            }
+            bird.velocity = bird.jump;
+        }
+
+        function createPipe() {
+            const minHeight = 50;
+            const maxHeight = canvas.height - pipeGap - minHeight;
+            const height = Math.floor(Math.random() * (maxHeight - minHeight)) + minHeight;
+
+            pipes.push({
+                x: canvas.width,
+                height: height,
+                passed: false
+            });
+        }
+
+        function resetGame() {
+            bird.y = 300;
+            bird.velocity = 0;
+            pipes = [];
+            score = 0;
+            gameOver = false;
+            gameStarted = false;
+            scoreElement.textContent = score;
+            startMessage.style.display = 'block';
+        }
+
+        function drawBird() {
+            ctx.save();
+            ctx.translate(bird.x + bird.size/2, bird.y + bird.size/2);
+            ctx.rotate(bird.velocity * 0.02);
+            ctx.drawImage(birdImg, -bird.size/2, -bird.size/2, bird.size, bird.size);
+            ctx.restore();
+        }
+
+        function drawPipes() {
+            ctx.fillStyle = '#ff0000';
+            pipes.forEach(pipe => {
+                // Bottom pipe
+                ctx.fillRect(pipe.x, pipe.height + pipeGap, pipeWidth, canvas.height - pipe.height - pipeGap);
+                // Top pipe
+                ctx.fillRect(pipe.x, 0, pipeWidth, pipe.height);
+            });
+        }
+
+        function checkCollision(pipe) {
+            const birdRight = bird.x + bird.size;
+            const birdLeft = bird.x;
+            const pipeLeft = pipe.x;
+            const pipeRight = pipe.x + pipeWidth;
+
+            if (bird.y < 0 || bird.y + bird.size > canvas.height) return true;
+
+            if (birdRight > pipeLeft && birdLeft < pipeRight) {
+                if (bird.y < pipe.height || bird.y + bird.size > pipe.height + pipeGap) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function gameLoop() {
+            if (!gameStarted || gameOver) return;
+
+            // Clear canvas
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update bird
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            // Create pipes
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                createPipe();
+            }
+
+            // Update and draw pipes
+            pipes.forEach((pipe, index) => {
+                pipe.x -= pipeSpeed;
+
+                // Check for score
+                if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
+                    pipe.passed = true;
+                    score++;
+                    scoreElement.textContent = score;
+                }
+
+                // Remove off-screen pipes
+                if (pipe.x + pipeWidth < 0) {
+                    pipes.splice(index, 1);
+                }
+
+                // Check collision
+                if (checkCollision(pipe)) {
+                    gameOver = true;
+                    startMessage.textContent = 'GAME OVER\nPRESS SPACE TO RESTART';
+                    startMessage.style.display = 'block';
+                    return;
+                }
+            });
+
+            drawPipes();
+            drawBird();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jump();
+            }
+        });
+
+        canvas.addEventListener('click', jump);
+
+        // Start message
+        startMessage.style.display = 'block';
+    </script>
+</body>
+</html> 
