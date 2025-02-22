@@ -7,16 +7,16 @@
   <link rel="stylesheet" href="style.css">
   <style>
     body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      margin: 0;
-      padding: 20px;
       background: linear-gradient(45deg, #1a0f1f, #2d1635);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
-      min-height: 100vh;
       position: relative;
       overflow-x: hidden;
       color: #ff4d00;
@@ -44,8 +44,8 @@
     h1 {
       color: #ff4d00;
       font-size: 60px;
-      margin-top: 100px;
-      margin-bottom: 30px;
+      margin-top: 140px;
+      margin-bottom: 40px;
       text-align: center;
       text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00, 0 0 30px #ff4d00;
       animation: titleGlow 2s ease-in-out infinite;
@@ -60,29 +60,25 @@
     }
 
     .content-container {
-      padding: 20px;
-      max-width: 1000px;
-      margin-top: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%;
-      gap: 30px;
+      justify-content: center;
+      padding: 20px;
+      max-width: 900px;
+      margin-top: 20px;
+      z-index: 1;
     }
 
     .game-box {
-      border: 3px solid #ff4d00;
-      border-radius: 20px;
-      padding: 40px;
-      margin: 20px 0;
-      background: rgba(26, 15, 31, 0.9);
-      box-shadow: 0 0 30px #ff4d00;
-      transition: all 0.3s;
-      max-width: 800px;
+      margin-top: 20px;
       width: 100%;
-      animation: fadeIn 0.5s;
-      position: relative;
-      overflow: hidden;
+      max-width: 600px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #ff4d00;
     }
 
     .game-box::before {
@@ -346,87 +342,87 @@
         left: 100%;
     }
 
-    .name-input {
-      margin: 20px 0;
-      padding: 15px;
-      font-size: 18px;
-      border: 2px solid #ff4d00;
-      border-radius: 15px;
-      color: #ff4d00;
-      background: rgba(26, 15, 31, 0.8);
-      width: 300px;
-      transition: all 0.3s;
-      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+    .name-input-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background: #000000;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 0 30px #ff4d00, 
+                   0 0 50px #ff4d00,
+                   0 0 70px #ff4d00;
+        border: 3px solid #ff4d00;
+        min-width: 300px;
     }
 
-    .name-input:focus {
-      outline: none;
-      border-color: #ff8533;
-      box-shadow: 0 0 25px rgba(255, 77, 0, 0.8);
-      transform: scale(1.02);
+    .name-input {
+        width: 100%;
+        padding: 8px;
+        background: #1a1a1a;
+        border: 2px solid #ff4d00;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 8px;
+    }
+
+    .name-input::placeholder {
+        color: #ff4d00;
     }
 
     .submit-button {
-      padding: 15px 30px;
-      font-size: 18px;
-      color: white;
-      background: linear-gradient(45deg, #ff4d00, #ff8533);
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-left: 10px;
-      text-transform: uppercase;
-      font-weight: bold;
-      letter-spacing: 1px;
-      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
-    }
-
-    .submit-button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 25px rgba(255, 77, 0, 0.8);
-    }
-
-    @keyframes borderGlow {
-        0%, 100% {
-            opacity: 0.3;
-            box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
-        }
-        50% {
-            opacity: 0.7;
-            box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
-        }
-    }
-
-    /* Add new styles for the special name displays */
-    #special-name-display {
-        margin-top: 20px;
-        font-size: 32px;
-        text-align: center;
+        width: 100%;
+        background: #ff4d00;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 14px;
         font-weight: bold;
-        opacity: 0;
-        transform: scale(0);
-        transition: all 0.5s;
+        cursor: pointer;
+    }
+
+    .input-label {
+        color: #ff4d00;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-align: center;
+        text-shadow: 0 0 10px #ff4d00;
+    }
+
+    #special-name-display {
+        position: absolute;
+        top: 130px;
+        right: 20px;
+        z-index: 9999;
+        text-align: center;
+        width: 300px;
+        background: #000000;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #ff4d00;
+        box-shadow: 0 0 20px #ff4d00;
     }
 
     /* Damien's Rainbow Style */
     .damien-style {
-        background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+        background: linear-gradient(to right, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee);
         -webkit-background-clip: text;
+        background-clip: text;
         color: transparent;
-        animation: rainbow 3s linear infinite, shake 0.5s infinite;
+        animation: rainbow 3s linear infinite;
         text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
     @keyframes rainbow {
         0% { background-position: 0% 50%; }
         100% { background-position: 100% 50%; }
-    }
-
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
     }
 
     /* Andruis's Kaakaa King Style */
@@ -438,8 +434,9 @@
 
     /* Josh's VIP Style */
     .josh-style {
-        background: linear-gradient(45deg, #gold, #silver);
+        background: linear-gradient(45deg, #ffd700, #c0c0c0);
         -webkit-background-clip: text;
+        background-clip: text;
         color: transparent;
         text-shadow: 0 0 15px rgba(255,215,0,0.7);
         animation: glow 2s infinite;
@@ -457,6 +454,55 @@
         50% { transform: scale(1.1); }
         100% { transform: scale(1); }
     }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes glow {
+        0% { text-shadow: 0 0 10px rgba(255,215,0,0.7); }
+        50% { text-shadow: 0 0 20px rgba(255,215,0,0.9); }
+        100% { text-shadow: 0 0 10px rgba(255,215,0,0.7); }
+    }
+
+    .vip-names {
+        margin-top: 20px;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid #ff4d00;
+        border-radius: 10px;
+        color: #ffd700;
+        text-align: center;
+        font-size: 24px;
+        box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+        animation: glow 2s infinite;
+    }
+
+    .vip-title {
+        color: #ff4d00;
+        font-size: 28px;
+        margin-bottom: 10px;
+        text-shadow: 0 0 10px rgba(255, 77, 0, 0.7);
+    }
+
+    .vip-list {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .vip-name {
+        background: linear-gradient(45deg, #ffd700, #ff4d00);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+        animation: pulse 2s infinite;
+    }
   </style>
 </head>
 <body>
@@ -470,8 +516,9 @@
   </div>
 
   <div class="name-input-container">
-    <input type="text" id="name-input" class="name-input" placeholder="Enter your name..." />
-    <button class="submit-button" onclick="changeName()">Submit</button>
+    <div class="input-label">ENTER EPIC NAME</div>
+    <input type="text" id="name-input" class="name-input" placeholder="Type your name here..." />
+    <button class="submit-button" onclick="changeName()">SUBMIT</button>
   </div>
 
   <!-- Pug button and image -->
@@ -499,26 +546,6 @@
   </div>
 
   <div class="content-container">
-    <div class="game-box">
-      <div class="game-title">
-        <span class="game-emoji">⚔️</span>
-        Fortnite Master
-      </div>
-      <p class="game-description">
-        My main game! Ready for epic Victory Royales and insane builds. 
-        Join me in battle and let's dominate the island!
-      </p>
-      <div>
-        <span class="achievement">🎯 Pro Builder</span>
-        <span class="achievement">🏆 Victory Expert</span>
-        <span class="achievement">⚡ Quick Editor</span>
-      </div>
-    </div>
-
-    <div class="epic-quote">
-      "Gaming isn't just a hobby, it's an epic adventure! 🎮"
-    </div>
-
     <div class="game-box">
       <div class="game-title">
         <span class="game-emoji">💀</span>
@@ -558,13 +585,8 @@
         <span class="achievement">👑 VIP Friend 3</span>
       </div>
     </div>
-
-    <!-- Dog Button -->
-    <button class="dog-button" onclick="showDogGif()">Show Dog Meme</button>
-    <img id="dog-gif" class="dog-gif" src="https://example.com/your-dog-meme.gif" alt="Dog Meme GIF" />
   </div>
 
-  <!-- Add this div after your name input -->
   <div id="special-name-display"></div>
 
   <script>
@@ -787,9 +809,10 @@
         }
     }
 
-    function showDogGif() {
-      var dogGif = document.getElementById("dog-gif");
-      dogGif.style.display = "block"; // Show the dog GIF
+    // Remove any automatic name display on page load
+    window.onload = function() {
+        document.getElementById("name-input").value = "";
+        document.getElementById("special-name-display").style.opacity = '0';
     }
   </script>
 </body>
