@@ -63,10 +63,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       padding: 20px;
       max-width: 900px;
-      margin-top: 20px;
+      margin-top: 200px;
       z-index: 1;
     }
 
@@ -192,38 +192,73 @@
     }
 
     .dog-button {
-      padding: 15px 30px;
-      font-size: 18px;
-      color: white;
-      background: linear-gradient(45deg, #ff4d00, #ff8533);
-      border: none;
-      border-radius: 15px;
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 15px 25px;
+      background: linear-gradient(135deg, 
+        rgba(40, 0, 0, 0.95), 
+        rgba(0, 0, 0, 0.9)
+      );
+      color: #ff3300;
+      border: 2px solid #ff0000;
+      font-family: "Impact", sans-serif;
+      font-size: 1.2em;
       cursor: pointer;
+      z-index: 1000;
+      clip-path: polygon(
+        0 0,
+        95% 0,
+        100% 25%,
+        100% 75%,
+        95% 100%,
+        0 100%
+      );
       transition: all 0.3s;
-      text-transform: uppercase;
-      font-weight: bold;
-      letter-spacing: 1px;
-      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
-      margin-top: 30px;
+      box-shadow: 
+        0 0 20px rgba(255, 0, 0, 0.3),
+        inset 0 0 15px rgba(255, 0, 0, 0.2);
     }
 
     .dog-button:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 25px rgba(255, 77, 0, 0.8);
+      color: #ff4d00;
+      border-color: #ff4d00;
+      text-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.8),
+        0 0 20px rgba(255, 0, 0, 0.4);
     }
 
-    .dog-gif {
+    .dog-meme {
       display: none;
-      margin-top: 20px;
-      max-width: 100%;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
-      transition: all 0.3s;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 200px;
+      z-index: 1001;
+      animation: pugFloat 2s ease-in-out infinite;
     }
 
-    .dog-gif:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(255, 77, 0, 0.8);
+    @keyframes pugFloat {
+      0%, 100% { 
+        transform: translate(-50%, -50%) translateY(0);
+      }
+      50% { 
+        transform: translate(-50%, -50%) translateY(-20px);
+      }
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
     }
 
     /* Add these styles to your existing styles */
@@ -398,7 +433,7 @@
 
     #special-name-display {
         position: absolute;
-        top: 130px;
+        top: 20px;
         right: 20px;
         z-index: 9999;
         text-align: center;
@@ -503,6 +538,147 @@
         text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
         animation: pulse 2s infinite;
     }
+
+    .side-links {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background: linear-gradient(135deg, 
+            rgba(40, 0, 0, 0.95), 
+            rgba(0, 0, 0, 0.9)
+        );
+        padding: 25px;
+        clip-path: polygon(
+            0 0,
+            95% 0,
+            100% 5%,
+            100% 95%,
+            95% 100%,
+            0 100%
+        );
+        border: 3px solid #ff0000;
+        box-shadow: 
+            0 0 20px rgba(255, 0, 0, 0.3),
+            inset 0 0 15px rgba(255, 0, 0, 0.2),
+            0 0 40px rgba(255, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .side-links::before {
+        content: 'DOOM MENU';
+        position: absolute;
+        top: -30px;
+        left: 0;
+        color: #ff0000;
+        font-family: "Impact", sans-serif;
+        font-size: 1.2em;
+        letter-spacing: 3px;
+        text-shadow: 
+            0 0 10px #ff0000,
+            0 0 20px #ff0000;
+        animation: doomPulse 2s infinite;
+    }
+
+    @keyframes doomPulse {
+        0%, 100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+        50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000; }
+    }
+
+    .side-links a {
+        color: #ff3300;
+        text-decoration: none;
+        padding: 12px 25px;
+        font-family: "Impact", sans-serif;
+        font-size: 1.1em;
+        letter-spacing: 2px;
+        background: linear-gradient(90deg, 
+            rgba(40, 0, 0, 0.9),
+            rgba(80, 0, 0, 0.5)
+        );
+        clip-path: polygon(
+            0 0,
+            95% 0,
+            100% 25%,
+            100% 75%,
+            95% 100%,
+            0 100%
+        );
+        border: 2px solid #660000;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .side-links a:hover {
+        color: #ff4d00;
+        background: linear-gradient(90deg, 
+            rgba(80, 0, 0, 0.9),
+            rgba(120, 0, 0, 0.5)
+        );
+        transform: translateX(10px) scale(1.05);
+        border-color: #ff0000;
+        text-shadow: 
+            0 0 10px rgba(255, 0, 0, 0.8),
+            0 0 20px rgba(255, 0, 0, 0.4);
+    }
+
+    .side-links a:hover::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 0, 0, 0.2),
+            transparent
+        );
+        animation: doomSlide 0.5s linear;
+    }
+
+    @keyframes doomSlide {
+        from { left: -100%; }
+        to { left: 100%; }
+    }
+
+    .fire-particles {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .particle {
+        position: absolute;
+        bottom: 0;
+        width: 5px;
+        height: 5px;
+        background: #ff4d00;
+        border-radius: 50%;
+        animation: rise 1.5s linear infinite;
+    }
+
+    @keyframes rise {
+        0% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            background: #ff4d00;
+        }
+        100% {
+            transform: translateY(-200px) scale(0);
+            opacity: 0;
+            background: #ff8533;
+        }
+    }
   </style>
 </head>
 <body>
@@ -513,36 +689,6 @@
   <!-- Gaming title -->
   <div class="gaming-title">
     <h1>Nash's Epic Gaming Realm</h1>
-  </div>
-
-  <div class="name-input-container">
-    <div class="input-label">ENTER EPIC NAME</div>
-    <input type="text" id="name-input" class="name-input" placeholder="Type your name here..." />
-    <button class="submit-button" onclick="changeName()">SUBMIT</button>
-  </div>
-
-  <!-- Pug button and image -->
-  <button id="pugButton" class="floating-pug-btn">🐶</button>
-  <img id="pugImage" src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif" class="pug-animation" style="display: none;">
-  
-  <!-- Animated navigation -->
-  <nav class="nav-links">
-    <a href="index.html" class="glowing-link">Gaming Page</a>
-    <a href="about.html" class="glowing-link">About Me</a>
-    <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-    <a href="memes.html" class="glowing-link">Epic Memes</a>
-    <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-    <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-    <a href="clans.html" class="glowing-link">Clans & Crews</a>
-    <a href="contact-me.html" class="glowing-link">Contact Me</a>
-  </nav>
-
-  <!-- Floating gaming icons -->
-  <div class="floating-icons">
-    <div class="game-icon" onclick="showGameMessage('🎮 Game On!')">🎮</div>
-    <div class="game-icon" onclick="showGameMessage('🎲 Roll the Dice!')">🎲</div>
-    <div class="game-icon" onclick="showGameMessage('🏆 Victory!')">🏆</div>
-    <div class="game-icon" onclick="showGameMessage('⚔️ Battle Time!')">⚔️</div>
   </div>
 
   <div class="content-container">
@@ -569,25 +715,29 @@
         Check out my epic gaming setup! Ready for any challenge that comes my way.
       </p>
     </div>
-
-    <!-- VIP Section for Friends -->
-    <div class="game-box">
-      <div class="game-title">
-        <span class="game-emoji">🌟</span>
-        VIP Friends
-      </div>
-      <p class="game-description">
-        Shoutout to my awesome friends! You guys are the best!
-      </p>
-      <div>
-        <span class="achievement">👑 VIP Friend 1</span>
-        <span class="achievement">👑 VIP Friend 2</span>
-        <span class="achievement">👑 VIP Friend 3</span>
-      </div>
-    </div>
   </div>
 
   <div id="special-name-display"></div>
+
+  <!-- Added Side Links -->
+  <div class="side-links">
+    <a href="index.html">🔥 GAMING PAGE</a>
+    <a href="about.html">💀 ABOUT ME</a>
+    <a href="fun-facts.html">⚔️ FUN FACTS</a>
+    <a href="memes.html">🔪 MEMES</a>
+    <a href="gaming-sites.html">🎯 GAMING SITES</a>
+    <a href="fave-songs.html">🎵 EPIC MUSIC</a>
+    <a href="clans.html">👥 CLANS & CREWS</a>
+    <a href="contact-me.html">📧 CONTACT ME</a>
+  </div>
+
+  <!-- Add fire particles container -->
+  <div class="fire-particles"></div>
+
+  <!-- Update dog button text -->
+  <button class="dog-button" onclick="showDogMeme()">�� SHOW DOG</button>
+  <div class="overlay" onclick="hideDogMeme()"></div>
+  <img src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif" alt="Floating Pug" class="dog-meme" onclick="hideDogMeme()">
 
   <script>
     const nameInput = document.getElementById('name-input');
@@ -747,17 +897,30 @@
       }, 2000);
     });
 
-    // Add particle effect
+    // Fire particles generation
     function createParticle() {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = Math.random() * 100 + 'vw';
-      document.querySelector('.gaming-particles').appendChild(particle);
-      
-      setTimeout(() => particle.remove(), 1500);
+        const particles = document.querySelector('.fire-particles');
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random position and size
+        const size = Math.random() * 8 + 4;
+        const left = Math.random() * 100;
+        
+        particle.style.left = left + '%';
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        
+        particles.appendChild(particle);
+        
+        // Remove particle after animation
+        setTimeout(() => {
+            particle.remove();
+        }, 1500);
     }
 
-    setInterval(createParticle, 100);
+    // Generate particles continuously
+    setInterval(createParticle, 50);
 
     function showGameMessage(message) {
         // Create floating message
@@ -813,6 +976,20 @@
     window.onload = function() {
         document.getElementById("name-input").value = "";
         document.getElementById("special-name-display").style.opacity = '0';
+    }
+
+    function showDogMeme() {
+        document.querySelector('.overlay').style.display = 'block';
+        document.querySelector('.dog-meme').style.display = 'block';
+        
+        // Play bark sound
+        const bark = new Audio('https://www.soundjay.com/dog/sounds/dog-bark-1.mp3');
+        bark.play().catch(error => console.log('Audio play failed:', error));
+    }
+
+    function hideDogMeme() {
+        document.querySelector('.overlay').style.display = 'none';
+        document.querySelector('.dog-meme').style.display = 'none';
     }
   </script>
 </body>
