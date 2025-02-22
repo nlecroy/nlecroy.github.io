@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎮 Epic Gaming Page 🎮</title>
+  <title>Nash's Epic Gaming Realm</title>
   <link rel="stylesheet" href="style.css">
   <style>
     body {
@@ -23,9 +23,10 @@
       color: #ff4d00;
       font-size: 50px;
       margin-top: 160px;
-      margin-bottom: 60px;
+      margin-bottom: 20px;
       text-align: center;
       animation: bounce 1s infinite;
+      width: 100%;
     }
 
     @keyframes bounce {
@@ -36,17 +37,18 @@
     .content-container {
       padding: 20px;
       max-width: 900px;
-      margin-top: 60px;
+      margin-top: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
     }
 
     .game-box {
       border: 3px solid #ff4d00;
       border-radius: 15px;
       padding: 30px;
-      margin: 50px 0;
+      margin: 20px 0;
       background: rgba(0, 0, 0, 0.8);
       box-shadow: 0 0 30px #ff4d00;
       transition: all 0.3s;
@@ -236,6 +238,42 @@
         left: 100%;
     }
 
+    .name-input {
+      margin: 20px 0;
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #ff4d00;
+      border-radius: 5px;
+      color: #ff4d00;
+      background: rgba(255, 255, 255, 0.8);
+      width: 300px;
+      transition: all 0.3s;
+      box-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+    }
+
+    .name-input:focus {
+      outline: none;
+      border-color: #ff8533;
+      box-shadow: 0 0 15px rgba(255, 77, 0, 0.8);
+    }
+
+    .submit-button {
+      padding: 10px 20px;
+      font-size: 18px;
+      color: white;
+      background-color: #ff4d00;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      margin-left: 10px;
+    }
+
+    .submit-button:hover {
+      background-color: #ff8533;
+      transform: scale(1.05);
+    }
+
     @keyframes borderGlow {
         0%, 100% {
             opacity: 0.3;
@@ -246,6 +284,31 @@
             box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
         }
     }
+
+    .dog-button {
+      padding: 10px 20px;
+      font-size: 18px;
+      color: white;
+      background-color: #ff4d00;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      margin-top: 20px;
+    }
+
+    .dog-button:hover {
+      background-color: #ff8533;
+      transform: scale(1.05);
+    }
+
+    .dog-gif {
+      display: none;
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+    }
   </style>
 </head>
 <body>
@@ -255,12 +318,12 @@
   
   <!-- Gaming title -->
   <div class="gaming-title">
-    <h1>🏆 Epic Gaming Hub 🏆</h1>
+    <h1>Nash's Epic Gaming Realm</h1>
   </div>
 
   <div class="name-input-container">
-    <input type="text" id="nameInput" placeholder="Enter your name..." class="magical-input">
-    <div id="welcomeMessage" class="welcome-message"></div>
+    <input type="text" id="name-input" class="name-input" placeholder="Enter your name..." />
+    <button class="submit-button" onclick="changeName()">Submit</button>
   </div>
 
   <!-- Pug button and image -->
@@ -331,10 +394,30 @@
         Check out my epic gaming setup! Ready for any challenge that comes my way.
       </p>
     </div>
+
+    <!-- VIP Section for Friends -->
+    <div class="game-box">
+      <div class="game-title">
+        <span class="game-emoji">🌟</span>
+        VIP Friends
+      </div>
+      <p class="game-description">
+        Shoutout to my awesome friends! You guys are the best!
+      </p>
+      <div>
+        <span class="achievement">👑 VIP Friend 1</span>
+        <span class="achievement">👑 VIP Friend 2</span>
+        <span class="achievement">👑 VIP Friend 3</span>
+      </div>
+    </div>
+
+    <!-- Dog Button -->
+    <button class="dog-button" onclick="showDogGif()">Show Dog Meme</button>
+    <img id="dog-gif" class="dog-gif" src="https://example.com/your-dog-meme.gif" alt="Dog Meme GIF" />
   </div>
 
   <script>
-    const nameInput = document.getElementById('nameInput');
+    const nameInput = document.getElementById('name-input');
     const welcomeMessage = document.getElementById('welcomeMessage');
     const pugButton = document.getElementById('pugButton');
     const pugImage = document.getElementById('pugImage');
@@ -354,7 +437,7 @@
             effect: 'epic'
         },
         'damien': {
-            title: '💫 Mystic VIP Damien 💫',
+            title: '💫 ultamate slayer VIP Damien 💫',
             effect: 'mystic'
         },
         'jude': {
@@ -518,6 +601,22 @@
         setTimeout(() => {
             floatingMsg.remove();
         }, 1000);
+    }
+
+    function changeName() {
+      var inputName = document.getElementById("name-input").value.toLowerCase();
+      var displayName = document.getElementById("display-name");
+
+      if (inputName === "damien") {
+        displayName.innerText = "🏆 Ultimate Slayer Damien 🏆";
+      } else {
+        displayName.innerText = "🏆 Epic Gaming Hub 🏆"; // Default name
+      }
+    }
+
+    function showDogGif() {
+      var dogGif = document.getElementById("dog-gif");
+      dogGif.style.display = "block"; // Show the dog GIF
     }
   </script>
 </body>
