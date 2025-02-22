@@ -45,29 +45,45 @@
             color: #ff0000;
             font-size: 24px;
             text-align: center;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .difficulty-btn {
+            background: #ff0000;
+            border: none;
+            color: #000;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            font-family: "Impact", sans-serif;
         }
 
         .back-button {
             position: fixed;
             top: 20px;
             left: 20px;
-            padding: 15px 30px;
-            background: linear-gradient(45deg, #ff0000, #ff4d00);
-            border: none;
+            padding: 10px 20px;
+            background: #ff0000;
             color: #000;
             text-decoration: none;
-            font-size: 1.2em;
-            cursor: pointer;
-            z-index: 100;
-            clip-path: polygon(
-                0 0,
-                90% 0,
-                100% 30%,
-                100% 100%,
-                10% 100%,
-                0 70%
-            );
+            font-size: 20px;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        @keyframes shatter {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.7); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
         }
     </style>
 </head>
@@ -76,7 +92,12 @@
     <div id="gameContainer">
         <canvas id="gameCanvas" width="400" height="600"></canvas>
         <div id="score">0</div>
-        <div id="startMessage">PRESS SPACE TO START<br>SPACE/CLICK TO JUMP</div>
+        <div id="startMessage">
+            SELECT DIFFICULTY:<br><br>
+            <button onclick="startGame('easy')" class="difficulty-btn">EASY</button><br>
+            <button onclick="startGame('medium')" class="difficulty-btn">MEDIUM</button><br>
+            <button onclick="startGame('hard')" class="difficulty-btn">HARD</button>
+        </div>
     </div>
 
     <script>
@@ -85,45 +106,197 @@
         const scoreElement = document.getElementById('score');
         const startMessage = document.getElementById('startMessage');
 
-        // Game variables
+        // Load sounds
+        const jumpSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+        const deathSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1690/1690-preview.mp3');
+        const scoreSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3');
+
         let bird = {
             x: 50,
             y: 300,
             velocity: 0,
-            gravity: 0.5,
-            jump: -8,
-            size: 30
+            size: 20,
+            rotation: 0
         };
 
         let pipes = [];
+        let particles = [];
         let score = 0;
         let gameStarted = false;
         let gameOver = false;
-        const pipeWidth = 50;
-        const pipeGap = 150;
-        const pipeSpeed = 2;
+        let currentDifficulty = 'medium';
+        let shake = 0;
 
-        // Load images
-        const birdImg = new Image();
-        birdImg.src = 'https://raw.githubusercontent.com/nlecroy/nlecroy.github.io/main/assets/cacodemon.png';
+        const difficulties = {
+            easy: {
+                speed: 1,
+                gravity: 0.2,
+                jump: -4,
+                gap: 200
+            },
+            medium: {
+                speed: 2,
+                gravity: 0.3,
+                jump: -6,
+                gap: 170
+            },
+            hard: {
+                speed: 3,
+                gravity: 0.4,
+                jump: -7,
+                gap: 150
+            }
+        };
 
-        // Game functions
+        // Update music links to more reliable sources
+        const music = {
+            easy: new Audio('https://assets.mixkit.co/music/preview/mixkit-relaxing-in-nature-522.mp3'),    // Peaceful nature
+            medium: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'),             // Medium intensity
+            hard: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3')              // Intense
+        };
+
+        // Add visual effects based on difficulty
+        const difficultyEffects = {
+            easy: {
+                backgroundColor: '#87CEEB',    // Sky blue
+                particleColors: ['#FFFFFF', '#FFD700', '#87CEEB'],  // White, gold, sky blue
+                screenShake: 0,
+                showDistrations: false,
+                birdColor: '#FFD700'  // Golden bird
+            },
+            medium: {
+                backgroundColor: '#1a0000',
+                particleColors: ['#ff4d00', '#ff8c00', '#ff0000'],
+                screenShake: 5,
+                showDistrations: false,
+                birdColor: '#ff4d00'
+            },
+            hard: {
+                backgroundColor: '#000000',
+                particleColors: ['#ff0000', '#ff0000', '#660000'],
+                screenShake: 15,
+                showDistrations: true,
+                birdColor: '#ff0000'
+            }
+        };
+
+        let distractions = [];
+
+        function createDistraction() {
+            if (currentDifficulty === 'hard' && Math.random() < 0.02) {
+                distractions.push({
+                    x: canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 30 + 20,
+                    speed: Math.random() * 3 + 2,
+                    rotation: 0
+                });
+            }
+        }
+
+        function updateDistractions() {
+            for (let i = distractions.length - 1; i >= 0; i--) {
+                const d = distractions[i];
+                d.x -= d.speed;
+                d.rotation += 0.1;
+
+                // Draw distraction (skull or warning symbol)
+                ctx.save();
+                ctx.translate(d.x + d.size/2, d.y + d.size/2);
+                ctx.rotate(d.rotation);
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.arc(0, 0, d.size/2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                if (d.x + d.size < 0) {
+                    distractions.splice(i, 1);
+                }
+            }
+        }
+
+        function applyScreenShake() {
+            if (difficultyEffects[currentDifficulty].screenShake > 0) {
+                const intensity = difficultyEffects[currentDifficulty].screenShake;
+                ctx.translate(
+                    Math.random() * intensity - intensity/2,
+                    Math.random() * intensity - intensity/2
+                );
+            }
+        }
+
+        function createParticle(x, y) {
+            const colors = difficultyEffects[currentDifficulty].particleColors;
+            return {
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            };
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+            }
+        }
+
+        function checkCollision(pipe) {
+            const birdRight = bird.x + bird.size;
+            const birdLeft = bird.x;
+            const pipeLeft = pipe.x;
+            const pipeRight = pipe.x + 50;
+
+            if (birdRight > pipeLeft && birdLeft < pipeRight) {
+                if (bird.y < pipe.height || bird.y + bird.size > pipe.height + difficulties[currentDifficulty].gap) {
+                    if (currentMusic) {
+                        currentMusic.pause();
+                        currentMusic.currentTime = 0;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function jump() {
             if (gameOver) {
                 resetGame();
                 return;
             }
-            if (!gameStarted) {
-                gameStarted = true;
-                startMessage.style.display = 'none';
-                gameLoop();
+            if (!gameStarted) return;
+
+            jumpSound.currentTime = 0;
+            jumpSound.play();
+            bird.velocity = difficulties[currentDifficulty].jump;
+            
+            // Add jump particles
+            for (let i = 0; i < 5; i++) {
+                particles.push(createParticle(bird.x + bird.size/2, bird.y + bird.size/2));
             }
-            bird.velocity = bird.jump;
         }
 
         function createPipe() {
+            const gap = difficulties[currentDifficulty].gap;
             const minHeight = 50;
-            const maxHeight = canvas.height - pipeGap - minHeight;
+            const maxHeight = canvas.height - gap - minHeight;
             const height = Math.floor(Math.random() * (maxHeight - minHeight)) + minHeight;
 
             pipes.push({
@@ -133,97 +306,203 @@
             });
         }
 
-        function resetGame() {
-            bird.y = 300;
-            bird.velocity = 0;
-            pipes = [];
-            score = 0;
-            gameOver = false;
-            gameStarted = false;
-            scoreElement.textContent = score;
-            startMessage.style.display = 'block';
-        }
-
-        function drawBird() {
-            ctx.save();
-            ctx.translate(bird.x + bird.size/2, bird.y + bird.size/2);
-            ctx.rotate(bird.velocity * 0.02);
-            ctx.drawImage(birdImg, -bird.size/2, -bird.size/2, bird.size, bird.size);
-            ctx.restore();
-        }
-
-        function drawPipes() {
-            ctx.fillStyle = '#ff0000';
-            pipes.forEach(pipe => {
-                // Bottom pipe
-                ctx.fillRect(pipe.x, pipe.height + pipeGap, pipeWidth, canvas.height - pipe.height - pipeGap);
-                // Top pipe
-                ctx.fillRect(pipe.x, 0, pipeWidth, pipe.height);
-            });
-        }
-
-        function checkCollision(pipe) {
-            const birdRight = bird.x + bird.size;
-            const birdLeft = bird.x;
-            const pipeLeft = pipe.x;
-            const pipeRight = pipe.x + pipeWidth;
-
-            if (bird.y < 0 || bird.y + bird.size > canvas.height) return true;
-
-            if (birdRight > pipeLeft && birdLeft < pipeRight) {
-                if (bird.y < pipe.height || bird.y + bird.size > pipe.height + pipeGap) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         function gameLoop() {
             if (!gameStarted || gameOver) return;
 
-            // Clear canvas
-            ctx.fillStyle = '#000000';
+            ctx.save();
+            
+            // Clear canvas with difficulty-specific background
+            ctx.fillStyle = difficultyEffects[currentDifficulty].backgroundColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Apply screen shake for harder difficulties
+            applyScreenShake();
+
+            // Create and update distractions in hard mode
+            if (currentDifficulty === 'hard') {
+                createDistraction();
+                updateDistractions();
+            }
+
+            // Draw peaceful elements in easy mode
+            if (currentDifficulty === 'easy') {
+                // Draw clouds
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.arc(
+                        (Date.now()/50 + i * 200) % canvas.width,
+                        50 + i * 30,
+                        20,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+            }
+
             // Update bird
-            bird.velocity += bird.gravity;
+            bird.velocity += difficulties[currentDifficulty].gravity;
             bird.y += bird.velocity;
+            bird.rotation = Math.atan2(bird.velocity, 15);
 
             // Create pipes
             if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
                 createPipe();
             }
 
-            // Update and draw pipes
-            pipes.forEach((pipe, index) => {
-                pipe.x -= pipeSpeed;
+            // Update particles
+            updateParticles();
 
-                // Check for score
-                if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
-                    pipe.passed = true;
-                    score++;
-                    scoreElement.textContent = score;
-                }
+            // Draw pipes with difficulty-specific effects
+            ctx.shadowBlur = currentDifficulty === 'easy' ? 0 : 10;
+            ctx.shadowColor = difficultyEffects[currentDifficulty].birdColor;
+            ctx.fillStyle = difficultyEffects[currentDifficulty].birdColor;
+            
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                const pipe = pipes[i];
+                pipe.x -= difficulties[currentDifficulty].speed;
 
-                // Remove off-screen pipes
-                if (pipe.x + pipeWidth < 0) {
-                    pipes.splice(index, 1);
-                }
+                // Draw pipes
+                ctx.fillRect(pipe.x, 0, 50, pipe.height);
+                ctx.fillRect(pipe.x, pipe.height + difficulties[currentDifficulty].gap, 
+                           50, canvas.height - pipe.height - difficulties[currentDifficulty].gap);
 
                 // Check collision
                 if (checkCollision(pipe)) {
                     gameOver = true;
-                    startMessage.textContent = 'GAME OVER\nPRESS SPACE TO RESTART';
+                    deathSound.play();
+                    shake = 20;
+                    // Create explosion particles
+                    for (let j = 0; j < 20; j++) {
+                        particles.push(createParticle(bird.x + bird.size/2, bird.y + bird.size/2));
+                    }
+                    startMessage.innerHTML = 'GAME OVER<br><br>' +
+                        '<button onclick="startGame(\'easy\')" class="difficulty-btn">EASY</button><br>' +
+                        '<button onclick="startGame(\'medium\')" class="difficulty-btn">MEDIUM</button><br>' +
+                        '<button onclick="startGame(\'hard\')" class="difficulty-btn">HARD</button>';
                     startMessage.style.display = 'block';
                     return;
                 }
-            });
 
-            drawPipes();
-            drawBird();
+                // Score points
+                if (!pipe.passed && pipe.x + 50 < bird.x) {
+                    pipe.passed = true;
+                    score++;
+                    scoreElement.textContent = score;
+                    scoreSound.play();
+                }
 
+                // Remove off-screen pipes
+                if (pipe.x + 50 < 0) {
+                    pipes.splice(i, 1);
+                }
+            }
+
+            // Draw bird with difficulty-specific color
+            ctx.save();
+            ctx.translate(bird.x + bird.size/2, bird.y + bird.size/2);
+            ctx.rotate(bird.rotation);
+            ctx.fillStyle = difficultyEffects[currentDifficulty].birdColor;
+            ctx.beginPath();
+            ctx.arc(0, 0, bird.size/2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Check boundaries
+            if (bird.y < 0 || bird.y + bird.size > canvas.height) {
+                gameOver = true;
+                deathSound.play();
+                if (currentMusic) {
+                    currentMusic.pause();
+                    currentMusic.currentTime = 0;
+                }
+                shake = 20;
+                // Create explosion particles
+                for (let i = 0; i < 20; i++) {
+                    particles.push(createParticle(bird.x + bird.size/2, bird.y + bird.size/2));
+                }
+                startMessage.innerHTML = 'GAME OVER<br><br>' +
+                    '<button onclick="startGame(\'easy\')" class="difficulty-btn">EASY</button><br>' +
+                    '<button onclick="startGame(\'medium\')" class="difficulty-btn">MEDIUM</button><br>' +
+                    '<button onclick="startGame(\'hard\')" class="difficulty-btn">HARD</button>';
+                startMessage.style.display = 'block';
+                return;
+            }
+
+            ctx.restore();
             requestAnimationFrame(gameLoop);
         }
+
+        function resetGame() {
+            bird.y = 300;
+            bird.velocity = 0;
+            bird.rotation = 0;
+            pipes = [];
+            particles = [];
+            score = 0;
+            gameOver = false;
+            gameStarted = false;
+            shake = 0;
+            scoreElement.textContent = score;
+            startMessage.style.display = 'block';
+            
+            stopAllMusic();
+        }
+
+        function startGame(difficulty) {
+            currentDifficulty = difficulty;
+            gameStarted = true;
+            startMessage.style.display = 'none';
+
+            // Stop any currently playing music
+            stopAllMusic();
+
+            // Start new music
+            try {
+                currentMusic = music[difficulty];
+                let playPromise = currentMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Music play failed:", error);
+                    });
+                }
+            } catch (error) {
+                console.log("Music start error:", error);
+            }
+
+            gameLoop();
+        }
+
+        function stopAllMusic() {
+            Object.values(music).forEach(track => {
+                track.pause();
+                track.currentTime = 0;
+            });
+            currentMusic = null;
+        }
+
+        // Add a preload function
+        function preloadMusic() {
+            Object.values(music).forEach(track => {
+                track.load();
+            });
+        }
+
+        // Call preload when page loads
+        window.addEventListener('load', preloadMusic);
+
+        // Add mute/unmute functionality
+        let isMuted = false;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                isMuted = !isMuted;
+                Object.values(music).forEach(track => {
+                    track.muted = isMuted;
+                });
+            }
+        });
 
         // Event listeners
         document.addEventListener('keydown', (e) => {
@@ -231,12 +510,22 @@
                 e.preventDefault();
                 jump();
             }
+            if (e.key === 'ArrowUp' && currentMusic) {
+                currentMusic.volume = Math.min(1, currentMusic.volume + 0.1);
+            } else if (e.key === 'ArrowDown' && currentMusic) {
+                currentMusic.volume = Math.max(0, currentMusic.volume - 0.1);
+            }
         });
 
         canvas.addEventListener('click', jump);
 
-        // Start message
-        startMessage.style.display = 'block';
+        // Initial draw
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff0000';
+        ctx.beginPath();
+        ctx.arc(bird.x + bird.size/2, bird.y + bird.size/2, bird.size/2, 0, Math.PI * 2);
+        ctx.fill();
     </script>
 </body>
 </html> 

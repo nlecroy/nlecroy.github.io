@@ -3,41 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epic Gaming Music - Slayer's Playlist</title>
+    <title>EPIC MUSIC</title>
     <style>
-        /* ... keeping all the same style rules ... */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Impact', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff0000, #660000);
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            clip-path: polygon(0 0, 90% 0, 100% 30%, 100% 100%, 10% 100%, 0 70%);
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 48px;
+            margin: 40px 0;
+            color: #ff0000;
+            text-shadow: 
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 30px #ff0000;
+            animation: glow 2s infinite alternate;
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .music-card {
+            background: linear-gradient(45deg, #1a0000, #000000);
+            border: 2px solid #ff0000;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .music-card:hover {
+            transform: translateZ(20px) scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(255, 0, 0, 0.5),
+                0 0 60px rgba(255, 0, 0, 0.3);
+        }
+
+        .music-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 0, 0, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .music-title {
+            font-size: 24px;
+            margin: 10px 0;
+            color: #ff0000;
+        }
+
+        .music-artist {
+            font-size: 18px;
+            color: #ff4444;
+            margin-bottom: 15px;
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #ff0000, #660000);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            clip-path: polygon(0 0, 90% 0, 100% 30%, 100% 100%, 10% 100%, 0 70%);
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; }
+            to { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(45deg) translateX(-100%); }
+            100% { transform: rotate(45deg) translateX(100%); }
+        }
+
+        .visualizer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: #000;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            gap: 2px;
+            z-index: 1000;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, #ff0000, #660000);
+            transition: height 0.1s ease;
+        }
     </style>
 </head>
 <body>
-    <div class="fire-particles"></div>
     <a href="index.html" class="back-button">← BACK TO HELL</a>
-
-    <div class="doom-container">
-        <h1 class="epic-title">Epic Gaming Music</h1>
-
+    
+    <div class="container">
+        <h1 class="title">EPIC MUSIC</h1>
+        
         <div class="music-grid">
             <div class="music-card">
-                <h3 class="music-title">Rip & Tear</h3>
-                <p class="music-description">DOOM's Ultimate Battle Theme</p>
-                <iframe class="music-embed" height="315" src="https://www.youtube.com/embed/zZMg9ryeWOw" frameborder="0" allowfullscreen></iframe>
+                <h2 class="music-title">DOOM Eternal</h2>
+                <p class="music-artist">Mick Gordon</p>
+                <button class="play-button" onclick="playMusic(0)">PLAY</button>
             </div>
 
             <div class="music-card">
-                <h3 class="music-title">BFG Division</h3>
-                <p class="music-description">When the BFG 9000 needs a theme song</p>
-                <iframe class="music-embed" height="315" src="https://www.youtube.com/embed/QHRuTYtSbJQ" frameborder="0" allowfullscreen></iframe>
+                <h2 class="music-title">BFG Division</h2>
+                <p class="music-artist">Mick Gordon</p>
+                <button class="play-button" onclick="playMusic(1)">PLAY</button>
             </div>
 
             <div class="music-card">
-                <h3 class="music-title">At DOOM's Gate</h3>
-                <p class="music-description">The Classic E1M1 Theme</p>
-                <iframe class="music-embed" height="315" src="https://www.youtube.com/embed/BSsfjHCFosw" frameborder="0" allowfullscreen></iframe>
+                <h2 class="music-title">Rip & Tear</h2>
+                <p class="music-artist">Mick Gordon</p>
+                <button class="play-button" onclick="playMusic(2)">PLAY</button>
+            </div>
+
+            <div class="music-card">
+                <h2 class="music-title">The Only Thing They Fear Is You</h2>
+                <p class="music-artist">Mick Gordon</p>
+                <button class="play-button" onclick="playMusic(3)">PLAY</button>
             </div>
         </div>
     </div>
 
+    <div class="visualizer">
+        <!-- Bars will be added by JavaScript -->
+    </div>
+
     <script>
-        // ... keeping the same particle effect script ...
+        // Create audio visualizer bars
+        const visualizer = document.querySelector('.visualizer');
+        const barCount = 32;
+        
+        for (let i = 0; i < barCount; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            visualizer.appendChild(bar);
+        }
+
+        // Animate bars
+        function animateVisualizer() {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                const height = Math.random() * 100;
+                bar.style.height = `${height}px`;
+            });
+        }
+
+        // Start animation
+        setInterval(animateVisualizer, 100);
+
+        // Play music function
+        function playMusic(index) {
+            // Add your music playing logic here
+            console.log(`Playing music track ${index}`);
+        }
     </script>
 </body>
 </html> 
