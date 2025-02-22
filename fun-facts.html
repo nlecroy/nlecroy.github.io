@@ -3,295 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fun Facts - Nash's Gaming Page</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="fun-facts-style.css">
+    <title>Epic Fun Facts - Secrets of the Slayer</title>
     <style>
-        .nav-links {
-            position: fixed;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 2;
-            background: linear-gradient(90deg, 
-                rgba(0, 0, 0, 0.95), 
-                rgba(255, 77, 0, 0.1)
-            );
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #ff4d00;
+            font-family: "Impact", sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0000 0%, #000000 100%);
+        }
+
+        .doom-container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            border-radius: 20px;
-            border: 2px solid #ff4d00;
-            box-shadow: 
-                0 0 20px rgba(255, 77, 0, 0.3),
-                inset 0 0 15px rgba(255, 77, 0, 0.2);
-            backdrop-filter: blur(5px);
-        }
-
-        .nav-links::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #ff4d00, transparent, #ff4d00);
-            border-radius: 20px;
-            z-index: -1;
-            animation: borderGlow 3s infinite;
-            opacity: 0.6;
-        }
-
-        .nav-links::after {
-            content: '≡ MENU';
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ff4d00;
-            font-size: 0.8em;
-            text-shadow: 0 0 10px rgba(255, 77, 0, 0.8);
-            letter-spacing: 2px;
-        }
-
-        .nav-links a {
-            font-size: 0.8em;
-            padding: 10px 20px;
-            white-space: nowrap;
             position: relative;
-            transition: all 0.3s;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 77, 0, 0.3);
-            overflow: hidden;
+            z-index: 1;
         }
 
-        .glowing-link {
-            color: #ff4d00;
-            text-decoration: none;
+        .epic-title {
+            font-size: 4em;
+            color: #ff0000;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(255, 77, 0, 0.5);
+            text-align: center;
+            margin: 40px 0;
+            text-shadow: 
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 30px #ff0000;
+            animation: titlePulse 2s infinite;
+        }
+
+        .fact-card {
+            background: rgba(40, 0, 0, 0.8);
+            margin: 30px 0;
+            border: 3px solid #ff0000;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+            height: 200px;
+        }
+
+        .fact-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .fact-front, .fact-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
             display: flex;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            clip-path: polygon(
+                0 0,
+                95% 0,
+                100% 5%,
+                100% 95%,
+                95% 100%,
+                0 100%
+            );
         }
 
-        .glowing-link:hover {
+        .fact-back {
+            background: rgba(60, 0, 0, 0.9);
+            transform: rotateY(180deg);
+        }
+
+        .fact-number {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 2em;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .fact-text {
+            font-size: 1.5em;
+            text-align: center;
             color: #ff8533;
-            text-shadow: 
-                0 0 10px rgba(255, 77, 0, 0.8),
-                0 0 20px rgba(255, 77, 0, 0.4);
-            transform: translateX(5px) scale(1.05);
-            background: rgba(255, 77, 0, 0.2);
-            border-color: #ff4d00;
+            text-shadow: 0 0 5px rgba(255, 133, 51, 0.3);
         }
 
-        @keyframes borderGlow {
-            0%, 100% {
-                opacity: 0.3;
-                box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+        .fact-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: none;
+            color: white;
+            font-family: "Impact", sans-serif;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-decoration: none;
+            clip-path: polygon(0 0, 90% 0, 100% 30%, 100% 70%, 90% 100%, 0 100%);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .fire-particles {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            bottom: 0;
+            width: 5px;
+            height: 5px;
+            background: #ff4d00;
+            border-radius: 50%;
+            animation: rise 1.5s linear infinite;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+                background: #ff4d00;
             }
-            50% {
-                opacity: 0.7;
-                box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
+            100% {
+                transform: translateY(-200px) scale(0);
+                opacity: 0;
+                background: #ff8533;
             }
+        }
+
+        @keyframes titlePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .click-hint {
+            text-align: center;
+            color: #ff4d00;
+            font-size: 1.2em;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
-<body class="fun-facts-page">
-    <div class="arcade-overlay"></div>
-    <div class="scanlines"></div>
-    
-    <div class="arcade-header">
-        <div class="pixel-text">EPIC GAMING FACTS</div>
-        <div class="insert-coin">INSERT COIN TO CONTINUE</div>
-    </div>
+<body>
+    <div class="fire-particles"></div>
+    <a href="index.html" class="back-button">← BACK TO HELL</a>
 
-    <div class="arcade-cabinet">
-        <div class="fact-screen">
-            <div class="fact-container">
-                <!-- DOOM Facts -->
-                <div class="fact-card doom">
-                    <div class="fact-number">DOOM-1</div>
-                    <div class="fact-text">DOOM Eternal has over 20 different types of demons to fight! 👹</div>
-                </div>
-                <div class="fact-card doom">
-                    <div class="fact-number">DOOM-2</div>
-                    <div class="fact-text">The BFG 9000 stands for "Big Force Gun" officially! 🔫</div>
-                </div>
-                <div class="fact-card doom">
-                    <div class="fact-number">DOOM-3</div>
-                    <div class="fact-text">DOOM (1993) was made by only 12 people at id Software! 🎮</div>
-                </div>
+    <div class="doom-container">
+        <h1 class="epic-title">Epic Fun Facts</h1>
+        <p class="click-hint">🔥 CLICK CARDS TO REVEAL SECRETS 🔥</p>
 
-                <!-- Pug Facts -->
-                <div class="fact-card pug">
-                    <div class="fact-number">PUG-1</div>
-                    <div class="fact-text">Pugs were bred to be companions for Chinese royalty! 👑</div>
+        <div class="fact-card">
+            <div class="fact-front">
+                <span class="fact-number">#1</span>
+                <div class="fact-text">
+                    <div class="fact-icon">🎮</div>
+                    DOOM FACT
                 </div>
-                <div class="fact-card pug">
-                    <div class="fact-number">PUG-2</div>
-                    <div class="fact-text">A group of pugs is called a 'grumble'! 🐕</div>
-                </div>
-                <div class="fact-card pug">
-                    <div class="fact-number">PUG-3</div>
-                    <div class="fact-text">Pugs have been around for over 2,000 years! ⌛</div>
-                </div>
-
-                <!-- Fortnite Facts -->
-                <div class="fact-card fortnite">
-                    <div class="fact-number">FN-1</div>
-                    <div class="fact-text">Fortnite was first released in 2017! 📅</div>
-                </div>
-                <div class="fact-card fortnite">
-                    <div class="fact-number">FN-2</div>
-                    <div class="fact-text">The most players online at once was 12.3 million during Travis Scott's concert! 🎤</div>
-                </div>
-                <div class="fact-card fortnite">
-                    <div class="fact-number">FN-3</div>
-                    <div class="fact-text">The Battle Bus travels at 25.7 kilometers per hour! 🚌</div>
-                </div>
-
-                <!-- Gaming Facts -->
-                <div class="fact-card gaming">
-                    <div class="fact-number">GAME-1</div>
-                    <div class="fact-text">The first video game was created in 1958 called "Tennis for Two"! 🎾</div>
-                </div>
-                <div class="fact-card gaming">
-                    <div class="fact-number">GAME-2</div>
-                    <div class="fact-text">The PlayStation 2 is the best-selling console of all time! 🏆</div>
-                </div>
-                <div class="fact-card gaming">
-                    <div class="fact-number">GAME-3</div>
-                    <div class="fact-text">Minecraft has sold over 238 million copies worldwide! ⛏️</div>
-                </div>
-
-                <!-- Bonus Facts -->
-                <div class="fact-card bonus">
-                    <div class="fact-number">BONUS-1</div>
-                    <div class="fact-text">The gaming industry is worth more than movies and sports combined! 💰</div>
-                </div>
-                <div class="fact-card bonus">
-                    <div class="fact-number">BONUS-2</div>
-                    <div class="fact-text">The average gamer is 34 years old! 🎯</div>
+            </div>
+            <div class="fact-back">
+                <div class="fact-text">
+                    DOOM's source code was released in 1997, 
+                    allowing fans to create thousands of mods 
+                    and custom levels!
                 </div>
             </div>
         </div>
 
-        <div class="category-buttons">
-            <button class="category-btn doom-btn" onclick="filterFacts('doom')">DOOM</button>
-            <button class="category-btn pug-btn" onclick="filterFacts('pug')">PUGS</button>
-            <button class="category-btn fortnite-btn" onclick="filterFacts('fortnite')">FORTNITE</button>
-            <button class="category-btn gaming-btn" onclick="filterFacts('gaming')">GAMING</button>
-            <button class="category-btn all-btn" onclick="filterFacts('all')">ALL</button>
-        </div>
-
-        <div class="cabinet-controls">
-            <div class="joystick"></div>
-            <div class="button red"></div>
-            <div class="button blue"></div>
-            <div class="button green"></div>
-            <div class="button yellow"></div>
-        </div>
-    </div>
-
-    <div class="high-scores">
-        <div class="score-header">HIGH SCORES</div>
-        <div class="score-list">
-            <div class="score-item">
-                <span class="score-name">NASH</span>
-                <span class="score-points">999999</span>
+        <div class="fact-card">
+            <div class="fact-front">
+                <span class="fact-number">#2</span>
+                <div class="fact-text">
+                    <div class="fact-icon">💀</div>
+                    DEMON SECRET
+                </div>
             </div>
-            <div class="score-item">
-                <span class="score-name">PUG</span>
-                <span class="score-points">888888</span>
-            </div>
-            <div class="score-item">
-                <span class="score-name">DOOM</span>
-                <span class="score-points">777777</span>
+            <div class="fact-back">
+                <div class="fact-text">
+                    The iconic Cyberdemon in DOOM took 
+                    multiple rocket hits because it was 
+                    programmed with 2000 hit points!
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="pixel-decorations">
-        <div class="pixel-pug left"></div>
-        <div class="pixel-pug right"></div>
-        <div class="pixel-ghost"></div>
-        <div class="pixel-pacman"></div>
-    </div>
+        <div class="fact-card">
+            <div class="fact-front">
+                <span class="fact-number">#3</span>
+                <div class="fact-text">
+                    <div class="fact-icon">🏆</div>
+                    HIDDEN LORE
+                </div>
+            </div>
+            <div class="fact-back">
+                <div class="fact-text">
+                    The BFG 9000's name officially stands for 
+                    "Bio Force Gun" but players know its true 
+                    meaning! ��
+                </div>
+            </div>
+        </div>
 
-    <nav class="nav-links">
-        <a href="index.html" class="glowing-link">Gaming Page</a>
-        <a href="about.html" class="glowing-link">About Me</a>
-        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-        <a href="memes.html" class="glowing-link">Epic Memes</a>
-        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-        <a href="clans.html" class="glowing-link">Clans & Crews</a>
-        <a href="contact-me.html" class="glowing-link">Contact Me</a>
-    </nav>
+        <div class="fact-card">
+            <div class="fact-front">
+                <span class="fact-number">#4</span>
+                <div class="fact-text">
+                    <div class="fact-icon">⚡</div>
+                    SPEED DEMON
+                </div>
+            </div>
+            <div class="fact-back">
+                <div class="fact-text">
+                    DOOM was so well optimized it ran at 
+                    35fps on 1993 hardware - faster than 
+                    many modern games!
+                </div>
+            </div>
+        </div>
+
+        <div class="fact-card">
+            <div class="fact-front">
+                <span class="fact-number">#5</span>
+                <div class="fact-text">
+                    <div class="fact-icon">🎵</div>
+                    METAL FACT
+                </div>
+            </div>
+            <div class="fact-back">
+                <div class="fact-text">
+                    DOOM's heavy metal soundtrack was 
+                    inspired by Metallica, Slayer, and 
+                    Pantera, creating the perfect demon-slaying 
+                    atmosphere!
+                </div>
+            </div>
+        </div>
+
+        <div class="fact-card">
+            <div class="fact-front">
+                <span class="fact-number">#6</span>
+                <div class="fact-text">
+                    <div class="fact-icon">👾</div>
+                    GAMING HISTORY
+                </div>
+            </div>
+            <div class="fact-back">
+                <div class="fact-text">
+                    DOOM was installed on more computers 
+                    than Windows 95 when it was released! 
+                    True gaming dominance!
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Animate facts with arcade sounds
-        const facts = document.querySelectorAll('.fact-card');
-        const coinSound = new Audio('https://www.soundjay.com/mechanical/sounds/coin-drop-1.mp3');
-        const blipSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
-
-        facts.forEach((fact, index) => {
-            fact.style.animationDelay = `${index * 0.5}s`;
-            fact.addEventListener('mouseenter', () => {
-                blipSound.currentTime = 0;
-                blipSound.play();
-                fact.classList.add('fact-highlight');
-            });
-            fact.addEventListener('mouseleave', () => {
-                fact.classList.remove('fact-highlight');
-            });
-        });
-
-        // Play coin sound on page load
-        window.addEventListener('load', () => {
-            coinSound.play();
-        });
-
-        // Add cabinet control interactions
-        const buttons = document.querySelectorAll('.button');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                button.classList.add('button-press');
-                blipSound.currentTime = 0;
-                blipSound.play();
-                setTimeout(() => {
-                    button.classList.remove('button-press');
-                }, 100);
-            });
-        });
-
-        // Add category filtering
-        function filterFacts(category) {
-            const facts = document.querySelectorAll('.fact-card');
-            const blipSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
-            blipSound.play();
-
-            facts.forEach(fact => {
-                if (category === 'all' || fact.classList.contains(category)) {
-                    fact.style.display = 'flex';
-                    fact.style.animation = 'factAppear 0.5s ease-out';
-                } else {
-                    fact.style.display = 'none';
-                }
-            });
-
-            // Highlight active button
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.classList.contains(category + '-btn')) {
-                    btn.classList.add('active');
-                }
-            });
+        // Fire particles
+        function createParticle() {
+            const particles = document.querySelector('.fire-particles');
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 8 + 4;
+            const left = Math.random() * 100;
+            
+            particle.style.left = left + '%';
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            particles.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1500);
         }
+
+        // Generate particles
+        setInterval(createParticle, 50);
+
+        // Card flip functionality
+        document.querySelectorAll('.fact-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+                
+                // Play flip sound
+                const flipSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+                flipSound.play().catch(error => console.log('Audio play failed:', error));
+            });
+        });
     </script>
 </body>
 </html>
