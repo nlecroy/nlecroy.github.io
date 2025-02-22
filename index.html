@@ -13,113 +13,221 @@
       justify-content: flex-start;
       margin: 0;
       padding: 20px;
-      background: url('https://example.com/your-background-image.jpg') no-repeat center center fixed;
-      background-size: cover;
+      background: linear-gradient(45deg, #1a0f1f, #2d1635);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
       color: #ff4d00;
       font-family: Arial, sans-serif;
     }
 
+    /* Add animated background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, transparent 20%, #1a0f1f 80%);
+      z-index: -1;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0% 50% }
+    }
+
     h1 {
       color: #ff4d00;
-      font-size: 50px;
-      margin-top: 160px;
-      margin-bottom: 20px;
+      font-size: 60px;
+      margin-top: 100px;
+      margin-bottom: 30px;
       text-align: center;
-      animation: bounce 1s infinite;
+      text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00, 0 0 30px #ff4d00;
+      animation: titleGlow 2s ease-in-out infinite;
+      font-family: 'Arial Black', sans-serif;
+      letter-spacing: 2px;
       width: 100%;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    @keyframes titleGlow {
+      0%, 100% { text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00, 0 0 30px #ff4d00; }
+      50% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00, 0 0 40px #ff4d00; }
     }
 
     .content-container {
       padding: 20px;
-      max-width: 900px;
+      max-width: 1000px;
       margin-top: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
+      gap: 30px;
     }
 
     .game-box {
       border: 3px solid #ff4d00;
-      border-radius: 15px;
-      padding: 30px;
+      border-radius: 20px;
+      padding: 40px;
       margin: 20px 0;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(26, 15, 31, 0.9);
       box-shadow: 0 0 30px #ff4d00;
       transition: all 0.3s;
-      max-width: 700px;
+      max-width: 800px;
       width: 100%;
       animation: fadeIn 0.5s;
+      position: relative;
+      overflow: hidden;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .game-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 77, 0, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    .game-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 40px #ff4d00;
     }
 
     .game-title {
-      font-size: 35px;
-      margin-bottom: 20px;
+      font-size: 40px;
       color: #ff4d00;
-      text-shadow: 0 0 10px #ff4d00;
       display: flex;
       align-items: center;
-      gap: 10px;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      gap: 15px;
+      text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+      margin-bottom: 20px;
     }
 
     .game-emoji {
-      font-size: 40px;
-      animation: bounce 2s infinite;
+      font-size: 45px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     .game-description {
+      color: #fff;
       font-size: 20px;
       line-height: 1.6;
-      margin: 15px 0;
-      color: white;
-      text-shadow: 0 0 5px #ff4d00;
+      margin: 20px 0;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
     }
 
     .epic-quote {
-      font-size: 28px;
-      margin: 30px 0;
-      max-width: 700px;
-      text-align: center;
+      font-size: 32px;
       color: #ff4d00;
-      text-shadow: 0 0 10px #ff4d00;
+      margin: 40px 0;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
       animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      font-style: italic;
     }
 
     .achievement {
-      font-size: 16px;
-      padding: 10px 20px;
-      margin: 8px;
+      display: inline-block;
       background: linear-gradient(45deg, #ff4d00, #ff8533);
-      color: black;
-      border-radius: 20px;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      margin: 8px;
       font-weight: bold;
-      box-shadow: 0 0 10px #ff4d00;
+      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+      transition: all 0.3s;
     }
 
-    .pug-image {
-      width: 100px;
-      margin: 10px;
+    .achievement:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 77, 0, 0.8);
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 100;
+    }
+
+    .sidebar a {
+      color: #ff4d00;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      background: rgba(26, 15, 31, 0.8);
+      transition: all 0.3s;
+      box-shadow: 0 0 10px rgba(255, 77, 0, 0.3);
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 77, 0, 0.2);
+      transform: translateX(5px);
+      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+    }
+
+    .dog-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      color: white;
+      background: linear-gradient(45deg, #ff4d00, #ff8533);
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+      margin-top: 30px;
+    }
+
+    .dog-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 77, 0, 0.8);
+    }
+
+    .dog-gif {
+      display: none;
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+      transition: all 0.3s;
+    }
+
+    .dog-gif:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 77, 0, 0.8);
     }
 
     /* Add these styles to your existing styles */
@@ -243,35 +351,40 @@
       padding: 15px;
       font-size: 18px;
       border: 2px solid #ff4d00;
-      border-radius: 5px;
+      border-radius: 15px;
       color: #ff4d00;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(26, 15, 31, 0.8);
       width: 300px;
       transition: all 0.3s;
-      box-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
     }
 
     .name-input:focus {
       outline: none;
       border-color: #ff8533;
-      box-shadow: 0 0 15px rgba(255, 77, 0, 0.8);
+      box-shadow: 0 0 25px rgba(255, 77, 0, 0.8);
+      transform: scale(1.02);
     }
 
     .submit-button {
-      padding: 10px 20px;
+      padding: 15px 30px;
       font-size: 18px;
       color: white;
-      background-color: #ff4d00;
+      background: linear-gradient(45deg, #ff4d00, #ff8533);
       border: none;
-      border-radius: 5px;
+      border-radius: 15px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
+      transition: all 0.3s;
       margin-left: 10px;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
     }
 
     .submit-button:hover {
-      background-color: #ff8533;
-      transform: scale(1.05);
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 77, 0, 0.8);
     }
 
     @keyframes borderGlow {
@@ -285,29 +398,64 @@
         }
     }
 
-    .dog-button {
-      padding: 10px 20px;
-      font-size: 18px;
-      color: white;
-      background-color: #ff4d00;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
-      margin-top: 20px;
+    /* Add new styles for the special name displays */
+    #special-name-display {
+        margin-top: 20px;
+        font-size: 32px;
+        text-align: center;
+        font-weight: bold;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.5s;
     }
 
-    .dog-button:hover {
-      background-color: #ff8533;
-      transform: scale(1.05);
+    /* Damien's Rainbow Style */
+    .damien-style {
+        background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+        -webkit-background-clip: text;
+        color: transparent;
+        animation: rainbow 3s linear infinite, shake 0.5s infinite;
+        text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
-    .dog-gif {
-      display: none;
-      margin-top: 20px;
-      max-width: 100%;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+    @keyframes rainbow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    /* Andruis's Kaakaa King Style */
+    .andruis-style {
+        color: #ffd700;
+        text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+        animation: pulse 1.5s infinite;
+    }
+
+    /* Josh's VIP Style */
+    .josh-style {
+        background: linear-gradient(45deg, #gold, #silver);
+        -webkit-background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 15px rgba(255,215,0,0.7);
+        animation: glow 2s infinite;
+    }
+
+    /* Jude's Elite Warrior Style */
+    .jude-style {
+        color: #ff4d00;
+        text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00;
+        animation: warrior-pulse 2s infinite;
+    }
+
+    @keyframes warrior-pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
     }
   </style>
 </head>
@@ -415,6 +563,9 @@
     <button class="dog-button" onclick="showDogGif()">Show Dog Meme</button>
     <img id="dog-gif" class="dog-gif" src="https://example.com/your-dog-meme.gif" alt="Dog Meme GIF" />
   </div>
+
+  <!-- Add this div after your name input -->
+  <div id="special-name-display"></div>
 
   <script>
     const nameInput = document.getElementById('name-input');
@@ -604,14 +755,36 @@
     }
 
     function changeName() {
-      var inputName = document.getElementById("name-input").value.toLowerCase();
-      var displayName = document.getElementById("display-name");
+        var inputName = document.getElementById("name-input").value.toLowerCase();
+        var specialDisplay = document.getElementById("special-name-display");
+        
+        // Reset styles
+        specialDisplay.className = '';
+        specialDisplay.style.opacity = '1';
+        specialDisplay.style.transform = 'scale(1)';
 
-      if (inputName === "damien") {
-        displayName.innerText = "🏆 Ultimate Slayer Damien 🏆";
-      } else {
-        displayName.innerText = "🏆 Epic Gaming Hub 🏆"; // Default name
-      }
+        switch(inputName) {
+            case 'damien':
+                specialDisplay.textContent = "ULTIMATE SLAYER DAMIEN";
+                specialDisplay.className = 'damien-style';
+                break;
+            case 'andruis':
+                specialDisplay.textContent = "THE EPIC KAAKAA KING";
+                specialDisplay.className = 'andruis-style';
+                break;
+            case 'josh':
+                specialDisplay.textContent = "V.I.P JOSH";
+                specialDisplay.className = 'josh-style';
+                break;
+            case 'jude':
+                specialDisplay.textContent = "ELITE WARRIOR JUDE";
+                specialDisplay.className = 'jude-style';
+                break;
+            default:
+                specialDisplay.style.opacity = '0';
+                specialDisplay.style.transform = 'scale(0)';
+                break;
+        }
     }
 
     function showDogGif() {
