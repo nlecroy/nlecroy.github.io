@@ -433,8 +433,9 @@
     }
 
     @keyframes rainbow {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 100% 50%; }
+        0% { background-position: 0% 50%; transform: scale(1); }
+        50% { background-position: 100% 50%; transform: scale(1.1); }
+        100% { background-position: 0% 50%; transform: scale(1); }
     }
 
     /* Andruis's Kaakaa King Style */
@@ -462,23 +463,54 @@
     }
 
     @keyframes warrior-pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
+        0% { transform: scale(1); text-shadow: 0 0 10px #ff4d00; }
+        50% { transform: scale(1.1); text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00; }
+        100% { transform: scale(1); text-shadow: 0 0 10px #ff4d00; }
     }
 
     @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
+        0% { transform: scale(1); text-shadow: 0 0 10px #ffd700; }
+        50% { transform: scale(1.1); text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        100% { transform: scale(1); text-shadow: 0 0 10px #ffd700; }
     }
 
     @keyframes glow {
-        0% { text-shadow: 0 0 10px rgba(255,215,0,0.7); }
-        50% { text-shadow: 0 0 20px rgba(255,215,0,0.9); }
-        100% { text-shadow: 0 0 10px rgba(255,215,0,0.7); }
+        0% { text-shadow: 0 0 10px rgba(255,215,0,0.7); transform: scale(1); }
+        50% { text-shadow: 0 0 20px rgba(255,215,0,0.9), 0 0 30px rgba(255,215,0,0.7); transform: scale(1.1); }
+        100% { text-shadow: 0 0 10px rgba(255,215,0,0.7); transform: scale(1); }
     }
 
+    /* Special effect for Andruis */
+    .legendary {
+        color: #ffd700;
+        text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+        animation: kingPulse 2s infinite;
+    }
+
+    @keyframes kingPulse {
+        0% { 
+            transform: scale(1); 
+            text-shadow: 0 0 10px #ffd700;
+        }
+        25% { 
+            transform: scale(1.1) rotate(-2deg); 
+            text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700;
+        }
+        50% { 
+            transform: scale(1) rotate(2deg); 
+            text-shadow: 0 0 15px #ffd700;
+        }
+        75% { 
+            transform: scale(1.1) rotate(-2deg); 
+            text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700;
+        }
+        100% { 
+            transform: scale(1); 
+            text-shadow: 0 0 10px #ffd700;
+        }
+    }
+
+    /* Special VIP section styles */
     .vip-names {
         margin-top: 20px;
         padding: 15px;
@@ -514,6 +546,22 @@
         font-weight: bold;
         text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
         animation: pulse 2s infinite;
+    }
+
+    /* Nashme's VIP Style */
+    .nashme-style {
+        background: linear-gradient(45deg, #ff0000, #ffd700);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: vipPulse 2s infinite;
+        text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+    }
+
+    @keyframes vipPulse {
+        0% { transform: scale(1); text-shadow: 0 0 10px rgba(255, 0, 0, 0.7); }
+        50% { transform: scale(1.1); text-shadow: 0 0 20px rgba(255, 0, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7); }
+        100% { transform: scale(1); text-shadow: 0 0 10px rgba(255, 0, 0, 0.7); }
     }
 
     .side-links {
@@ -656,6 +704,72 @@
             background: #ff8533;
         }
     }
+
+    .fire-link {
+        color: #ff4d00;
+        text-decoration: none;
+        font-size: 1.5em;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        padding: 10px 20px;
+        border: 2px solid #ff4d00;
+        background: rgba(255, 77, 0, 0.1);
+        position: relative;
+        transition: all 0.3s;
+        animation: fireGlow 2s infinite;
+    }
+
+    .fire-link:hover {
+        background: rgba(255, 77, 0, 0.2);
+        transform: scale(1.1);
+        box-shadow: 0 0 20px #ff4d00;
+    }
+
+    @keyframes fireGlow {
+        0%, 100% { text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00; }
+        50% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00, 0 0 40px #ff4d00; }
+    }
+
+    .secret-button {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px 40px;
+        background: linear-gradient(45deg, #ff0000, #ff4d00);
+        border: none;
+        border-radius: 10px;
+        color: #ffffff;
+        font-family: "Impact", sans-serif;
+        font-size: 24px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        box-shadow: 
+            0 0 20px rgba(255, 0, 0, 0.5),
+            0 0 40px rgba(255, 77, 0, 0.3);
+        animation: secretPulse 2s infinite;
+        z-index: 9999;
+        text-decoration: none;
+        display: none;
+    }
+
+    @keyframes secretPulse {
+        0% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-50%, -50%) scale(1.1); }
+        100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .secret-button:hover {
+        animation: secretShake 0.5s infinite;
+    }
+
+    @keyframes secretShake {
+        0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+        25% { transform: translate(-50%, -50%) rotate(-5deg); }
+        75% { transform: translate(-50%, -50%) rotate(5deg); }
+    }
   </style>
 </head>
 <body>
@@ -679,7 +793,7 @@
       </p>
       <div>
         <span class="achievement">🔥 Demon Hunter</span>
-        <span class="achievement">⚔️ Slayer of the Damned</span>
+        <span class="achievement">⚔️ Slayer of Demons</span>
       </div>
     </div>
 
@@ -726,6 +840,9 @@
     <p class="welcome-message" id="welcomeMessage">Welcome, Slayer!</p>
   </div>
 
+  <!-- Add secret button (hidden by default) -->
+  <a href="bob-news.html" class="secret-button" id="secretButton">🔥 SECRET BOB NEWS 🔥</a>
+
   <script>
     const nameInput = document.getElementById('name-input');
     const welcomeMessage = document.getElementById('welcomeMessage');
@@ -736,23 +853,33 @@
     const specialFriends = {
         'nash': {
             title: '⚡ Ultimate VIP Nash | Developer ⚡',
-            effect: 'ultimate-vip'
+            effect: 'ultimate-vip',
+            isVIP: true
         },
         'andruis': {
             title: '👑 Legendary Kaakaa King 👑',
-            effect: 'legendary'
-        },
-        'brayden': {
-            title: '🌟 Epic King Bob 🌟',
-            effect: 'epic'
+            effect: 'andruis-style legendary',
+            isVIP: true
         },
         'damien': {
             title: '💫 ultamate slayer VIP Damien 💫',
-            effect: 'mystic'
+            effect: 'damien-style',
+            isVIP: true
+        },
+        'josh': {
+            title: 'V.I.P JOSH',
+            effect: 'josh-style',
+            isVIP: true
         },
         'jude': {
             title: '⚔️ Elite Warrior Jude ⚔️',
-            effect: 'elite'
+            effect: 'jude-style',
+            isVIP: true
+        },
+        'nashme': {
+            title: '🔥 VIP Nashme 🔥',
+            effect: 'nashme-style',
+            isVIP: true
         }
     };
 
@@ -763,90 +890,72 @@
         welcomeMessage.textContent = `Welcome, ${savedName}!`;
     }
 
-    nameInput.addEventListener('input', function() {
-        const name = this.value;
-        localStorage.setItem('visitorName', name);
-        welcomeMessage.textContent = name ? `Welcome, ${name}!` : 'Welcome, Slayer!';
+    function showVIPSection() {
+        const vipSection = document.createElement('div');
+        vipSection.className = 'vip-names';
+        vipSection.innerHTML = `
+            <h2 class="vip-title">⭐ VIP MEMBERS ⭐</h2>
+            <div class="vip-list">
+                <span class="vip-name">Nash</span>
+                <span class="vip-name">Andruis</span>
+                <span class="vip-name">Damien</span>
+                <span class="vip-name">Josh</span>
+                <span class="vip-name">Jude</span>
+                <span class="vip-name">Nashme</span>
+            </div>
+        `;
         
-        // Add secret code check
-        if (name.toLowerCase() === 'big head club') {
-            // Create secret link if it doesn't exist
-            if (!document.getElementById('secret-link')) {
-                const secretLink = document.createElement('div');
-                secretLink.id = 'secret-link';
-                secretLink.innerHTML = `
-                    <a href="bob-news.html" class="fire-link">
-                        🔥 BOB NEWS 🔥
-                    </a>
-                `;
-                secretLink.style.cssText = `
-                    position: fixed;
-                    bottom: 0;
-                    width: 100%;
-                    text-align: center;
-                    background: linear-gradient(to right, #000000, #1a0000);
-                    padding: 15px;
-                    z-index: 9999;
-                `;
-                document.body.appendChild(secretLink);
-                
-                // Play secret sound
-                const secretSound = new Audio('https://www.soundjay.com/button/button-35.mp3');
-                secretSound.play();
-            }
+        // Remove existing VIP section if it exists
+        const existingVIP = document.querySelector('.vip-names');
+        if (existingVIP) {
+            existingVIP.remove();
+        }
+        
+        document.body.appendChild(vipSection);
+        
+        // Play VIP sound
+        const vipSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+        vipSound.play().catch(error => console.log('Audio play failed:', error));
+    }
+
+    nameInput.addEventListener('input', function() {
+        const name = this.value.toLowerCase();
+        const secretButton = document.getElementById('secretButton');
+        
+        // Check for special names first
+        const friend = specialFriends[name];
+        
+        if (name === 'big head club') {
+            secretButton.style.display = 'block';
+            
+            // Play special sound
+            const secretSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+            secretSound.play().catch(error => console.log('Audio play failed:', error));
+            
+            welcomeMessage.textContent = '🎯 SECRET UNLOCKED! 🎯';
+            welcomeMessage.className = 'welcome-message legendary';
         } else {
-            // Remove secret link if it exists
-            const secretLink = document.getElementById('secret-link');
-            if (secretLink) {
-                secretLink.remove();
+            secretButton.style.display = 'none';
+            
+            if (friend) {
+                welcomeMessage.textContent = `Welcome, ${friend.title}`;
+                welcomeMessage.className = `welcome-message ${friend.effect}`;
+                showSpecialEffect(friend.effect);
+                
+                if (friend.isVIP) {
+                    showVIPSection();
+                }
+            } else {
+                welcomeMessage.textContent = name ? `Welcome, ${name}!` : 'Welcome, Slayer!';
+                welcomeMessage.className = 'welcome-message';
+                
+                const vipSection = document.querySelector('.vip-names');
+                if (vipSection) {
+                    vipSection.remove();
+                }
             }
         }
     });
-
-    // Add this CSS to your existing styles
-    const style = document.createElement('style');
-    style.textContent = `
-        .fire-link {
-            color: #ff4d00;
-            text-decoration: none;
-            font-size: 1.5em;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            padding: 10px 20px;
-            border: 2px solid #ff4d00;
-            background: rgba(255, 77, 0, 0.1);
-            position: relative;
-            transition: all 0.3s;
-            animation: fireGlow 2s infinite;
-        }
-
-        .fire-link:hover {
-            background: rgba(255, 77, 0, 0.2);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px #ff4d00;
-        }
-
-        @keyframes fireGlow {
-            0%, 100% { text-shadow: 0 0 10px #ff4d00, 0 0 20px #ff4d00; }
-            50% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00, 0 0 40px #ff4d00; }
-        }
-    `;
-    document.head.appendChild(style);
-
-    function updateWelcome(name) {
-        const lowerName = name.toLowerCase();
-        const friend = specialFriends[lowerName];
-        
-        if (friend) {
-            welcomeMessage.textContent = `Welcome, ${friend.title}`;
-            welcomeMessage.className = `welcome-message ${friend.effect}`;
-            showSpecialEffect(friend.effect);
-        } else {
-            welcomeMessage.textContent = `Welcome, ${name}!`;
-            welcomeMessage.className = 'welcome-message';
-        }
-    }
 
     function showSpecialEffect(effect) {
         const sound = new Audio('https://www.soundjay.com/button/button-3.mp3');
