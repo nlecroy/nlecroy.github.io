@@ -1087,6 +1087,18 @@
         document.querySelector('.overlay').style.display = 'none';
         document.querySelector('.dog-meme').style.display = 'none';
     }
+
+    function checkVIP() {
+        var name = document.getElementById('name-input').value.toLowerCase();
+        var vipStatus = document.getElementById('welcomeMessage');
+        
+        if (name === 'brayden') {
+            window.location.href = 'vip.html'; // Redirect to King Bob's VIP page
+        } else {
+            vipStatus.innerHTML = 'Not a VIP... yet.';
+            vipStatus.style.color = '#ff0000';
+        }
+    }
   </script>
 </body>
 </html>

@@ -3,383 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 Epic Gaming Sites 🎮</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Epic Gaming Sites - Slayer's Arsenal</title>
     <style>
         body {
-            background-color: black;
-            color: #ff4d00;
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
+            padding: 0;
+            background: #000;
             color: #ff4d00;
-            text-shadow: 0 0 20px #ff4d00;
-            font-size: 40px;
-            margin-bottom: 30px;
+            font-family: "Impact", sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0000 0%, #000000 100%);
         }
 
-        .sites-container {
-            margin-left: 200px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .game-site {
-            border: 2px solid #ff4d00;
-            border-radius: 10px;
-            padding: 20px;
-            background: rgba(255, 77, 0, 0.1);
-            transition: all 0.3s;
-            box-shadow: 0 0 15px #ff4d00;
-        }
-
-        .game-site:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px #ff4d00;
-        }
-
-        .game-site h2 {
-            color: #ff4d00;
-            margin: 0 0 10px 0;
-            text-shadow: 0 0 10px #ff4d00;
-        }
-
-        .game-site p {
-            color: white;
-            margin: 10px 0;
-        }
-
-        .game-site a {
-            color: #ff4d00;
-            text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            padding: 10px 20px;
-            border: 1px solid #ff4d00;
-            border-radius: 5px;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-
-        .game-site a:hover {
-            background: #ff4d00;
-            color: black;
-            box-shadow: 0 0 15px #ff4d00;
-        }
-
-        .classified-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.7)),
-                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            z-index: -1;
-        }
-
-        .terminal-header {
-            text-align: center;
-            margin: 20px 0;
-            animation: glitch 2s infinite;
-        }
-
-        .terminal-header h1 {
-            color: #00ff00;
-            font-size: 2.5em;
-            text-shadow: 0 0 10px #00ff00;
-            margin: 0;
-        }
-
-        .terminal-header p {
-            color: #ff0000;
-            margin: 5px 0;
-        }
-
-        .sites-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
+        .doom-container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .epic-title {
+            font-size: 4em;
+            color: #ff0000;
+            text-transform: uppercase;
+            text-align: center;
+            margin: 40px 0;
+            text-shadow: 
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 30px #ff0000;
+            animation: titlePulse 2s infinite;
+        }
+
+        .site-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
         }
 
         .site-card {
-            background: rgba(0, 255, 0, 0.1);
-            border: 2px solid #00ff00;
-            border-radius: 10px;
+            background: rgba(40, 0, 0, 0.8);
+            border: 3px solid #ff0000;
             padding: 20px;
-            position: relative;
-            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
-            transition: all 0.3s;
+            position: relative;
+            clip-path: polygon(
+                0 0,
+                95% 0,
+                100% 5%,
+                100% 95%,
+                95% 100%,
+                0 100%
+            );
         }
 
         .site-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
-
-        .site-card::before {
-            content: 'CLASSIFIED';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #ff0000;
-            font-size: 0.8em;
-            opacity: 0.7;
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.5),
+                0 0 40px rgba(255, 0, 0, 0.3);
         }
 
         .site-title {
-            font-size: 1.5em;
-            color: #00ff00;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px #00ff00;
+            color: #ff4d00;
+            font-size: 2em;
+            margin: 10px 0;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
         }
 
         .site-description {
-            color: #00cc00;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-
-        .access-button {
-            background: #000;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            padding: 8px 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .access-button:hover {
-            background: #00ff00;
-            color: #000;
-        }
-
-        .nav-links {
-            position: fixed;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 9999;
-            background: linear-gradient(90deg, 
-                rgba(0, 0, 0, 0.95), 
-                rgba(255, 77, 0, 0.1)
-            );
-            padding: 20px;
-            border-radius: 20px;
-            border: 2px solid #ff4d00;
-            box-shadow: 
-                0 0 20px rgba(255, 77, 0, 0.3),
-                inset 0 0 15px rgba(255, 77, 0, 0.2);
-            backdrop-filter: blur(5px);
-        }
-
-        .nav-links::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #ff4d00, transparent, #ff4d00);
-            border-radius: 20px;
-            z-index: -1;
-            animation: borderGlow 3s infinite;
-            opacity: 0.6;
-        }
-
-        .nav-links::after {
-            content: '≡ MENU';
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ff4d00;
-            font-size: 0.8em;
-            text-shadow: 0 0 10px rgba(255, 77, 0, 0.8);
-            letter-spacing: 2px;
-        }
-
-        .nav-links a {
-            font-size: 0.8em;
-            padding: 10px 20px;
-            white-space: nowrap;
-            position: relative;
-            transition: all 0.3s;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 77, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .glowing-link {
-            color: #ff4d00;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(255, 77, 0, 0.5);
-            display: flex;
-            align-items: center;
-        }
-
-        .glowing-link:hover {
             color: #ff8533;
-            text-shadow: 
-                0 0 10px rgba(255, 77, 0, 0.8),
-                0 0 20px rgba(255, 77, 0, 0.4);
-            transform: translateX(5px) scale(1.05);
-            background: rgba(255, 77, 0, 0.2);
-            border-color: #ff4d00;
+            text-align: center;
+            font-size: 1.1em;
+            margin: 15px 0;
         }
 
-        @keyframes borderGlow {
-            0%, 100% {
-                opacity: 0.3;
-                box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
-            }
-            50% {
-                opacity: 0.7;
-                box-shadow: 0 0 30px rgba(255, 77, 0, 0.5);
-            }
-        }
-
-        @keyframes glitch {
-            0% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
-            25% { text-shadow: -2px 2px #ff0000, 2px -2px #00ff00; }
-            50% { text-shadow: 2px -2px #ff0000, -2px 2px #00ff00; }
-            75% { text-shadow: -2px -2px #ff0000, 2px 2px #00ff00; }
-            100% { text-shadow: 2px 2px #ff0000, -2px -2px #00ff00; }
-        }
-
-        .scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                transparent 50%,
-                rgba(0, 255, 0, 0.025) 50%
+        .site-link {
+            display: block;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            color: #000;
+            text-decoration: none;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 20px;
+            text-transform: uppercase;
+            transition: transform 0.3s;
+            clip-path: polygon(
+                0 0,
+                90% 0,
+                100% 30%,
+                100% 100%,
+                10% 100%,
+                0 70%
             );
-            background-size: 100% 4px;
-            z-index: 1;
-            pointer-events: none;
         }
 
-        .static-effect {
+        .site-link:hover {
+            transform: scale(1.1);
+        }
+
+        .site-icon {
+            font-size: 3em;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        @keyframes titlePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .fire-particles {
             position: fixed;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMABA+AAAACHRSTlMzMzMzMzMzM85JBgUAAAABYktHRAH/Ai3eAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QUcCDsxNYLZPAAAAEJJREFUKM9jYBgFgwEwMzJCGcwQBhsDAwMzhMECYbBC1LFCGGwQBjuEwQFhcEIYXBAGN4TBA2HwQhh8EAY/BMICAJqXBdc7+DNzAAAAAElFTkSuQmCC');
-            opacity: 0.03;
-            z-index: 2;
+            height: 200px;
             pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            bottom: 0;
+            width: 5px;
+            height: 5px;
+            background: #ff4d00;
+            border-radius: 50%;
+            animation: rise 1.5s linear infinite;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: none;
+            color: #000;
+            text-decoration: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 100;
+            clip-path: polygon(
+                0 0,
+                90% 0,
+                100% 30%,
+                100% 100%,
+                10% 100%,
+                0 70%
+            );
         }
     </style>
 </head>
 <body>
-    <div class="classified-overlay"></div>
-    <div class="scan-line"></div>
-    <div class="static-effect"></div>
+    <div class="fire-particles"></div>
+    <a href="index.html" class="back-button">← BACK TO HELL</a>
 
-    <div class="terminal-header">
-        <h1>⚡ CLASSIFIED GAMING SITES ⚡</h1>
-        <p>ACCESS LEVEL: TOP SECRET</p>
-        <p>ENCRYPTION: ENABLED</p>
+    <div class="doom-container">
+        <h1 class="epic-title">Epic Gaming Sites</h1>
+
+        <div class="site-grid">
+            <div class="site-card">
+                <div class="site-icon">🎮</div>
+                <h2 class="site-title">STEAM</h2>
+                <p class="site-description">The ultimate gaming platform. Your gateway to endless digital carnage!</p>
+                <a href="https://store.steampowered.com/" class="site-link" target="_blank">ENTER STEAM</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🎯</div>
+                <h2 class="site-title">CRAZY GAMES</h2>
+                <p class="site-description">Thousands of free browser games ready to play instantly!</p>
+                <a href="https://www.crazygames.com/" class="site-link" target="_blank">PLAY NOW</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🎲</div>
+                <h2 class="site-title">POKI</h2>
+                <p class="site-description">Free online games - Play anywhere, anytime!</p>
+                <a href="https://poki.com/" class="site-link" target="_blank">START GAMING</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🏆</div>
+                <h2 class="site-title">TWITCH</h2>
+                <p class="site-description">Watch the best gamers dominate. Learn from the masters of destruction!</p>
+                <a href="https://www.twitch.tv/" class="site-link" target="_blank">WATCH NOW</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">⚔️</div>
+                <h2 class="site-title">IGN</h2>
+                <p class="site-description">Your source for gaming news, reviews, and epic gaming intel!</p>
+                <a href="https://www.ign.com/" class="site-link" target="_blank">GET INTEL</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">💀</div>
+                <h2 class="site-title">DOOM</h2>
+                <p class="site-description">The official home of DOOM. Rip and tear until it is done!</p>
+                <a href="https://doom.com/" class="site-link" target="_blank">RIP & TEAR</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🎮</div>
+                <h2 class="site-title">COOLMATH GAMES</h2>
+                <p class="site-description">Brain training? More like gaming in disguise!</p>
+                <a href="https://www.coolmathgames.com/" class="site-link" target="_blank">PLAY SMART</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🎯</div>
+                <h2 class="site-title">Y8 GAMES</h2>
+                <p class="site-description">Classic browser gaming since forever!</p>
+                <a href="https://www.y8.com/" class="site-link" target="_blank">PLAY Y8</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🎲</div>
+                <h2 class="site-title">KONGREGATE</h2>
+                <p class="site-description">Community-powered gaming excellence!</p>
+                <a href="https://www.kongregate.com/" class="site-link" target="_blank">JOIN NOW</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🎮</div>
+                <h2 class="site-title">ADDICTING GAMES</h2>
+                <p class="site-description">Warning: These games are seriously addicting!</p>
+                <a href="https://www.addictinggames.com/" class="site-link" target="_blank">GET ADDICTED</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🏹</div>
+                <h2 class="site-title">ARMOR GAMES</h2>
+                <p class="site-description">Your shield against boredom!</p>
+                <a href="https://armorgames.com/" class="site-link" target="_blank">SUIT UP</a>
+            </div>
+
+            <div class="site-card">
+                <div class="site-icon">🎲</div>
+                <h2 class="site-title">HUMBLE BUNDLE</h2>
+                <p class="site-description">Epic game deals that help charity. Gaming with a purpose!</p>
+                <a href="https://www.humblebundle.com/" class="site-link" target="_blank">GET DEALS</a>
+            </div>
+        </div>
     </div>
-
-    <h1>🎮 Epic Unblocked Gaming Sites 🎮</h1>
-
-    <div class="sites-container">
-        <div class="game-site">
-            <h2>🏃 Subway Surfers</h2>
-            <p>Run, dodge, and surf through the subway! One of the most popular unblocked games.</p>
-            <a href="https://now.gg/play/sybo-games/4236/subway-surfers" target="_blank">Play Now!</a>
-        </div>
-
-        <div class="game-site">
-            <h2>⚔️ 1v1.LOL</h2>
-            <p>Build and fight in this epic battle royale game! Similar to Fortnite.</p>
-            <a href="https://1v1.lol" target="_blank">Play Now!</a>
-        </div>
-
-        <div class="game-site">
-            <h2>🎯 Shell Shockers</h2>
-            <p>Epic egg-based FPS game! Battle other eggs in intense matches.</p>
-            <a href="https://shellshock.io" target="_blank">Play Now!</a>
-        </div>
-
-        <div class="game-site">
-            <h2>🚗 Slope</h2>
-            <p>Race down an endless slope! How far can you go?</p>
-            <a href="https://slope-game.com" target="_blank">Play Now!</a>
-        </div>
-
-        <div class="game-site">
-            <h2>🎲 Cookie Clicker</h2>
-            <p>Click cookies, build an empire! Super addictive idle game.</p>
-            <a href="https://orteil.dashnet.org/cookieclicker/" target="_blank">Play Now!</a>
-        </div>
-
-        <div class="game-site">
-            <h2>🎯 Paper.io</h2>
-            <p>Capture territory and become the biggest! Don't hit other players' trails!</p>
-            <a href="https://paper-io.com" target="_blank">Play Now!</a>
-        </div>
-
-        <div class="game-site">
-            <h2>🎮 Retro Games</h2>
-            <p>Play classic Nintendo and arcade games online!</p>
-            <a href="https://www.retrogames.cc" target="_blank">Play Now!</a>
-        </div>
-
-        <div class="game-site">
-            <h2>⚔️ Minecraft Classic</h2>
-            <p>Play the classic version of Minecraft right in your browser!</p>
-            <a href="https://classic.minecraft.net" target="_blank">Play Now!</a>
-        </div>
-    </div>
-
-    <nav class="nav-links">
-        <a href="index.html" class="glowing-link">Gaming Page</a>
-        <a href="about.html" class="glowing-link">About Me</a>
-        <a href="fun-facts.html" class="glowing-link">Fun Facts</a>
-        <a href="memes.html" class="glowing-link">Epic Memes</a>
-        <a href="gaming-sites.html" class="glowing-link">Gaming Sites</a>
-        <a href="fave-songs.html" class="glowing-link">Epic Music</a>
-        <a href="clans.html" class="glowing-link">Clans & Crews</a>
-        <a href="contact-me.html" class="glowing-link">Contact Me</a>
-    </nav>
 
     <script>
-        // Add terminal typing sound effect
-        function playTypeSound() {
-            const audio = new Audio('https://www.soundjay.com/button/button-3.mp3');
-            audio.volume = 0.1;
-            audio.play();
+        // Fire particles
+        function createParticle() {
+            const particles = document.querySelector('.fire-particles');
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 8 + 4;
+            const left = Math.random() * 100;
+            
+            particle.style.left = left + '%';
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            particles.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1500);
         }
 
-        // Add hover effects with sound
+        // Generate particles
+        setInterval(createParticle, 50);
+
+        // Add click sound effect to cards
         document.querySelectorAll('.site-card').forEach(card => {
-            card.addEventListener('mouseenter', playTypeSound);
+            card.addEventListener('click', () => {
+                const sound = new Audio('https://www.soundjay.com/button/button-30.mp3');
+                sound.play().catch(error => console.log('Audio play failed:', error));
+            });
         });
     </script>
 </body>
