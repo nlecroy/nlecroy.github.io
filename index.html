@@ -378,71 +378,48 @@
     }
 
     .name-input-container {
-        position: absolute;
-        top: 20px;
-        right: 20px;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        transform: none;
         z-index: 9999;
         display: flex;
-        flex-direction: column;
-        gap: 15px;
-        background: #000000;
-        padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 0 30px #ff4d00, 
-                   0 0 50px #ff4d00,
-                   0 0 70px #ff4d00;
-        border: 3px solid #ff4d00;
-        min-width: 300px;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 15px;
     }
 
     .name-input {
-        width: 100%;
-        padding: 8px;
-        background: #1a1a1a;
-        border: 2px solid #ff4d00;
-        color: #ffffff;
-        font-size: 14px;
-        font-weight: bold;
-        border-radius: 8px;
-    }
-
-    .name-input::placeholder {
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid #ff4d00;
         color: #ff4d00;
-    }
-
-    .submit-button {
-        width: 100%;
-        background: #ff4d00;
-        color: white;
-        border: none;
-        padding: 8px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .input-label {
-        color: #ff4d00;
-        font-size: 16px;
-        font-weight: bold;
+        padding: 5px 10px;
+        font-family: "Impact", sans-serif;
+        font-size: 0.9em;
+        outline: none;
+        width: 150px;
+        height: 25px;
+        transition: all 0.3s;
         text-transform: uppercase;
-        text-align: center;
-        text-shadow: 0 0 10px #ff4d00;
+        border-radius: 4px;
     }
 
-    #special-name-display {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
+    .name-input:focus {
+        border-color: #ff8533;
+        box-shadow: 0 0 15px rgba(255, 77, 0, 0.4);
+    }
+
+    .welcome-message {
+        color: #ff4d00;
+        font-family: "Impact", sans-serif;
         text-align: center;
-        width: 300px;
-        background: #000000;
-        padding: 20px;
-        border-radius: 15px;
-        border: 2px solid #ff4d00;
-        box-shadow: 0 0 20px #ff4d00;
+        text-shadow: 0 0 10px rgba(255, 77, 0, 0.8);
+        margin: 0;
+        font-size: 0.9em;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        white-space: nowrap;
     }
 
     /* Damien's Rainbow Style */
@@ -735,9 +712,19 @@
   <div class="fire-particles"></div>
 
   <!-- Update dog button text -->
-  <button class="dog-button" onclick="showDogMeme()">�� SHOW DOG</button>
+  <button class="dog-button" onclick="showDogMeme()">SHOW DOG</button>
   <div class="overlay" onclick="hideDogMeme()"></div>
   <img src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif" alt="Floating Pug" class="dog-meme" onclick="hideDogMeme()">
+
+  <!-- Name input container now appears at top right -->
+  <div class="name-input-container">
+    <input type="text" 
+           class="name-input" 
+           placeholder="ENTER YOUR NAME"
+           id="name-input"
+           maxlength="20">
+    <p class="welcome-message" id="welcomeMessage">Welcome, Slayer!</p>
+  </div>
 
   <script>
     const nameInput = document.getElementById('name-input');
@@ -773,13 +760,13 @@
     const savedName = localStorage.getItem('visitorName');
     if (savedName) {
         nameInput.value = savedName;
-        updateWelcome(savedName);
+        welcomeMessage.textContent = `Welcome, ${savedName}!`;
     }
 
     nameInput.addEventListener('input', function() {
         const name = this.value;
         localStorage.setItem('visitorName', name);
-        updateWelcome(name);
+        welcomeMessage.textContent = name ? `Welcome, ${name}!` : 'Welcome, Slayer!';
         
         // Add secret code check
         if (name.toLowerCase() === 'big head club') {
