@@ -891,6 +891,112 @@
         transform-style: preserve-3d;
         perspective: 1000px;
     }
+
+    /* Add these new styles */
+    .contact-link-container {
+        position: relative;
+        margin: 20px;
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+    .contact-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 20px 40px;
+        background: linear-gradient(45deg, #800000, #330000);
+        color: #fff;
+        text-decoration: none;
+        font-size: 32px;
+        border: 3px solid #ff0000;
+        position: relative;
+        transition: all 0.3s ease;
+        transform-style: preserve-3d;
+        animation: contactFloat 3s infinite ease-in-out;
+        clip-path: polygon(
+            0 10%, 10% 0,
+            90% 0, 100% 10%,
+            100% 90%, 90% 100%,
+            10% 100%, 0 90%
+        );
+        box-shadow: 
+            0 0 30px rgba(255, 0, 0, 0.3),
+            inset 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+
+    .contact-text {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: bold;
+        text-shadow: 
+            0 0 10px #ff0000,
+            0 0 20px #ff0000;
+    }
+
+    .contact-icon {
+        font-size: 36px;
+        animation: spin 2s linear infinite;
+    }
+
+    .hellfire-effect {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 40px;
+        background: linear-gradient(to top, #ff0000, transparent);
+        filter: blur(5px);
+        opacity: 0.5;
+        animation: flicker 0.5s infinite alternate;
+    }
+
+    .contact-link:hover {
+        transform: translateZ(30px) scale(1.1);
+        box-shadow: 
+            0 0 40px #ff0000,
+            0 0 80px rgba(255, 0, 0, 0.5),
+            0 0 120px rgba(255, 0, 0, 0.3);
+    }
+
+    .contact-link:hover .hellfire-effect {
+        height: 60px;
+        opacity: 0.8;
+    }
+
+    @keyframes contactFloat {
+        0% { transform: translateY(0) translateZ(0); }
+        50% { transform: translateY(-10px) translateZ(20px); }
+        100% { transform: translateY(0) translateZ(0); }
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes flicker {
+        0% { opacity: 0.5; height: 35px; }
+        100% { opacity: 0.8; height: 45px; }
+    }
+
+    /* Add King Bob style */
+    .king-bob-style {
+        color: #ffd700 !important;
+        text-shadow: 
+            0 0 10px #ffd700,
+            0 0 20px #ffd700,
+            0 0 30px #ff4400,
+            0 0 40px #ff4400 !important;
+        animation: kingBobGlow 2s infinite alternate;
+    }
+
+    @keyframes kingBobGlow {
+        from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ff4400; }
+        to { text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ff4400; }
+    }
   </style>
 </head>
 <body>
@@ -939,8 +1045,7 @@
     <a href="memes.html">🔪 MEMES</a>
     <a href="gaming-sites.html">🎯 GAMING SITES</a>
     <a href="fave-songs.html">🎵 EPIC MUSIC</a>
-    <a href="clans.html">👥 CLANS & CREWS</a>
-    <a href="contact-me.html">📧 CONTACT ME</a>
+    <a href="clans.html">�� CLANS & CREWS</a>
   </div>
 
   <!-- Add fire particles container -->
@@ -981,6 +1086,14 @@
         </a>
         <div class="flame-effect"></div>
     </div>
+
+    <div class="contact-link-container">
+        <a href="contact.html" class="contact-link">
+            <span class="contact-text">SUMMON ME</span>
+            <div class="contact-icon">💀</div>
+        </a>
+        <div class="hellfire-effect"></div>
+    </div>
   </div>
 
   <script>
@@ -1019,6 +1132,11 @@
         'nashme': {
             title: '🔥 VIP Nashme 🔥',
             effect: 'nashme-style',
+            isVIP: true
+        },
+        'brayden': {
+            title: '👑 KING BOB THE ALMIGHTY 👑',
+            effect: 'king-bob-style legendary',
             isVIP: true
         }
     };
@@ -1239,6 +1357,26 @@
             vipStatus.style.color = '#ff0000';
         }
     }
+
+    // Add King Bob style
+    const style = document.createElement('style');
+    style.textContent = `
+        .king-bob-style {
+            color: #ffd700 !important;
+            text-shadow: 
+                0 0 10px #ffd700,
+                0 0 20px #ffd700,
+                0 0 30px #ff4400,
+                0 0 40px #ff4400 !important;
+            animation: kingBobGlow 2s infinite alternate;
+        }
+
+        @keyframes kingBobGlow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ff4400; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ff4400; }
+        }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
