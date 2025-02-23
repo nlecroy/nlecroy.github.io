@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DONATE</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1a0f2e, #2e1647);
+            color: #fff;
+            font-family: 'Impact', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #5c2e91, #2e1647);
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            border: 2px solid #9b4dff;
+            box-shadow: 0 0 20px rgba(155, 77, 255, 0.3);
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #9b4dff;
+            text-shadow: 
+                0 0 10px #9b4dff,
+                0 0 20px #9b4dff;
+            margin-bottom: 40px;
+        }
+
+        .donate-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .donate-card {
+            background: rgba(155, 77, 255, 0.1);
+            border: 2px solid #9b4dff;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .donate-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(155, 77, 255, 0.5);
+        }
+
+        .donate-amount {
+            font-size: 36px;
+            color: #9b4dff;
+            margin: 10px 0;
+        }
+
+        .donate-description {
+            color: #ccc;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .donate-button {
+            background: linear-gradient(45deg, #5c2e91, #2e1647);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            border: 2px solid #9b4dff;
+        }
+
+        .donate-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(155, 77, 255, 0.5);
+        }
+
+        .crypto-options {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(155, 77, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .crypto-address {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            cursor: pointer;
+        }
+
+        .crypto-address:hover {
+            background: rgba(155, 77, 255, 0.3);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        .floating-hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            color: #9b4dff;
+            font-size: 24px;
+            animation: float 3s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        .payment-methods {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .payment-methods img {
+            max-width: 200px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .payment-methods img:hover {
+            opacity: 1;
+        }
+
+        .payment-info {
+            margin-top: 40px;
+            text-align: center;
+            color: #ccc;
+            font-size: 18px;
+        }
+
+        .payment-info small {
+            display: block;
+            margin-top: 10px;
+            opacity: 0.7;
+        }
+
+        .special-note {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(155, 77, 255, 0.1);
+            border: 2px solid #9b4dff;
+            border-radius: 10px;
+            text-align: center;
+            animation: glow 2s infinite alternate;
+        }
+
+        .special-note p {
+            margin: 10px 0;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .special-note p:first-child {
+            color: #9b4dff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px rgba(155, 77, 255, 0.3);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(155, 77, 255, 0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="hearts"></div>
+    <a href="index.html" class="back-button">← BACK</a>
+
+    <div class="container">
+        <h1>SUPPORT THE DEVELOPER</h1>
+        
+        <div class="donate-options">
+            <div class="donate-card">
+                <div class="donate-amount">$5</div>
+                <div class="donate-description">A small gift to support development</div>
+                <a href="https://gl.me/u/T22BFg2859vK" target="_blank" class="donate-button">DONATE NOW</a>
+            </div>
+            
+            <div class="donate-card">
+                <div class="donate-amount">$10</div>
+                <div class="donate-description">Help fund new features</div>
+                <a href="https://gl.me/u/T22BFg2859vK" target="_blank" class="donate-button">DONATE NOW</a>
+            </div>
+            
+            <div class="donate-card">
+                <div class="donate-amount">$25</div>
+                <div class="donate-description">Become a premium supporter</div>
+                <a href="https://gl.me/u/T22BFg2859vK" target="_blank" class="donate-button">DONATE NOW</a>
+            </div>
+        </div>
+
+        <div class="payment-info">
+            <p>Donations are processed securely through Greenlight</p>
+            <small>Amounts between $5 and $250 accepted</small>
+        </div>
+
+        <div class="special-note">
+            <p>💡 Put your name in the note box when donating $5 or more and email me your suggestions!</p>
+            <p>I regularly update this site and value your feedback.</p>
+        </div>
+    </div>
+
+    <script>
+        function donate(amount) {
+            // Replace with your actual payment processing logic
+            alert(`Thank you for wanting to donate $${amount}! Payment processing coming soon.`);
+        }
+
+        function copyAddress(type) {
+            const element = event.target;
+            const address = element.textContent.split(': ')[1].trim();
+            navigator.clipboard.writeText(address);
+            
+            const originalText = element.textContent;
+            element.textContent = 'Copied to clipboard!';
+            setTimeout(() => element.textContent = originalText, 1000);
+        }
+
+        // Create floating hearts background
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = '💜';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDelay = Math.random() * 3 + 's';
+            document.getElementById('hearts').appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 3000);
+        }
+
+        setInterval(createHeart, 300);
+    </script>
+</body>
+</html> 
