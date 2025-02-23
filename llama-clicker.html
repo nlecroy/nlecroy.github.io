@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLAMA CLICKER</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a0f2e;
+            color: #fff;
+            font-family: 'Impact', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(45deg, #1a0f2e, #2e1647);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .upgrade-area {
+            width: 300px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-left: 3px solid #9b4dff;
+            overflow-y: auto;
+        }
+
+        .vbucks-button {
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+            background: linear-gradient(45deg, #5c2e91, #2e1647);
+            border: 4px solid #9b4dff;
+            border-radius: 50%;
+            color: white;
+            font-family: 'Impact', sans-serif;
+            font-size: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: float 3s infinite ease-in-out;
+            box-shadow: 
+                0 0 20px rgba(155, 77, 255, 0.3),
+                inset 0 0 10px rgba(155, 77, 255, 0.3);
+        }
+
+        .vbucks-button:active {
+            transform: scale(0.95);
+        }
+
+        .button-text {
+            position: relative;
+            z-index: 2;
+            text-shadow: 
+                0 0 10px #9b4dff,
+                0 0 20px #9b4dff;
+        }
+
+        .button-effects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .upgrade-effects {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Upgrade effect styles */
+        .rainbow-effect {
+            animation: rainbowBorder 2s linear infinite;
+        }
+
+        .golden-effect {
+            border-color: #ffd700;
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.5),
+                inset 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .storm-effect {
+            background: linear-gradient(45deg, #4a1f91, #2e1647);
+        }
+
+        .ultra-effect {
+            animation: ultraPulse 2s infinite alternate;
+        }
+
+        .upgrade-notification {
+            position: fixed;
+            font-size: 48px;
+            color: #fff;
+            text-shadow: 0 0 20px #9b4dff;
+            animation: upgradeNotify 1s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rainbowBorder {
+            0% { border-color: #ff0000; }
+            17% { border-color: #ff9900; }
+            33% { border-color: #ffff00; }
+            50% { border-color: #00ff00; }
+            67% { border-color: #0099ff; }
+            83% { border-color: #6633ff; }
+            100% { border-color: #ff0066; }
+        }
+
+        @keyframes ultraPulse {
+            0% { transform: scale(1); filter: hue-rotate(0deg); }
+            100% { transform: scale(1.1); filter: hue-rotate(360deg); }
+        }
+
+        @keyframes upgradeNotify {
+            0% { 
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .vbucks {
+            font-size: 48px;
+            color: #9b4dff;
+            text-shadow: 
+                0 0 10px #9b4dff,
+                0 0 20px #9b4dff;
+            margin: 20px 0;
+        }
+
+        .upgrade-card {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #9b4dff;
+            border-radius: 5px;
+            background: rgba(155, 77, 255, 0.1);
+        }
+
+        .upgrade-button {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0;
+            text-align: left;
+        }
+
+        .upgrade-button small {
+            display: block;
+            margin-top: 5px;
+            color: #ccc;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #5c2e91, #2e1647);
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            border: 2px solid #9b4dff;
+            box-shadow: 0 0 20px rgba(155, 77, 255, 0.3);
+            z-index: 1000;
+        }
+
+        .vbuck-particle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 24px;
+            animation: flyUp 1s ease-out forwards;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes flyUp {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(0, -100px);
+                opacity: 0;
+            }
+        }
+
+        .factory-stats {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            text-align: center;
+            border-top: 2px solid #9b4dff;
+        }
+
+        .factory-progress {
+            width: 80%;
+            height: 20px;
+            background: #2e1647;
+            margin: 10px auto;
+            border: 2px solid #9b4dff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(45deg, #5c2e91, #9b4dff);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        .factory-text {
+            color: #9b4dff;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(155, 77, 255, 0.5);
+            margin: 5px 0;
+        }
+
+        .factory-details {
+            color: #fff;
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← BACK</a>
+
+    <div class="container">
+        <div class="game-area">
+            <div class="vbucks">V-Bucks: <span id="vbucks-count">0</span></div>
+            <button class="vbucks-button" id="llama">
+                <span class="button-text">V-BUCKS</span>
+                <div class="button-effects"></div>
+            </button>
+            <div id="upgrade-effects" class="upgrade-effects"></div>
+        </div>
+
+        <div class="upgrade-area">
+            <h2>UPGRADES</h2>
+            <button class="upgrade-button" id="autoClickerBtn" onclick="buyUpgrade('autoClicker')">
+                Auto Clicker (Level: <span id="autoClickerLevel">0</span>)
+                <br>
+                <small>Clicks automatically every second</small>
+                <br>
+                <small>Cost: <span id="autoClickerCost">10</span> V-Bucks</small>
+            </button>
+            <button class="upgrade-button" id="doubleVBucksBtn" onclick="buyUpgrade('doubleVBucks')">
+                Double V-Bucks (Level: <span id="doubleVBucksLevel">0</span>)
+                <br>
+                <small>Multiply V-Bucks per click</small>
+                <br>
+                <small>Cost: <span id="doubleVBucksCost">50</span> V-Bucks</small>
+            </button>
+            <button class="upgrade-button" id="rainbowLlamaBtn" onclick="buyUpgrade('rainbowLlama')">
+                Rainbow Llama (Cost: 100)
+                <br>
+                <small>5x V-Bucks per click</small>
+            </button>
+            <button class="upgrade-button" id="vbucksStormBtn" onclick="buyUpgrade('vbucksStorm')">
+                V-Bucks Storm (Cost: 500)
+                <br>
+                <small>10x V-Bucks per click</small>
+            </button>
+            <button class="upgrade-button" id="goldenLlamaBtn" onclick="buyUpgrade('goldenLlama')">
+                Golden Llama (Cost: 1000)
+                <br>
+                <small>25x V-Bucks per click</small>
+            </button>
+            <button class="upgrade-button" id="llamaArmyBtn" onclick="buyUpgrade('llamaArmy')">
+                Llama Army (Cost: 2500)
+                <br>
+                <small>Auto-clicks 5 times per second</small>
+            </button>
+            <button class="upgrade-button" id="vbucksFactoryBtn" onclick="buyUpgrade('vbucksFactory')">
+                V-Bucks Factory (Cost: 5000)
+                <br>
+                <small>50x V-Bucks per click</small>
+            </button>
+            <button class="upgrade-button" id="ultraLlamaBtn" onclick="buyUpgrade('ultraLlama')">
+                Ultra Llama (Cost: 10000)
+                <br>
+                <small>100x V-Bucks + Special Effects</small>
+            </button>
+        </div>
+    </div>
+
+    <div class="factory-stats">
+        <div class="factory-progress">
+            <div class="progress-bar" id="factoryProgress"></div>
+        </div>
+        <div class="factory-text">
+            V-Bucks Factory World Domination: <span id="factoryPercent">0</span>%
+        </div>
+        <div class="factory-details" id="factoryDetails">
+            Factories: 0 | Land Conquered: 0 sq km
+        </div>
+    </div>
+
+    <script>
+        let vbucks = 0;
+        let clickPower = 1;
+        let autoClickerInterval = null;
+        let llamaArmyInterval = null;
+        let criticalChance = 0;
+        let factoryCount = 0;
+        const EARTH_SURFACE = 510100000; // Earth's surface area in square kilometers
+        let conqueredArea = 0;
+        
+        const upgrades = {
+            autoClicker: {
+                level: 0,
+                baseCost: 10,
+                getNextCost: function() {
+                    return Math.floor(this.baseCost * Math.pow(1.5, this.level));
+                }
+            },
+            doubleVBucks: {
+                level: 0,
+                baseCost: 50,
+                getNextCost: function() {
+                    return Math.floor(this.baseCost * Math.pow(2, this.level));
+                }
+            },
+            rainbowLlama: { cost: 100, owned: false },
+            vbucksStorm: { cost: 500, owned: false },
+            goldenLlama: { cost: 1000, owned: false },
+            llamaArmy: { cost: 2500, owned: false },
+            vbucksFactory: { cost: 5000, owned: false },
+            ultraLlama: { cost: 10000, owned: false }
+        };
+
+        function updateVBucks() {
+            document.getElementById('vbucks-count').textContent = Math.floor(vbucks);
+            
+            // Update upgrade buttons
+            for (const [upgrade, data] of Object.entries(upgrades)) {
+                const btn = document.getElementById(`${upgrade}Btn`);
+                if (btn) {  // Check if button exists
+                    btn.disabled = vbucks < data.getNextCost() || data.owned;
+                    // Add visual feedback for affordability
+                    if (vbucks < data.getNextCost()) {
+                        btn.style.opacity = '0.5';
+                        btn.style.cursor = 'not-allowed';
+                    } else if (!data.owned) {
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                    }
+                }
+            }
+        }
+
+        function createVBuckParticle(x, y, amount, isCritical = false) {
+            const particle = document.createElement('div');
+            particle.className = 'vbuck-particle' + (isCritical ? ' critical' : '');
+            particle.textContent = '+' + amount;
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 1000);
+        }
+
+        document.querySelector('.vbucks-button').addEventListener('click', (e) => {
+            let clickAmount = clickPower;
+            
+            // Critical hit system
+            if (Math.random() < criticalChance) {
+                clickAmount *= 3;
+                createVBuckParticle(e.clientX, e.clientY, clickAmount, true);
+            } else {
+                createVBuckParticle(e.clientX, e.clientY, clickAmount);
+            }
+            
+            vbucks += clickAmount;
+            updateVBucks();
+            
+            // Play click sound
+            const clickSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+            clickSound.play().catch(error => console.log('Audio play failed:', error));
+        });
+
+        function updateUpgradeDisplays() {
+            // Update Auto Clicker
+            document.getElementById('autoClickerLevel').textContent = upgrades.autoClicker.level;
+            document.getElementById('autoClickerCost').textContent = upgrades.autoClicker.getNextCost();
+
+            // Update Double V-Bucks
+            document.getElementById('doubleVBucksLevel').textContent = upgrades.doubleVBucks.level;
+            document.getElementById('doubleVBucksCost').textContent = upgrades.doubleVBucks.getNextCost();
+        }
+
+        function buyUpgrade(type) {
+            const upgrade = upgrades[type];
+            
+            if (type === 'autoClicker' || type === 'doubleVBucks') {
+                const cost = upgrade.getNextCost();
+                if (vbucks >= cost) {
+                    vbucks -= cost;
+                    upgrade.level++;
+                    
+                    if (type === 'autoClicker') {
+                        if (window.autoClickerInterval) {
+                            clearInterval(window.autoClickerInterval);
+                        }
+                        window.autoClickerInterval = setInterval(() => {
+                            vbucks += clickPower;
+                            updateVBucks();
+                        }, 1000 / upgrade.level);
+                    } else if (type === 'doubleVBucks') {
+                        clickPower *= 2;
+                    }
+                    
+                    updateVBucks();
+                    updateUpgradeDisplays();
+                    showUpgradeEffect(type, upgrade.level);
+                }
+            } else {
+                // Handle one-time upgrades as before
+                if (vbucks >= upgrade.cost && !upgrade.owned) {
+                    vbucks -= upgrade.cost;
+                    upgrade.owned = true;
+                    
+                    switch(type) {
+                        case 'rainbowLlama':
+                            clickPower *= 5;
+                            document.querySelector('.vbucks-button').classList.add('rainbow-effect');
+                            break;
+                        case 'vbucksStorm':
+                            clickPower *= 10;
+                            document.body.style.background = 'linear-gradient(45deg, #4a1f91, #2e1647)';
+                            break;
+                        case 'goldenLlama':
+                            clickPower *= 25;
+                            document.querySelector('.vbucks-button').classList.add('golden-effect');
+                            criticalChance = 0.1;
+                            break;
+                        case 'llamaArmy':
+                            llamaArmyInterval = setInterval(() => {
+                                vbucks += clickPower;
+                                updateVBucks();
+                            }, 200);
+                            break;
+                        case 'vbucksFactory':
+                            clickPower *= 50;
+                            document.body.style.background = 'linear-gradient(45deg, #6a2f91, #4e1647)';
+                            criticalChance = 0.2;
+                            factoryCount++;
+                            updateFactoryProgress();
+                            setInterval(() => {
+                                conqueredArea += Math.random() * 1000;
+                                updateFactoryProgress();
+                            }, 1000);
+                            break;
+                        case 'ultraLlama':
+                            clickPower *= 100;
+                            document.querySelector('.vbucks-button').classList.add('ultra-effect');
+                            criticalChance = 0.3;
+                            setInterval(() => {
+                                const x = Math.random() * window.innerWidth;
+                                const y = Math.random() * window.innerHeight;
+                                createVBuckParticle(x, y, clickPower * 0.1);
+                            }, 1000);
+                            break;
+                    }
+                    
+                    updateVBucks();
+                    showUpgradeEffect(type);
+                }
+            }
+        }
+
+        function showUpgradeEffect(type, level) {
+            const notification = document.createElement('div');
+            notification.className = 'upgrade-notification';
+            notification.style.left = '50%';
+            notification.style.top = '50%';
+            
+            const button = document.querySelector('.vbucks-button');
+            
+            switch(type) {
+                case 'autoClicker':
+                    notification.textContent = `🤖 AUTO CLICKER LEVEL ${level}!`;
+                    break;
+                case 'doubleVBucks':
+                    notification.textContent = `💰 MULTIPLIER LEVEL ${level}!`;
+                    button.style.transform = 'scale(1.1)';
+                    break;
+                case 'rainbowLlama':
+                    notification.textContent = '🌈 RAINBOW POWER!';
+                    button.classList.add('rainbow-effect');
+                    break;
+                case 'vbucksStorm':
+                    notification.textContent = '⚡ V-BUCKS STORM!';
+                    button.classList.add('storm-effect');
+                    break;
+                case 'goldenLlama':
+                    notification.textContent = '👑 GOLDEN LLAMA!';
+                    button.classList.add('golden-effect');
+                    break;
+                case 'llamaArmy':
+                    notification.textContent = '⚔️ LLAMA ARMY ASSEMBLED!';
+                    break;
+                case 'vbucksFactory':
+                    notification.textContent = '🏭 V-BUCKS FACTORY ONLINE!';
+                    break;
+                case 'ultraLlama':
+                    notification.textContent = '🔥 ULTRA LLAMA UNLEASHED!';
+                    button.classList.add('ultra-effect');
+                    break;
+            }
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 1000);
+        }
+
+        function updateFactoryProgress() {
+            const percent = (conqueredArea / EARTH_SURFACE) * 100;
+            document.getElementById('factoryProgress').style.width = Math.min(percent, 100) + '%';
+            document.getElementById('factoryPercent').textContent = percent.toFixed(6);
+            document.getElementById('factoryDetails').textContent = 
+                `Factories: ${factoryCount} | Land Conquered: ${Math.floor(conqueredArea).toLocaleString()} sq km`;
+            
+            // Add effects when reaching milestones
+            if (percent >= 25 && percent < 25.1) {
+                showMilestone('25% OF EARTH CONQUERED! 🌍');
+            } else if (percent >= 50 && percent < 50.1) {
+                showMilestone('HALF THE EARTH IS YOURS! 🌎');
+            } else if (percent >= 75 && percent < 75.1) {
+                showMilestone('75% DOMINATION! 🌏');
+            } else if (percent >= 99 && percent < 99.1) {
+                showMilestone('WORLD DOMINATION IMMINENT! 👑');
+            }
+        }
+
+        function showMilestone(message) {
+            const milestone = document.createElement('div');
+            milestone.className = 'upgrade-notification';
+            milestone.style.left = '50%';
+            milestone.style.top = '50%';
+            milestone.textContent = message;
+            document.body.appendChild(milestone);
+            setTimeout(() => milestone.remove(), 2000);
+        }
+
+        // Initialize the game
+        updateVBucks();
+        updateUpgradeDisplays();
+    </script>
+</body>
+</html>

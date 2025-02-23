@@ -163,6 +163,89 @@
       box-shadow: 0 0 20px rgba(255, 77, 0, 0.8);
     }
 
+    .achievement.clickable {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 10px 20px;
+      margin: 5px;
+      display: inline-block;
+      background: linear-gradient(45deg, #660000, #330000);
+      border: 2px solid #ff0000;
+      border-radius: 5px;
+    }
+
+    .achievement.clickable:hover {
+      transform: scale(1.1);
+      text-shadow: 
+        0 0 10px #ff0000,
+        0 0 20px #ff0000;
+      box-shadow: 
+        0 0 20px rgba(255, 0, 0, 0.5),
+        inset 0 0 10px rgba(255, 0, 0, 0.3);
+    }
+
+    .achievement-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(45deg, #1a0000, #000000);
+      border: 3px solid #ff0000;
+      padding: 30px;
+      z-index: 1000;
+      text-align: center;
+      clip-path: polygon(
+        0 10%, 10% 0,
+        90% 0, 100% 10%,
+        100% 90%, 90% 100%,
+        10% 100%, 0 90%
+      );
+      box-shadow: 
+        0 0 30px rgba(255, 0, 0, 0.5),
+        inset 0 0 20px rgba(255, 0, 0, 0.3);
+      animation: popupScale 0.3s ease-out;
+    }
+
+    .achievement-title {
+      font-size: 32px;
+      color: #ff0000;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+
+    .achievement-description {
+      font-size: 18px;
+      color: #ff4444;
+      margin-bottom: 20px;
+    }
+
+    .achievement-close {
+      background: linear-gradient(45deg, #ff0000, #660000);
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      clip-path: polygon(0 0, 90% 0, 100% 30%, 100% 100%, 10% 100%, 0 70%);
+      text-transform: uppercase;
+      font-family: 'Impact', sans-serif;
+      letter-spacing: 2px;
+    }
+
+    .achievement-close:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+
+    @keyframes popupScale {
+      from { transform: translate(-50%, -50%) scale(0.8); }
+      to { transform: translate(-50%, -50%) scale(1); }
+    }
+
     .sidebar {
       position: fixed;
       left: 20px;
@@ -997,6 +1080,169 @@
         from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ff4400; }
         to { text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ff4400; }
     }
+
+    .llama-clicker-container {
+        position: relative;
+        margin: 20px;
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+    .llama-clicker-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 20px 40px;
+        background: linear-gradient(45deg, #5c2e91, #2e1647);
+        color: #fff;
+        text-decoration: none;
+        font-size: 32px;
+        border: 3px solid #9b4dff;
+        position: relative;
+        transition: all 0.3s ease;
+        transform-style: preserve-3d;
+        animation: llamaFloat 3s infinite ease-in-out;
+        clip-path: polygon(
+            0 10%, 10% 0,
+            90% 0, 100% 10%,
+            100% 90%, 90% 100%,
+            10% 100%, 0 90%
+        );
+        box-shadow: 
+            0 0 30px rgba(155, 77, 255, 0.3),
+            inset 0 0 20px rgba(155, 77, 255, 0.3);
+    }
+
+    .llama-text {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: bold;
+        text-shadow: 
+            0 0 10px #9b4dff,
+            0 0 20px #9b4dff;
+    }
+
+    .llama-icon {
+        font-size: 36px;
+        animation: bounce 1s infinite alternate;
+    }
+
+    .vbucks-effect {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 40px;
+        background: linear-gradient(to top, #9b4dff, transparent);
+        filter: blur(5px);
+        opacity: 0.5;
+        animation: vbucksGlow 0.5s infinite alternate;
+    }
+
+    .llama-clicker-link:hover {
+        transform: translateZ(30px) scale(1.1);
+        box-shadow: 
+            0 0 40px #9b4dff,
+            0 0 80px rgba(155, 77, 255, 0.5),
+            0 0 120px rgba(155, 77, 255, 0.3);
+    }
+
+    @keyframes llamaFloat {
+        0% { transform: translateY(0) translateZ(0); }
+        50% { transform: translateY(-10px) translateZ(20px); }
+        100% { transform: translateY(0) translateZ(0); }
+    }
+
+    @keyframes bounce {
+        from { transform: translateY(0); }
+        to { transform: translateY(-10px); }
+    }
+
+    @keyframes vbucksGlow {
+        0% { opacity: 0.5; height: 35px; }
+        100% { opacity: 0.8; height: 45px; }
+    }
+
+    .summon-container {
+        position: relative;
+        margin: 20px;
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+    .summon-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 20px 40px;
+        background: linear-gradient(45deg, #800000, #330000);
+        color: #fff;
+        text-decoration: none;
+        font-size: 32px;
+        border: 3px solid #ff0000;
+        position: relative;
+        transition: all 0.3s ease;
+        transform-style: preserve-3d;
+        animation: summonFloat 3s infinite ease-in-out;
+        clip-path: polygon(
+            0 10%, 10% 0,
+            90% 0, 100% 10%,
+            100% 90%, 90% 100%,
+            10% 100%, 0 90%
+        );
+        box-shadow: 
+            0 0 30px rgba(255, 0, 0, 0.3),
+            inset 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+
+    .summon-text {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: bold;
+        text-shadow: 
+            0 0 10px #ff0000,
+            0 0 20px #ff0000;
+    }
+
+    .summon-icon {
+        font-size: 36px;
+        animation: bounce 1s infinite alternate;
+    }
+
+    .hellfire-effect {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 40px;
+        background: linear-gradient(to top, #ff0000, transparent);
+        filter: blur(5px);
+        opacity: 0.5;
+        animation: hellfireGlow 0.5s infinite alternate;
+    }
+
+    .summon-link:hover {
+        transform: translateZ(30px) scale(1.1);
+        box-shadow: 
+            0 0 40px #ff0000,
+            0 0 80px rgba(255, 0, 0, 0.5),
+            0 0 120px rgba(255, 0, 0, 0.3);
+    }
+
+    @keyframes summonFloat {
+        0% { transform: translateY(0) translateZ(0); }
+        50% { transform: translateY(-10px) translateZ(20px); }
+        100% { transform: translateY(0) translateZ(0); }
+    }
+
+    @keyframes hellfireGlow {
+        0% { opacity: 0.5; height: 35px; }
+        100% { opacity: 0.8; height: 45px; }
+    }
   </style>
 </head>
 <body>
@@ -1019,8 +1265,8 @@
         Unleash chaos in the world of Doom! Ready to slay demons and conquer hell.
       </p>
       <div>
-        <span class="achievement">🔥 Demon Hunter</span>
-        <span class="achievement">⚔️ Slayer of Demons</span>
+        <span class="achievement clickable" onclick="showAchievement('Demon Hunter')">🔥 Demon Hunter</span>
+        <span class="achievement clickable" onclick="showAchievement('Slayer of Demons')">⚔️ Slayer of Demons</span>
       </div>
     </div>
 
@@ -1087,10 +1333,18 @@
         <div class="flame-effect"></div>
     </div>
 
-    <div class="contact-link-container">
-        <a href="contact.html" class="contact-link">
-            <span class="contact-text">SUMMON ME</span>
-            <div class="contact-icon">💀</div>
+    <div class="llama-clicker-container">
+        <a href="llama-clicker.html" class="llama-clicker-link">
+            <span class="llama-text">LLAMA CLICKER</span>
+            <div class="llama-icon">🦙</div>
+        </a>
+        <div class="vbucks-effect"></div>
+    </div>
+
+    <div class="summon-container">
+        <a href="contact.html" class="summon-link">
+            <span class="summon-text">SUMMON ME</span>
+            <div class="summon-icon">💀</div>
         </a>
         <div class="hellfire-effect"></div>
     </div>
@@ -1377,6 +1631,35 @@
         }
     `;
     document.head.appendChild(style);
+
+    function showAchievement(type) {
+        const achievements = {
+            'Demon Hunter': {
+                description: 'Mastered the art of hunting demons through the depths of hell. A true warrior of chaos!',
+                icon: '🔥'
+            },
+            'Slayer of Demons': {
+                description: 'The ultimate demon slayer, feared by all creatures of the underworld!',
+                icon: '⚔️'
+            }
+        };
+
+        const achievement = achievements[type];
+        
+        const popup = document.createElement('div');
+        popup.className = 'achievement-popup';
+        popup.innerHTML = `
+            <h2 class="achievement-title">${achievement.icon} ${type}</h2>
+            <p class="achievement-description">${achievement.description}</p>
+            <button class="achievement-close" onclick="this.parentElement.remove()">CLOSE</button>
+        `;
+        
+        document.body.appendChild(popup);
+
+        // Play epic sound
+        const sound = new Audio('https://www.soundjay.com/button/button-3.mp3');
+        sound.play().catch(error => console.log('Audio play failed:', error));
+    }
   </script>
 </body>
 </html>
