@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Donate</title>
+    <style>
+        body {
+            background: linear-gradient(45deg, #1a0f2e, #2e1647);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Impact', sans-serif;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #9b4dff;
+            text-shadow: 0 0 10px #9b4dff;
+            margin-bottom: 30px;
+        }
+
+        .donate-button {
+            display: inline-block;
+            padding: 20px 40px;
+            font-size: 24px;
+            background: linear-gradient(45deg, #5c2e91, #2e1647);
+            color: white;
+            text-decoration: none;
+            border: 3px solid #9b4dff;
+            margin: 10px;
+            transition: all 0.3s ease;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .donate-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #9b4dff;
+        }
+
+        .note {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #ccc;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #5c2e91, #2e1647);
+            color: white;
+            text-decoration: none;
+            border: 2px solid #9b4dff;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← Back</a>
+    
+    <div class="container">
+        <h1>SUPPORT THE DEVELOPER</h1>
+        <a href="https://gl.me/u/T22BFg2859vK" target="_blank" class="donate-button">DONATE NOW</a>
+        <div class="note">
+            <p>💡 Add your name in the note box when donating and feel free to include any suggestions!</p>
+            <p>Your support helps keep this site running and growing. Thank you! 💜</p>
+        </div>
+    </div>
+</body>
+</html> 
