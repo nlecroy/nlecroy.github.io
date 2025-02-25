@@ -1243,6 +1243,74 @@
         0% { opacity: 0.5; height: 35px; }
         100% { opacity: 0.8; height: 45px; }
     }
+
+    .donate-container {
+        position: relative;
+        margin: 20px;
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+    .donate-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 20px 40px;
+        background: linear-gradient(45deg, #5c2e91, #2e1647);
+        color: #fff;
+        text-decoration: none;
+        font-size: 32px;
+        border: 3px solid #9b4dff;
+        position: relative;
+        transition: all 0.3s ease;
+        transform-style: preserve-3d;
+        animation: donateFloat 3s infinite ease-in-out;
+        clip-path: polygon(
+            0 10%, 10% 0,
+            90% 0, 100% 10%,
+            100% 90%, 90% 100%,
+            10% 100%, 0 90%
+        );
+        box-shadow: 
+            0 0 30px rgba(155, 77, 255, 0.3),
+            inset 0 0 20px rgba(155, 77, 255, 0.3);
+    }
+
+    .donate-text {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: bold;
+        text-shadow: 0 0 10px currentColor;
+    }
+
+    .donate-icon {
+        font-size: 36px;
+        animation: bounce 1s infinite alternate;
+    }
+
+    .sparkle-effect {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 40px;
+        filter: blur(5px);
+        opacity: 0.5;
+        animation: sparkleGlow 1s infinite alternate;
+    }
+
+    @keyframes donateFloat {
+        0% { transform: translateY(0) translateZ(0); }
+        50% { transform: translateY(-10px) translateZ(20px); }
+        100% { transform: translateY(0) translateZ(0); }
+    }
+
+    @keyframes sparkleGlow {
+        0% { opacity: 0.3; height: 35px; }
+        100% { opacity: 0.6; height: 45px; }
+    }
   </style>
 </head>
 <body>
@@ -1347,6 +1415,14 @@
             <div class="summon-icon">💀</div>
         </a>
         <div class="hellfire-effect"></div>
+    </div>
+
+    <div class="donate-container">
+        <a href="donate.html" class="donate-link">
+            <span class="donate-text">DONATE</span>
+            <div class="donate-icon">💜</div>
+        </a>
+        <div class="sparkle-effect"></div>
     </div>
   </div>
 
@@ -1481,187 +1557,4 @@
 
     function createSpecialParticle(effect) {
         const particle = document.createElement('div');
-        particle.className = `special-particle ${effect}`;
-        particle.style.left = Math.random() * 100 + 'vw';
-        document.body.appendChild(particle);
-        
-        setTimeout(() => particle.remove(), 1500);
-    }
-
-    pugButton.addEventListener('click', () => {
-      pugImage.style.display = 'block';
-      pugImage.classList.add('pug-enter');
-      
-      const bark = new Audio('https://www.soundjay.com/dog/sounds/dog-bark-1.mp3');
-      bark.play();
-      
-      setTimeout(() => {
-        pugImage.classList.remove('pug-enter');
-        pugImage.classList.add('pug-exit');
-        setTimeout(() => {
-          pugImage.style.display = 'none';
-          pugImage.classList.remove('pug-exit');
-        }, 500);
-      }, 2000);
-    });
-
-    // Fire particles generation
-    function createParticle() {
-        const particles = document.querySelector('.fire-particles');
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        // Random position and size
-        const size = Math.random() * 8 + 4;
-        const left = Math.random() * 100;
-        
-        particle.style.left = left + '%';
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        
-        particles.appendChild(particle);
-        
-        // Remove particle after animation
-        setTimeout(() => {
-            particle.remove();
-        }, 1500);
-    }
-
-    // Generate particles continuously
-    setInterval(createParticle, 50);
-
-    function showGameMessage(message) {
-        // Create floating message
-        const floatingMsg = document.createElement('div');
-        floatingMsg.className = 'floating-message';
-        floatingMsg.textContent = message;
-        document.body.appendChild(floatingMsg);
-
-        // Play click sound
-        const clickSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
-        clickSound.play();
-
-        // Remove message after animation
-        setTimeout(() => {
-            floatingMsg.remove();
-        }, 1000);
-    }
-
-    function changeName() {
-        var inputName = document.getElementById("name-input").value.toLowerCase();
-        var specialDisplay = document.getElementById("special-name-display");
-        
-        // Reset styles
-        specialDisplay.className = '';
-        specialDisplay.style.opacity = '1';
-        specialDisplay.style.transform = 'scale(1)';
-
-        switch(inputName) {
-            case 'damien':
-                specialDisplay.textContent = "ULTIMATE SLAYER DAMIEN";
-                specialDisplay.className = 'damien-style';
-                break;
-            case 'andruis':
-                specialDisplay.textContent = "THE EPIC KAAKAA KING";
-                specialDisplay.className = 'andruis-style';
-                break;
-            case 'josh':
-                specialDisplay.textContent = "V.I.P JOSH";
-                specialDisplay.className = 'josh-style';
-                break;
-            case 'jude':
-                specialDisplay.textContent = "ELITE WARRIOR JUDE";
-                specialDisplay.className = 'jude-style';
-                break;
-            default:
-                specialDisplay.style.opacity = '0';
-                specialDisplay.style.transform = 'scale(0)';
-                break;
-        }
-    }
-
-    // Remove any automatic name display on page load
-    window.onload = function() {
-        document.getElementById("name-input").value = "";
-        document.getElementById("special-name-display").style.opacity = '0';
-    }
-
-    function showDogMeme() {
-        document.querySelector('.overlay').style.display = 'block';
-        document.querySelector('.dog-meme').style.display = 'block';
-        
-        // Play bark sound
-        const bark = new Audio('https://www.soundjay.com/dog/sounds/dog-bark-1.mp3');
-        bark.play().catch(error => console.log('Audio play failed:', error));
-    }
-
-    function hideDogMeme() {
-        document.querySelector('.overlay').style.display = 'none';
-        document.querySelector('.dog-meme').style.display = 'none';
-    }
-
-    function checkVIP() {
-        var name = document.getElementById('name-input').value.toLowerCase();
-        var vipStatus = document.getElementById('welcomeMessage');
-        
-        if (name === 'brayden') {
-            window.location.href = 'vip.html'; // Redirect to King Bob's VIP page
-        } else {
-            vipStatus.innerHTML = 'Not a VIP... yet.';
-            vipStatus.style.color = '#ff0000';
-        }
-    }
-
-    // Add King Bob style
-    const style = document.createElement('style');
-    style.textContent = `
-        .king-bob-style {
-            color: #ffd700 !important;
-            text-shadow: 
-                0 0 10px #ffd700,
-                0 0 20px #ffd700,
-                0 0 30px #ff4400,
-                0 0 40px #ff4400 !important;
-            animation: kingBobGlow 2s infinite alternate;
-        }
-
-        @keyframes kingBobGlow {
-            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ff4400; }
-            to { text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ff4400; }
-        }
-    `;
-    document.head.appendChild(style);
-
-    function showAchievement(type) {
-        const achievements = {
-            'Demon Hunter': {
-                description: 'Mastered the art of hunting demons through the depths of hell. A true warrior of chaos!',
-                icon: '🔥'
-            },
-            'Slayer of Demons': {
-                description: 'The ultimate demon slayer, feared by all creatures of the underworld!',
-                icon: '⚔️'
-            }
-        };
-
-        const achievement = achievements[type];
-        
-        const popup = document.createElement('div');
-        popup.className = 'achievement-popup';
-        popup.innerHTML = `
-            <h2 class="achievement-title">${achievement.icon} ${type}</h2>
-            <p class="achievement-description">${achievement.description}</p>
-            <button class="achievement-close" onclick="this.parentElement.remove()">CLOSE</button>
-        `;
-        
-        document.body.appendChild(popup);
-
-        // Play epic sound
-        const sound = new Audio('https://www.soundjay.com/button/button-3.mp3');
-        sound.play().catch(error => console.log('Audio play failed:', error));
-    }
-  </script>
-</body>
-</html>
-
-    
+        particle.className = `
