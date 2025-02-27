@@ -101,6 +101,72 @@
             0% { transform: translateY(0); }
             100% { transform: translateY(50px); }
         }
+
+        .epic-donation-container {
+            text-align: center;
+            margin: 40px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .epic-donation-link {
+            display: inline-block;
+            padding: 20px 40px;
+            background: linear-gradient(45deg, #5c2e91, #2e1647);
+            border: 3px solid #9b4dff;
+            border-radius: 15px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            animation: donationPulse 2s infinite;
+            box-shadow: 
+                0 0 20px rgba(155, 77, 255, 0.5),
+                inset 0 0 10px rgba(155, 77, 255, 0.3);
+        }
+
+        .epic-donation-link:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(155, 77, 255, 0.8),
+                inset 0 0 15px rgba(155, 77, 255, 0.5);
+        }
+
+        .donation-text {
+            position: relative;
+            z-index: 1;
+            text-shadow: 
+                0 0 10px rgba(155, 77, 255, 0.8),
+                0 0 20px rgba(155, 77, 255, 0.4);
+        }
+
+        .donation-flames {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to top, #9b4dff, transparent);
+            filter: blur(5px);
+            opacity: 0.5;
+            animation: flameFlicker 0.5s infinite alternate;
+        }
+
+        @keyframes donationPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes flameFlicker {
+            0% { opacity: 0.3; height: 35px; }
+            100% { opacity: 0.6; height: 45px; }
+        }
     </style>
 </head>
 <body class="bob-news-page">
@@ -136,6 +202,13 @@
     <nav class="nav-links">
         <a href="index.html" class="glowing-link">RETURN TO BASE</a>
     </nav>
+
+    <div class="epic-donation-container">
+        <a href="donate.html" class="epic-donation-link">
+            <span class="donation-text">💜 SUPPORT THE CREATOR OF THIS SITE AND MAKER OF BOB NEWS! 💜</span>
+            <div class="donation-flames"></div>
+        </a>
+    </div>
 
     <script>
         // Add particle effects
