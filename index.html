@@ -821,7 +821,7 @@
         transform: translate(-50%, -50%);
         padding: 20px 40px;
         background: linear-gradient(45deg, #ff0000, #ff4d00);
-        border: none;
+        border: 3px solid #ff0000;
         border-radius: 10px;
         color: #ffffff;
         font-family: "Impact", sans-serif;
@@ -829,28 +829,26 @@
         cursor: pointer;
         text-transform: uppercase;
         letter-spacing: 2px;
-        box-shadow: 
-            0 0 20px rgba(255, 0, 0, 0.5),
-            0 0 40px rgba(255, 77, 0, 0.3);
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
         z-index: 9999;
         text-decoration: none;
         display: none;
     }
 
-    @keyframes secretPulse {
-        0% { transform: translate(-50%, -50%) scale(1); }
-        50% { transform: translate(-50%, -50%) scale(1.1); }
-        100% { transform: translate(-50%, -50%) scale(1); }
-    }
-
     .secret-button:hover {
-        animation: secretShake 0.5s infinite;
+        transform: translate(-50%, -50%) scale(1.1);
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
     }
 
-    @keyframes secretShake {
-        0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-        25% { transform: translate(-50%, -50%) rotate(-5deg); }
-        75% { transform: translate(-50%, -50%) rotate(5deg); }
+    @keyframes secretReveal {
+        from { 
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+        to { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
     }
 
     .doom-bird-container {
@@ -1329,7 +1327,7 @@
         }
         100% {
             transform: translate(
-                calc((random(100) - 50) * 4px)),
+                calc((random(100) - 50) * 4px),
                 calc((random(100) - 50) * 4px)
             ) scale(0);
             opacity: 0;
@@ -1534,26 +1532,23 @@
         const name = this.value.toLowerCase();
         const secretButton = document.getElementById('secretButton');
         
-        // Check for special names first
-        const friend = specialFriends[name];
-        
         if (name === 'bjg hfbd clvb') {
+            // Show secret button
             secretButton.style.display = 'block';
-            secretButton.style.animation = 'secretReveal 0.5s ease-out';
-            secretButton.style.zIndex = '9999';
-            secretButton.style.opacity = '1';
+            secretButton.style.animation = 'secretReveal 0.5s forwards';
             
-            // Play epic reveal sound
+            // Play sound
             const secretSound = new Audio('https://www.soundjay.com/button/button-3.mp3');
             secretSound.play().catch(error => console.log('Audio play failed:', error));
             
+            // Update welcome message
             welcomeMessage.textContent = '🔥 SECRET BOB NEWS UNLOCKED! 🔥';
             welcomeMessage.className = 'welcome-message legendary';
-            
-            // Add epic particle effect
-            createSecretParticles();
         } else {
             secretButton.style.display = 'none';
+            
+            // Check for special names first
+            const friend = specialFriends[name];
             
             if (friend) {
                 welcomeMessage.textContent = `Welcome, ${friend.title}`;
@@ -1587,8 +1582,22 @@
 
     function createSpecialParticle(effect) {
         const particle = document.createElement('div');
-        particle.className = `
-```
-</script>
+        particle.className = 'special-particle';
+        particle.style.cssText = `
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff4d00;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            left: 50%;
+            top: 50%;
+            animation: secretParticle 1s ease-out forwards;
+        `;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1000);
+    }
+  </script>
 </body>
 </html>
