@@ -79,32 +79,23 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 20px #ff4d00;
+      position: relative;
+      transition: all 0.3s ease;
     }
 
     .game-box::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        45deg,
-        transparent,
-        rgba(255, 77, 0, 0.1),
-        transparent
-      );
-      transform: rotate(45deg);
-      animation: shine 3s infinite;
-    }
-
-    @keyframes shine {
-      0% { transform: translateX(-100%) rotate(45deg); }
-      100% { transform: translateX(100%) rotate(45deg); }
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, transparent, rgba(255, 77, 0, 0.1), transparent);
+      border-radius: 12px;
+      z-index: -1;
     }
 
     .game-box:hover {
-      transform: translateY(-5px);
       box-shadow: 0 0 40px #ff4d00;
     }
 
@@ -1411,6 +1402,7 @@
         <a href="gaming-sites.html" class="nav-link">GAMING SITES</a>
         <a href="music.html" class="nav-link">MUSIC</a>
         <a href="flappy.html" class="nav-link">DOOM BIRD</a>
+        <a href="donate.html" class="nav-link">RETURN TO BASE</a>
     </div>
   </nav>
 
