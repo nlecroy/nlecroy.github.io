@@ -230,6 +230,18 @@
             <button id="flameCursorToggle" class="button">Enable Flame Cursor</button>
         </div>
         
+        <div class="feature-card">
+            <div class="feature-title">🌈 Rainbow Text Mode</div>
+            <div class="feature-description">Make all text on the site cycle through rainbow colors!</div>
+            <button id="rainbowTextToggle" class="button">Enable Rainbow Text</button>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🎮 Retro Game Mode</div>
+            <div class="feature-description">Transform the site into a retro arcade style!</div>
+            <button id="retroModeToggle" class="button">Enable Retro Mode</button>
+        </div>
+        
         <a href="index.html" class="button">Return to Main Site</a>
     </div>
     
@@ -561,6 +573,133 @@
         
         if (visitDates.length >= 5) {
             unlockAchievement('achievement-7');
+        }
+        
+        // Rainbow Text Mode
+        const rainbowTextToggle = document.getElementById('rainbowTextToggle');
+        let rainbowTextActive = localStorage.getItem('rainbowTextEnabled') === 'true';
+        
+        // Initialize based on saved preference
+        if (rainbowTextActive) {
+            enableRainbowText();
+            rainbowTextToggle.textContent = "Disable Rainbow Text";
+        }
+        
+        rainbowTextToggle.addEventListener('click', function() {
+            rainbowTextActive = !rainbowTextActive;
+            
+            if (rainbowTextActive) {
+                enableRainbowText();
+                rainbowTextToggle.textContent = "Disable Rainbow Text";
+                localStorage.setItem('rainbowTextEnabled', 'true');
+            } else {
+                disableRainbowText();
+                rainbowTextToggle.textContent = "Enable Rainbow Text";
+                localStorage.setItem('rainbowTextEnabled', 'false');
+            }
+        });
+        
+        function enableRainbowText() {
+            const style = document.createElement('style');
+            style.id = 'rainbow-text-style';
+            style.textContent = `
+                body * {
+                    animation: rainbowText 5s linear infinite !important;
+                }
+                
+                @keyframes rainbowText {
+                    0% { color: #ff0000; }
+                    16.6% { color: #ff8000; }
+                    33.3% { color: #ffff00; }
+                    50% { color: #00ff00; }
+                    66.6% { color: #00ffff; }
+                    83.3% { color: #0000ff; }
+                    100% { color: #ff00ff; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        function disableRainbowText() {
+            const style = document.getElementById('rainbow-text-style');
+            if (style) {
+                style.remove();
+            }
+        }
+        
+        // Retro Game Mode
+        const retroModeToggle = document.getElementById('retroModeToggle');
+        let retroModeActive = localStorage.getItem('retroModeEnabled') === 'true';
+        
+        // Initialize based on saved preference
+        if (retroModeActive) {
+            enableRetroMode();
+            retroModeToggle.textContent = "Disable Retro Mode";
+        }
+        
+        retroModeToggle.addEventListener('click', function() {
+            retroModeActive = !retroModeActive;
+            
+            if (retroModeActive) {
+                enableRetroMode();
+                retroModeToggle.textContent = "Disable Retro Mode";
+                localStorage.setItem('retroModeEnabled', 'true');
+            } else {
+                disableRetroMode();
+                retroModeToggle.textContent = "Enable Retro Mode";
+                localStorage.setItem('retroModeEnabled', 'false');
+            }
+        });
+        
+        function enableRetroMode() {
+            const style = document.createElement('style');
+            style.id = 'retro-mode-style';
+            style.textContent = `
+                body {
+                    font-family: 'Courier New', monospace !important;
+                    background: #000 !important;
+                    color: #0f0 !important;
+                    text-shadow: 0 0 5px #0f0 !important;
+                }
+                
+                .feature-card, button, input {
+                    border-color: #0f0 !important;
+                    background: #000 !important;
+                    color: #0f0 !important;
+                    box-shadow: 0 0 10px #0f0 !important;
+                }
+                
+                button:hover {
+                    background: #0f0 !important;
+                    color: #000 !important;
+                }
+                
+                /* Scanlines effect */
+                body::after {
+                    content: '';
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(
+                        to bottom,
+                        rgba(0, 0, 0, 0) 50%,
+                        rgba(0, 0, 0, 0.3) 50%
+                    );
+                    background-size: 100% 4px;
+                    pointer-events: none;
+                    z-index: 9999;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        function disableRetroMode() {
+            const style = document.getElementById('retro-mode-style');
+            if (style) {
+                style.remove();
+            }
         }
     </script>
 </body>

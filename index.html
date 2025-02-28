@@ -1569,6 +1569,204 @@
         0% { text-shadow: 0 0 5px #ff4d00; }
         100% { text-shadow: 0 0 15px #ff4d00; }
     }
+
+    /* Add these new features to the index.html page */
+    <div class="new-features">
+        <div class="feature-button" id="confettiButton">🎉 CONFETTI EXPLOSION</div>
+        <div class="feature-button" id="matrixButton">🖥️ MATRIX MODE</div>
+        <div class="feature-button" id="screenShakeButton">💥 SCREEN SHAKE</div>
+    </div>
+
+    <style>
+        .new-features {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .feature-button {
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: "Impact", sans-serif;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        .feature-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        }
+        
+        .matrix-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9000;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .matrix-character {
+            position: absolute;
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 20px;
+            animation: matrixFall linear infinite;
+        }
+    </style>
+
+    <script>
+        // Add confetti explosion feature
+        document.getElementById('confettiButton').addEventListener('click', function() {
+            for (let i = 0; i < 100; i++) {
+                createConfetti();
+            }
+        });
+        
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = Math.random() * 15 + 5 + 'px';
+            confetti.style.height = Math.random() * 15 + 5 + 'px';
+            confetti.style.backgroundColor = getRandomColor();
+            confetti.style.borderRadius = '50%';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-20px';
+            confetti.style.zIndex = '9999';
+            confetti.style.pointerEvents = 'none';
+            
+            const animationDuration = Math.random() * 3 + 2;
+            confetti.style.animation = `confettiFall ${animationDuration}s linear forwards`;
+            
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                confetti.remove();
+            }, animationDuration * 1000);
+        }
+        
+        function getRandomColor() {
+            const colors = ['#ff0000', '#ff4d00', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // Add Matrix mode
+        document.getElementById('matrixButton').addEventListener('click', function() {
+            toggleMatrixEffect();
+        });
+        
+        function toggleMatrixEffect() {
+            let matrixEffect = document.querySelector('.matrix-effect');
+            
+            if (!matrixEffect) {
+                matrixEffect = document.createElement('div');
+                matrixEffect.className = 'matrix-effect';
+                document.body.appendChild(matrixEffect);
+                
+                // Add matrix characters
+                for (let i = 0; i < 50; i++) {
+                    createMatrixColumn(matrixEffect);
+                }
+                
+                // Add click event to exit
+                matrixEffect.addEventListener('click', function() {
+                    matrixEffect.style.display = 'none';
+                });
+            }
+            
+            if (matrixEffect.style.display === 'none' || !matrixEffect.style.display) {
+                matrixEffect.style.display = 'block';
+            } else {
+                matrixEffect.style.display = 'none';
+            }
+        }
+        
+        function createMatrixColumn(container) {
+            const column = document.createElement('div');
+            column.style.position = 'absolute';
+            column.style.left = Math.random() * 100 + 'vw';
+            column.style.top = '0';
+            
+            const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>/?";
+            const columnHeight = Math.floor(Math.random() * 20) + 10;
+            
+            for (let i = 0; i < columnHeight; i++) {
+                const char = document.createElement('div');
+                char.className = 'matrix-character';
+                char.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+                char.style.top = i * 20 + 'px';
+                char.style.animationDuration = Math.random() * 5 + 2 + 's';
+                char.style.animationDelay = Math.random() * 2 + 's';
+                column.appendChild(char);
+            }
+            
+            container.appendChild(column);
+        }
+        
+        // Add screen shake effect
+        document.getElementById('screenShakeButton').addEventListener('click', function() {
+            shakeScreen();
+        });
+        
+        function shakeScreen() {
+            document.body.classList.add('screen-shake');
+            setTimeout(() => {
+                document.body.classList.remove('screen-shake');
+            }, 500);
+        }
+    </script>
+
+    <style>
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        .screen-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+    </style>
   </style>
 </head>
 <body>
