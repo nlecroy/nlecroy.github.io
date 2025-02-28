@@ -3173,5 +3173,649 @@
   // Show the epic hello on page load
   setTimeout(showEpicHello, 1000);
 </script>
+
+<!-- Add more voice commands and fix weather effects -->
+<script>
+  // Weather Effects - Rain
+  function startRain() {
+    // Clear any existing weather
+    clearWeather();
+    
+    // Create rain container
+    const rainContainer = document.createElement('div');
+    rainContainer.id = 'rainContainer';
+    rainContainer.style.position = 'fixed';
+    rainContainer.style.top = '0';
+    rainContainer.style.left = '0';
+    rainContainer.style.width = '100%';
+    rainContainer.style.height = '100%';
+    rainContainer.style.pointerEvents = 'none';
+    rainContainer.style.zIndex = '900';
+    document.body.appendChild(rainContainer);
+    
+    // Create raindrops
+    const createRaindrop = () => {
+      const raindrop = document.createElement('div');
+      raindrop.className = 'rain-drop';
+      raindrop.style.position = 'fixed';
+      raindrop.style.width = '2px';
+      raindrop.style.height = '15px';
+      raindrop.style.background = 'linear-gradient(to bottom, transparent, #00a2ff)';
+      raindrop.style.borderRadius = '0 0 5px 5px';
+      raindrop.style.left = Math.random() * 100 + 'vw';
+      raindrop.style.opacity = '0.7';
+      raindrop.style.zIndex = '900';
+      raindrop.style.pointerEvents = 'none';
+      
+      // Add animation
+      raindrop.style.animation = `rainFall ${Math.random() * 0.5 + 0.5}s linear forwards`;
+      
+      rainContainer.appendChild(raindrop);
+      
+      // Remove raindrop after animation
+      setTimeout(() => {
+        raindrop.remove();
+      }, 1500);
+    };
+    
+    // Create raindrops continuously
+    const interval = setInterval(createRaindrop, 10);
+    rainContainer.dataset.intervalId = interval;
+    
+    // Add rain sound
+    const rainSound = new Audio('https://www.soundjay.com/nature/sounds/rain-02.mp3');
+    rainSound.loop = true;
+    rainSound.volume = 0.3;
+    rainSound.play().catch(e => console.log('Sound failed:', e));
+    
+    // Add stop button
+    addWeatherStopButton();
+    
+    // Show achievement
+    showAchievement('Rainmaker', 'You summoned the rain!');
+  }
+  
+  // Weather Effects - Snow
+  function startSnow() {
+    // Clear any existing weather
+    clearWeather();
+    
+    // Create snow container
+    const snowContainer = document.createElement('div');
+    snowContainer.id = 'snowContainer';
+    snowContainer.style.position = 'fixed';
+    snowContainer.style.top = '0';
+    snowContainer.style.left = '0';
+    snowContainer.style.width = '100%';
+    snowContainer.style.height = '100%';
+    snowContainer.style.pointerEvents = 'none';
+    snowContainer.style.zIndex = '900';
+    document.body.appendChild(snowContainer);
+    
+    // Create snowflakes
+    const createSnowflake = () => {
+      const snowflake = document.createElement('div');
+      snowflake.className = 'snow-flake';
+      snowflake.textContent = '❄';
+      snowflake.style.position = 'fixed';
+      snowflake.style.color = 'white';
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+      snowflake.style.fontSize = Math.random() * 15 + 10 + 'px';
+      snowflake.style.zIndex = '900';
+      snowflake.style.pointerEvents = 'none';
+      
+      // Add animation
+      snowflake.style.animation = `snowFall ${Math.random() * 3 + 2}s linear forwards`;
+      
+      snowContainer.appendChild(snowflake);
+      
+      // Remove snowflake after animation
+      setTimeout(() => {
+        snowflake.remove();
+      }, 5000);
+    };
+    
+    // Create snowflakes continuously
+    const interval = setInterval(createSnowflake, 50);
+    snowContainer.dataset.intervalId = interval;
+    
+    // Add winter sound
+    const winterSound = new Audio('https://www.soundjay.com/nature/sounds/wind-1.mp3');
+    winterSound.loop = true;
+    winterSound.volume = 0.2;
+    winterSound.play().catch(e => console.log('Sound failed:', e));
+    
+    // Add stop button
+    addWeatherStopButton();
+    
+    // Show achievement
+    showAchievement('Winter Wizard', 'You summoned the snow!');
+  }
+  
+  // Weather Effects - Storm
+  function startStorm() {
+    // Start with rain
+    startRain();
+    
+    // Add lightning effect
+    const lightning = document.createElement('div');
+    lightning.className = 'lightning';
+    lightning.style.position = 'fixed';
+    lightning.style.top = '0';
+    lightning.style.left = '0';
+    lightning.style.width = '100%';
+    lightning.style.height = '100%';
+    lightning.style.background = 'white';
+    lightning.style.opacity = '0';
+    lightning.style.zIndex = '999';
+    lightning.style.pointerEvents = 'none';
+    document.body.appendChild(lightning);
+    
+    // Flash lightning periodically
+    const flashLightning = () => {
+      lightning.style.opacity = Math.random() * 0.5 + 0.5;
+      
+      // Play thunder sound with delay
+      setTimeout(() => {
+        const thunderSound = new Audio('https://www.soundjay.com/nature/sounds/thunder-1.mp3');
+        thunderSound.volume = 0.4;
+        thunderSound.play().catch(e => console.log('Sound failed:', e));
+      }, Math.random() * 1000 + 500);
+      
+      // Hide lightning
+      setTimeout(() => {
+        lightning.style.opacity = 0;
+      }, 100);
+    };
+    
+    // Initial flash
+    flashLightning();
+    
+    // Flash lightning periodically
+    const lightningInterval = setInterval(flashLightning, Math.random() * 3000 + 2000);
+    
+    // Store lightning interval for cleanup
+    const rainContainer = document.getElementById('rainContainer');
+    rainContainer.dataset.lightningInterval = lightningInterval;
+    
+    // Show achievement
+    showAchievement('Storm Bringer', 'You summoned the storm!');
+  }
+  
+  // Helper function to clear weather effects
+  function clearWeather() {
+    // Clear rain
+    const rainContainer = document.getElementById('rainContainer');
+    if (rainContainer) {
+      clearInterval(parseInt(rainContainer.dataset.intervalId));
+      if (rainContainer.dataset.lightningInterval) {
+        clearInterval(parseInt(rainContainer.dataset.lightningInterval));
+      }
+      rainContainer.remove();
+    }
+    
+    // Clear snow
+    const snowContainer = document.getElementById('snowContainer');
+    if (snowContainer) {
+      clearInterval(parseInt(snowContainer.dataset.intervalId));
+      snowContainer.remove();
+    }
+    
+    // Clear lightning
+    const lightning = document.querySelector('.lightning');
+    if (lightning) {
+      lightning.remove();
+    }
+    
+    // Remove stop button
+    const stopButton = document.getElementById('weatherStopButton');
+    if (stopButton) {
+      stopButton.remove();
+    }
+  }
+  
+  // Add weather stop button
+  function addWeatherStopButton() {
+    // Remove existing button if any
+    const existingButton = document.getElementById('weatherStopButton');
+    if (existingButton) {
+      existingButton.remove();
+    }
+    
+    // Create new stop button
+    const stopButton = document.createElement('button');
+    stopButton.id = 'weatherStopButton';
+    stopButton.textContent = 'Stop Weather';
+    stopButton.style.position = 'fixed';
+    stopButton.style.bottom = '200px';
+    stopButton.style.right = '20px';
+    stopButton.style.background = '#ff0000';
+    stopButton.style.color = 'white';
+    stopButton.style.border = 'none';
+    stopButton.style.padding = '5px 10px';
+    stopButton.style.borderRadius = '5px';
+    stopButton.style.cursor = 'pointer';
+    stopButton.style.zIndex = '999';
+    
+    stopButton.addEventListener('click', clearWeather);
+    
+    document.body.appendChild(stopButton);
+  }
+
+  // Add missing animation keyframes
+  const weatherStyles = document.createElement('style');
+  weatherStyles.textContent = `
+    @keyframes rainFall {
+      0% { transform: translateY(-100px); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0.7; }
+    }
+    
+    @keyframes snowFall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.8; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0.6; }
+    }
+  `;
+  document.head.appendChild(weatherStyles);
+
+  // Add more voice commands
+  const originalOnResult = recognition.onresult;
+  recognition.onresult = function(event) {
+    const transcript = event.results[0][0].transcript.toLowerCase();
+    console.log("Voice detected: " + transcript);
+    
+    // Update indicator to show what was heard
+    voiceIndicator.textContent = '🎤 Heard: "' + transcript + '"';
+    
+    // Process commands
+    if (transcript.includes('confetti')) {
+      for (let i = 0; i < 100; i++) {
+        createConfetti();
+      }
+      voiceIndicator.textContent = '🎤 Command recognized: "confetti"';
+    } else if (transcript.includes('matrix')) {
+      createMatrixEffect();
+      voiceIndicator.textContent = '🎤 Command recognized: "matrix"';
+    } else if (transcript.includes('shake')) {
+      shakeScreen();
+      voiceIndicator.textContent = '🎤 Command recognized: "shake"';
+    } else if (transcript.includes('rain')) {
+      startRain();
+      voiceIndicator.textContent = '🎤 Command recognized: "rain"';
+    } else if (transcript.includes('snow')) {
+      startSnow();
+      voiceIndicator.textContent = '🎤 Command recognized: "snow"';
+    } else if (transcript.includes('storm')) {
+      startStorm();
+      voiceIndicator.textContent = '🎤 Command recognized: "storm"';
+    } else if (transcript.includes('hello')) {
+      showEpicHello();
+      voiceIndicator.textContent = '🎤 Command recognized: "hello"';
+    } else if (transcript.includes('3d') || transcript.includes('three d')) {
+      toggle3DMode();
+      voiceIndicator.textContent = '🎤 Command recognized: "3D mode"';
+    } else if (transcript.includes('power')) {
+      togglePowerUpMode();
+      voiceIndicator.textContent = '🎤 Command recognized: "power up"';
+    } else if (transcript.includes('rainbow')) {
+      startRainbowText();
+      voiceIndicator.textContent = '🎤 Command recognized: "rainbow"';
+    } else if (transcript.includes('fire')) {
+      startFireEffect();
+      voiceIndicator.textContent = '🎤 Command recognized: "fire"';
+    } else if (transcript.includes('explosion')) {
+      createMassiveExplosion();
+      voiceIndicator.textContent = '🎤 Command recognized: "explosion"';
+    } else if (transcript.includes('disco')) {
+      startDiscoMode();
+      voiceIndicator.textContent = '🎤 Command recognized: "disco"';
+    } else {
+      voiceIndicator.textContent = '🎤 Command not recognized. Try again.';
+    }
+    
+    // Restart recognition after processing
+    setTimeout(() => {
+      if (window.voiceCommandsActive) {
+        recognition.start();
+      }
+    }, 1000);
+  };
+
+  // Add rainbow text effect
+  function startRainbowText() {
+    const style = document.createElement('style');
+    style.id = 'rainbowTextStyle';
+    style.textContent = `
+      body * {
+        animation: rainbowText 2s infinite;
+      }
+      
+      @keyframes rainbowText {
+        0% { color: #ff0000; }
+        16% { color: #ff8000; }
+        33% { color: #ffff00; }
+        50% { color: #00ff00; }
+        66% { color: #00ffff; }
+        83% { color: #0000ff; }
+        100% { color: #ff00ff; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Add stop button
+    const stopButton = document.createElement('button');
+    stopButton.id = 'rainbowStopButton';
+    stopButton.textContent = 'Stop Rainbow';
+    stopButton.style.position = 'fixed';
+    stopButton.style.top = '100px';
+    stopButton.style.right = '20px';
+    stopButton.style.background = '#ff0000';
+    stopButton.style.color = 'white';
+    stopButton.style.border = 'none';
+    stopButton.style.padding = '5px 10px';
+    stopButton.style.borderRadius = '5px';
+    stopButton.style.cursor = 'pointer';
+    stopButton.style.zIndex = '9999';
+    
+    stopButton.addEventListener('click', function() {
+      const rainbowStyle = document.getElementById('rainbowTextStyle');
+      if (rainbowStyle) rainbowStyle.remove();
+      stopButton.remove();
+    });
+    
+    document.body.appendChild(stopButton);
+    
+    // Show achievement
+    showAchievement('Rainbow Wizard', 'You made everything colorful!');
+  }
+
+  // Add fire effect
+  function startFireEffect() {
+    // Create fire container
+    const fireContainer = document.createElement('div');
+    fireContainer.id = 'fireContainer';
+    fireContainer.style.position = 'fixed';
+    fireContainer.style.bottom = '0';
+    fireContainer.style.left = '0';
+    fireContainer.style.width = '100%';
+    fireContainer.style.height = '150px';
+    fireContainer.style.pointerEvents = 'none';
+    fireContainer.style.zIndex = '900';
+    document.body.appendChild(fireContainer);
+    
+    // Create fire particles
+    const createFireParticle = () => {
+      const particle = document.createElement('div');
+      particle.style.position = 'absolute';
+      particle.style.bottom = '0';
+      particle.style.width = Math.random() * 15 + 5 + 'px';
+      particle.style.height = particle.style.width;
+      particle.style.background = '#ff4d00';
+      particle.style.borderRadius = '50%';
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.animation = 'fireRise 1.5s ease-out forwards';
+      
+      fireContainer.appendChild(particle);
+      
+      // Remove particle after animation
+      setTimeout(() => {
+        particle.remove();
+      }, 1500);
+    };
+    
+    // Add fire animation
+    const fireStyle = document.createElement('style');
+    fireStyle.id = 'fireStyle';
+    fireStyle.textContent = `
+      @keyframes fireRise {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          background: #ff4d00;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-150px) scale(0);
+          background: #ffff00;
+        }
+      }
+    `;
+    document.head.appendChild(fireStyle);
+    
+    // Create fire particles continuously
+    const interval = setInterval(createFireParticle, 10);
+    
+    // Add stop button
+    const stopButton = document.createElement('button');
+    stopButton.id = 'fireStopButton';
+    stopButton.textContent = 'Stop Fire';
+    stopButton.style.position = 'fixed';
+    stopButton.style.bottom = '160px';
+    stopButton.style.right = '20px';
+    stopButton.style.background = '#ff0000';
+    stopButton.style.color = 'white';
+    stopButton.style.border = 'none';
+    stopButton.style.padding = '5px 10px';
+    stopButton.style.borderRadius = '5px';
+    stopButton.style.cursor = 'pointer';
+    stopButton.style.zIndex = '999';
+    
+    stopButton.addEventListener('click', function() {
+      clearInterval(interval);
+      fireContainer.remove();
+      fireStyle.remove();
+      stopButton.remove();
+    });
+    
+    document.body.appendChild(stopButton);
+    
+    // Show achievement
+    showAchievement('Fire Starter', 'You summoned the flames!');
+  }
+
+  // Add massive explosion effect
+  function createMassiveExplosion() {
+    // Create explosion container
+    const explosionContainer = document.createElement('div');
+    explosionContainer.style.position = 'fixed';
+    explosionContainer.style.top = '0';
+    explosionContainer.style.left = '0';
+    explosionContainer.style.width = '100%';
+    explosionContainer.style.height = '100%';
+    explosionContainer.style.pointerEvents = 'none';
+    explosionContainer.style.zIndex = '9000';
+    document.body.appendChild(explosionContainer);
+    
+    // Create explosion flash
+    const flash = document.createElement('div');
+    flash.style.position = 'fixed';
+    flash.style.top = '0';
+    flash.style.left = '0';
+    flash.style.width = '100%';
+    flash.style.height = '100%';
+    flash.style.background = 'white';
+    flash.style.opacity = '1';
+    flash.style.zIndex = '9001';
+    flash.style.pointerEvents = 'none';
+    document.body.appendChild(flash);
+    
+    // Play explosion sound
+    const explosionSound = new Audio('https://www.soundjay.com/mechanical/sounds/explosion-01.mp3');
+    explosionSound.volume = 0.5;
+    explosionSound.play().catch(e => console.log('Sound failed:', e));
+    
+    // Shake the screen
+    document.body.classList.add('screen-shake');
+    
+    // Fade out flash
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.5s';
+      flash.style.opacity = '0';
+      
+      // Create explosion particles
+      for (let i = 0; i < 200; i++) {
+        createExplosionParticle(explosionContainer);
+      }
+      
+      // Remove shake
+      setTimeout(() => {
+        document.body.classList.remove('screen-shake');
+      }, 1000);
+      
+      // Remove flash
+      setTimeout(() => {
+        flash.remove();
+      }, 500);
+      
+      // Remove container after animation
+      setTimeout(() => {
+        explosionContainer.remove();
+      }, 3000);
+    }, 100);
+    
+    // Show achievement
+    showAchievement('Demolition Expert', 'BOOM! That was epic!');
+  }
+  
+  function createExplosionParticle(container) {
+    const particle = document.createElement('div');
+    particle.style.position = 'fixed';
+    particle.style.top = '50%';
+    particle.style.left = '50%';
+    particle.style.width = Math.random() * 20 + 5 + 'px';
+    particle.style.height = particle.style.width;
+    
+    // Random color
+    const colors = ['#ff0000', '#ff4d00', '#ffff00', '#ffaa00'];
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.borderRadius = '50%';
+    particle.style.boxShadow = '0 0 10px ' + particle.style.background;
+    
+    // Random direction
+    const angle = Math.random() * Math.PI * 2;
+    const distance = Math.random() * 100 + 50;
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+    
+    // Animation
+    particle.style.transition = 'all 2s cubic-bezier(0.1, 0.8, 0.1, 1)';
+    
+    container.appendChild(particle);
+    
+    setTimeout(() => {
+      particle.style.transform = `translate(${x}vw, ${y}vh)`;
+      particle.style.opacity = '0';
+    }, 10);
+  }
+
+  // Add disco mode
+  function startDiscoMode() {
+    // Create disco container
+    const discoContainer = document.createElement('div');
+    discoContainer.id = 'discoContainer';
+    discoContainer.style.position = 'fixed';
+    discoContainer.style.top = '0';
+    discoContainer.style.left = '0';
+    discoContainer.style.width = '100%';
+    discoContainer.style.height = '100%';
+    discoContainer.style.pointerEvents = 'none';
+    discoContainer.style.zIndex = '900';
+    document.body.appendChild(discoContainer);
+    
+    // Add disco ball
+    const discoBall = document.createElement('div');
+    discoBall.style.position = 'fixed';
+    discoBall.style.top = '0';
+    discoBall.style.left = '50%';
+    discoBall.style.transform = 'translateX(-50%)';
+    discoBall.style.width = '100px';
+    discoBall.style.height = '100px';
+    discoBall.style.background = 'radial-gradient(circle, #ffffff, #aaaaaa)';
+    discoBall.style.borderRadius = '50%';
+    discoBall.style.boxShadow = '0 0 20px white';
+    discoBall.style.zIndex = '901';
+    discoBall.style.animation = 'discoBallSpin 5s linear infinite';
+    discoContainer.appendChild(discoBall);
+    
+    // Add disco lights
+    for (let i = 0; i < 5; i++) {
+      const light = document.createElement('div');
+      light.style.position = 'fixed';
+      light.style.top = '0';
+      light.style.left = (i * 25) + '%';
+      light.style.width = '50px';
+      light.style.height = '100vh';
+      light.style.opacity = '0.5';
+      light.style.zIndex = '900';
+      light.style.animation = `discoLight ${i + 1}s infinite alternate`;
+      discoContainer.appendChild(light);
+    }
+    
+    // Add disco style
+    const discoStyle = document.createElement('style');
+    discoStyle.id = 'discoStyle';
+    discoStyle.textContent = `
+      @keyframes discoBallSpin {
+        0% { transform: translateX(-50%) rotate(0deg); }
+        100% { transform: translateX(-50%) rotate(360deg); }
+      }
+      
+      @keyframes discoLight {
+        0% { background: red; transform: translateX(-50px); }
+        25% { background: yellow; }
+        50% { background: green; transform: translateX(50px); }
+        75% { background: blue; }
+        100% { background: purple; transform: translateX(-50px); }
+      }
+    `;
+    document.head.appendChild(discoStyle);
+    
+    // Play disco music
+    const discoMusic = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    discoMusic.volume = 0.3;
+    discoMusic.loop = true;
+    discoMusic.id = 'discoMusic';
+    discoMusic.play().catch(e => console.log('Sound failed:', e));
+    document.body.appendChild(discoMusic);
+    
+    // Add stop button
+    const stopButton = document.createElement('button');
+    stopButton.id = 'discoStopButton';
+    stopButton.textContent = 'Stop Disco';
+    stopButton.style.position = 'fixed';
+    stopButton.style.top = '120px';
+    stopButton.style.right = '20px';
+    stopButton.style.background = '#ff0000';
+    stopButton.style.color = 'white';
+    stopButton.style.border = 'none';
+    stopButton.style.padding = '5px 10px';
+    stopButton.style.borderRadius = '5px';
+    stopButton.style.cursor = 'pointer';
+    stopButton.style.zIndex = '9999';
+    
+    stopButton.addEventListener('click', function() {
+      discoContainer.remove();
+      discoStyle.remove();
+      const music = document.getElementById('discoMusic');
+      if (music) {
+        music.pause();
+        music.remove();
+      }
+      stopButton.remove();
+    });
+    
+    document.body.appendChild(stopButton);
+    
+    // Show achievement
+    showAchievement('Disco King', 'Let\'s dance!');
+  }
+
+  // Add event listeners for weather buttons
+  document.getElementById('rainButton').addEventListener('click', startRain);
+  document.getElementById('snowButton').addEventListener('click', startSnow);
+  document.getElementById('stormButton').addEventListener('click', startStorm);
+</script>
 </body>
 </html>
