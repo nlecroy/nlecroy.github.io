@@ -1779,19 +1779,132 @@
     <h1>Nash's Epic Gaming Realm</h1>
   </div>
 
-  <!-- Add hidden letter that appears when clicking the title -->
-  <div class="hidden-letter-container" style="display: none; position: fixed; top: 150px; left: 50px; font-size: 18px; opacity: 1; z-index: 2000; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px; border: 2px solid #ff4d00;">
+  <!-- Fix the CSS errors by properly structuring the new features section -->
+  <div class="new-features">
+    <div class="feature-button" id="confettiButton">🎉 CONFETTI EXPLOSION</div>
+    <div class="feature-button" id="matrixButton">🖥️ MATRIX MODE</div>
+    <div class="feature-button" id="screenShakeButton">💥 SCREEN SHAKE</div>
+  </div>
+
+  <!-- Add a more visible hidden letter with a flashing effect -->
+  <div class="hidden-letter-container" style="position: fixed; bottom: 100px; left: 50px; font-size: 20px; opacity: 1; z-index: 2000; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 10px; border: 3px solid #ff4d00; animation: flashBorder 2s infinite;">
     <p>Found a secret letter: <span class="hidden-letter">D</span></p>
   </div>
 
+  <style>
+    /* Fix the CSS structure by properly nesting styles */
+    .new-features {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 1000;
+    }
+    
+    .feature-button {
+        background: linear-gradient(45deg, #ff0000, #ff4d00);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: "Impact", sans-serif;
+        font-size: 16px;
+        transition: all 0.3s;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+    
+    .feature-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    }
+    
+    /* Make the hidden letter more visible */
+    .hidden-letter {
+        display: inline-block;
+        color: #ff4d00;
+        font-weight: bold;
+        font-size: 2em;
+        padding: 10px;
+        border: 3px solid #ff4d00;
+        border-radius: 5px;
+        background: rgba(0,0,0,0.8);
+        box-shadow: 0 0 30px #ff4d00;
+        animation: letterPulse 1s infinite alternate;
+    }
+    
+    @keyframes letterPulse {
+        0% { text-shadow: 0 0 15px #ff4d00; transform: scale(1); }
+        100% { text-shadow: 0 0 30px #ff4d00; transform: scale(1.3); }
+    }
+    
+    @keyframes flashBorder {
+        0% { box-shadow: 0 0 10px #ff4d00; }
+        50% { box-shadow: 0 0 30px #ff4d00; }
+        100% { box-shadow: 0 0 10px #ff4d00; }
+    }
+    
+    /* Add a hint message that appears periodically */
+    .letter-hint {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.9);
+        color: #ff4d00;
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid #ff4d00;
+        font-size: 24px;
+        z-index: 9999;
+        text-align: center;
+        animation: fadeInOut 5s forwards;
+        pointer-events: none;
+    }
+    
+    @keyframes fadeInOut {
+        0% { opacity: 0; }
+        20% { opacity: 1; }
+        80% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+  </style>
+
   <script>
-    // Make the letter appear when clicking the title
-    document.querySelector('.gaming-title').addEventListener('click', function() {
-      document.querySelector('.hidden-letter-container').style.display = 'block';
-      // Play discovery sound
-      const sound = new Audio('https://www.myinstants.com/media/sounds/ding-sound-effect_2.mp3');
-      sound.volume = 0.5;
-      sound.play().catch(e => console.log('Sound failed:', e));
+    // Show a hint message after 10 seconds if the user hasn't found any letters
+    setTimeout(() => {
+        if (!localStorage.getItem('foundLetterD')) {
+            const hint = document.createElement('div');
+            hint.className = 'letter-hint';
+            hint.innerHTML = "🔍 HINT: Look for glowing letters on each page!<br>They're much more visible now!";
+            document.body.appendChild(hint);
+            
+            setTimeout(() => {
+                hint.remove();
+            }, 5000);
+        }
+    }, 10000);
+    
+    // Mark the letter as found when clicked
+    document.querySelector('.hidden-letter').addEventListener('click', function() {
+        localStorage.setItem('foundLetterD', 'true');
+        
+        // Play discovery sound
+        const sound = new Audio('https://www.myinstants.com/media/sounds/ding-sound-effect_2.mp3');
+        sound.volume = 0.5;
+        sound.play().catch(e => console.log('Sound failed:', e));
+        
+        // Show confirmation
+        const confirmation = document.createElement('div');
+        confirmation.className = 'letter-hint';
+        confirmation.innerHTML = "✅ Letter D found!<br>3 more to go!";
+        document.body.appendChild(confirmation);
+        
+        setTimeout(() => {
+            confirmation.remove();
+        }, 3000);
     });
   </script>
 
