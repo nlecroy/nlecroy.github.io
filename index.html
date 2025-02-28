@@ -3820,286 +3820,145 @@
 
 <!-- Add VIP feature for special names -->
 <script>
-  // Check for VIP names when the name is entered
-  document.getElementById('nameInput').addEventListener('input', function() {
-    const name = this.value.toLowerCase().trim();
+  // Wait for DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Find the name input element - try different possible selectors
+    const nameInput = document.getElementById('nameInput') || 
+                      document.getElementById('name') || 
+                      document.querySelector('input[type="text"][placeholder*="name" i]') ||
+                      document.querySelector('input[type="text"]');
     
-    // Check for VIP names
-    if (name === 'chris' || name === 'rianna' || name === 'mike') {
-      // Remove existing VIP banner if any
-      const existingBanner = document.getElementById('vipBanner');
-      if (existingBanner) {
-        existingBanner.remove();
-      }
-      
-      // Create VIP banner
-      const vipBanner = document.createElement('div');
-      vipBanner.id = 'vipBanner';
-      vipBanner.style.position = 'fixed';
-      vipBanner.style.top = '0';
-      vipBanner.style.left = '0';
-      vipBanner.style.width = '100%';
-      vipBanner.style.padding = '15px';
-      vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #ff4d00)';
-      vipBanner.style.color = '#000';
-      vipBanner.style.fontFamily = 'Impact, sans-serif';
-      vipBanner.style.fontSize = '24px';
-      vipBanner.style.textAlign = 'center';
-      vipBanner.style.zIndex = '9999';
-      vipBanner.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.8)';
-      vipBanner.style.textTransform = 'uppercase';
-      vipBanner.style.letterSpacing = '2px';
-      vipBanner.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
-      
-      // Different message for each VIP
-      if (name === 'chris') {
-        vipBanner.innerHTML = '⭐ VIP ACCESS GRANTED: CHRIS - YOU ARE A MAIL CHAMP! ⭐';
-        vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #ff0000)';
-      } else if (name === 'rianna') {
-        vipBanner.innerHTML = '⭐ VIP ACCESS GRANTED: RIANNA - YOU ARE A MAIL CHAMP! ⭐';
-        vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #ff00ff)';
-      } else if (name === 'mike') {
-        vipBanner.innerHTML = '⭐ VIP ACCESS GRANTED: MIKE - YOU ARE A MAIL CHAMP! ⭐';
-        vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #0000ff)';
-      }
-      
-      document.body.appendChild(vipBanner);
-      
-      // Add cool 3D text effect
-      const mailChampText = document.createElement('div');
-      mailChampText.id = 'mailChampText';
-      mailChampText.style.position = 'fixed';
-      mailChampText.style.top = '50%';
-      mailChampText.style.left = '50%';
-      mailChampText.style.transform = 'translate(-50%, -50%)';
-      mailChampText.style.fontFamily = 'Impact, sans-serif';
-      mailChampText.style.fontSize = '80px';
-      mailChampText.style.color = '#ffd700';
-      mailChampText.style.textShadow = 
-        '0 1px 0 #ccc, ' +
-        '0 2px 0 #c9c9c9, ' +
-        '0 3px 0 #bbb, ' +
-        '0 4px 0 #b9b9b9, ' +
-        '0 5px 0 #aaa, ' +
-        '0 6px 1px rgba(0,0,0,.1), ' +
-        '0 0 5px rgba(0,0,0,.1), ' +
-        '0 1px 3px rgba(0,0,0,.3), ' +
-        '0 3px 5px rgba(0,0,0,.2), ' +
-        '0 5px 10px rgba(0,0,0,.25), ' +
-        '0 10px 10px rgba(0,0,0,.2), ' +
-        '0 20px 20px rgba(0,0,0,.15)';
-      mailChampText.style.zIndex = '9998';
-      mailChampText.style.whiteSpace = 'nowrap';
-      mailChampText.style.textAlign = 'center';
-      mailChampText.style.animation = 'mailChampPulse 2s infinite alternate';
-      mailChampText.innerHTML = 'MAIL CHAMP!';
-      
-      // Add animation style
-      const style = document.createElement('style');
-      style.textContent = `
-        @keyframes mailChampPulse {
-          0% { transform: translate(-50%, -50%) scale(1); }
-          100% { transform: translate(-50%, -50%) scale(1.2); }
-        }
-      `;
-      document.head.appendChild(style);
-      
-      document.body.appendChild(mailChampText);
-      
-      // Play special VIP sound
-      const vipSound = new Audio('https://www.myinstants.com/media/sounds/ta-da.mp3');
-      vipSound.volume = 0.5;
-      vipSound.play().catch(e => console.log('Sound failed:', e));
-      
-      // Add confetti explosion
-      for (let i = 0; i < 200; i++) {
-        createConfetti();
-      }
-      
-      // Remove the text after 5 seconds
-      setTimeout(() => {
-        mailChampText.style.animation = 'mailChampFadeOut 1s forwards';
-        
-        // Add fade out animation
-        const fadeOutStyle = document.createElement('style');
-        fadeOutStyle.textContent = `
-          @keyframes mailChampFadeOut {
-            0% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-          }
-        `;
-        document.head.appendChild(fadeOutStyle);
-        
-        setTimeout(() => {
-          mailChampText.remove();
-        }, 1000);
-      }, 5000);
-      
-      // Unlock special VIP features
-      unlockVIPFeatures(name);
+    if (!nameInput) {
+      console.error('Could not find name input element');
+      return;
     }
+    
+    // Check for VIP names when the name is entered
+    nameInput.addEventListener('input', function() {
+      const name = this.value.toLowerCase().trim();
+      
+      // Check for VIP names
+      if (name === 'chris' || name === 'rianna' || name === 'mike') {
+        console.log('VIP detected:', name);
+        
+        // Remove existing VIP banner if any
+        const existingBanner = document.getElementById('vipBanner');
+        if (existingBanner) {
+          existingBanner.remove();
+        }
+        
+        // Create VIP banner
+        const vipBanner = document.createElement('div');
+        vipBanner.id = 'vipBanner';
+        vipBanner.style.position = 'fixed';
+        vipBanner.style.top = '0';
+        vipBanner.style.left = '0';
+        vipBanner.style.width = '100%';
+        vipBanner.style.padding = '15px';
+        vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #ff4d00)';
+        vipBanner.style.color = '#000';
+        vipBanner.style.fontFamily = 'Impact, sans-serif';
+        vipBanner.style.fontSize = '24px';
+        vipBanner.style.textAlign = 'center';
+        vipBanner.style.zIndex = '9999';
+        vipBanner.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.8)';
+        vipBanner.style.textTransform = 'uppercase';
+        vipBanner.style.letterSpacing = '2px';
+        vipBanner.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+        
+        // Different message for each VIP
+        if (name === 'chris') {
+          vipBanner.innerHTML = '⭐ VIP ACCESS GRANTED: CHRIS - YOU ARE A MAIL CHAMP! ⭐';
+          vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #ff0000)';
+        } else if (name === 'rianna') {
+          vipBanner.innerHTML = '⭐ VIP ACCESS GRANTED: RIANNA - YOU ARE A MAIL CHAMP! ⭐';
+          vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #ff00ff)';
+        } else if (name === 'mike') {
+          vipBanner.innerHTML = '⭐ VIP ACCESS GRANTED: MIKE - YOU ARE A MAIL CHAMP! ⭐';
+          vipBanner.style.background = 'linear-gradient(45deg, #ffd700, #0000ff)';
+        }
+        
+        document.body.appendChild(vipBanner);
+        
+        // Add cool 3D text effect
+        showMailChampText();
+        
+        // Play special VIP sound
+        const vipSound = new Audio('https://www.myinstants.com/media/sounds/ta-da.mp3');
+        vipSound.volume = 0.5;
+        vipSound.play().catch(e => console.log('Sound failed:', e));
+        
+        // Add confetti explosion
+        for (let i = 0; i < 200; i++) {
+          createConfetti();
+        }
+        
+        // Unlock special VIP features
+        unlockVIPFeatures(name);
+      }
+    });
   });
   
-  // Function to unlock special VIP features
-  function unlockVIPFeatures(name) {
-    // Create VIP features container
-    const vipFeatures = document.createElement('div');
-    vipFeatures.id = 'vipFeatures';
-    vipFeatures.style.position = 'fixed';
-    vipFeatures.style.top = '70px';
-    vipFeatures.style.left = '20px';
-    vipFeatures.style.background = 'linear-gradient(45deg, #000000, #333333)';
-    vipFeatures.style.border = '2px solid #ffd700';
-    vipFeatures.style.borderRadius = '10px';
-    vipFeatures.style.padding = '15px';
-    vipFeatures.style.zIndex = '9997';
-    vipFeatures.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.5)';
+  function showMailChampText() {
+    // Add cool 3D text effect
+    const mailChampText = document.createElement('div');
+    mailChampText.id = 'mailChampText';
+    mailChampText.style.position = 'fixed';
+    mailChampText.style.top = '50%';
+    mailChampText.style.left = '50%';
+    mailChampText.style.transform = 'translate(-50%, -50%)';
+    mailChampText.style.fontFamily = 'Impact, sans-serif';
+    mailChampText.style.fontSize = '80px';
+    mailChampText.style.color = '#ffd700';
+    mailChampText.style.textShadow = 
+      '0 1px 0 #ccc, ' +
+      '0 2px 0 #c9c9c9, ' +
+      '0 3px 0 #bbb, ' +
+      '0 4px 0 #b9b9b9, ' +
+      '0 5px 0 #aaa, ' +
+      '0 6px 1px rgba(0,0,0,.1), ' +
+      '0 0 5px rgba(0,0,0,.1), ' +
+      '0 1px 3px rgba(0,0,0,.3), ' +
+      '0 3px 5px rgba(0,0,0,.2), ' +
+      '0 5px 10px rgba(0,0,0,.25), ' +
+      '0 10px 10px rgba(0,0,0,.2), ' +
+      '0 20px 20px rgba(0,0,0,.15)';
+    mailChampText.style.zIndex = '9998';
+    mailChampText.style.whiteSpace = 'nowrap';
+    mailChampText.style.textAlign = 'center';
+    mailChampText.style.animation = 'mailChampPulse 2s infinite alternate';
+    mailChampText.innerHTML = 'MAIL CHAMP!';
     
-    vipFeatures.innerHTML = `
-      <div style="color: #ffd700; font-family: Impact, sans-serif; font-size: 20px; margin-bottom: 10px;">VIP FEATURES</div>
-      <div class="vip-feature" id="goldModeButton">🏆 GOLD MODE</div>
-      <div class="vip-feature" id="vipConfettiButton">✨ VIP CONFETTI</div>
-      <div class="vip-feature" id="secretMessageButton">🔒 SECRET MESSAGE</div>
-    `;
-    
-    // Add VIP feature styles
-    const vipStyle = document.createElement('style');
-    vipStyle.textContent = `
-      .vip-feature {
-        background: linear-gradient(45deg, #b8860b, #ffd700);
-        color: #000;
-        padding: 10px;
-        margin: 5px 0;
-        border-radius: 5px;
-        cursor: pointer;
-        font-family: "Impact", sans-serif;
-        font-size: 16px;
-        transition: all 0.3s;
-        text-align: center;
+    // Add animation style
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes mailChampPulse {
+        0% { transform: translate(-50%, -50%) scale(1); }
+        100% { transform: translate(-50%, -50%) scale(1.2); }
       }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(mailChampText);
+    
+    // Remove the text after 5 seconds
+    setTimeout(() => {
+      mailChampText.style.animation = 'mailChampFadeOut 1s forwards';
       
-      .vip-feature:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-      }
-    `;
-    document.head.appendChild(vipStyle);
-    
-    document.body.appendChild(vipFeatures);
-    
-    // Add event listeners for VIP features
-    document.getElementById('goldModeButton').addEventListener('click', function() {
-      // Enable gold mode
-      const goldStyle = document.createElement('style');
-      goldStyle.id = 'goldModeStyle';
-      goldStyle.textContent = `
-        body {
-          background: linear-gradient(45deg, #000000, #3a2800) !important;
-        }
-        
-        .game-box, .links a, .feature-button, .mega-feature {
-          border-color: #ffd700 !important;
-          box-shadow: 0 0 20px rgba(255, 215, 0, 0.5) !important;
-        }
-        
-        h1, h2, h3, .feature-title, .mega-feature-title {
-          color: #ffd700 !important;
-          text-shadow: 0 0 10px rgba(255, 215, 0, 0.5) !important;
+      // Add fade out animation
+      const fadeOutStyle = document.createElement('style');
+      fadeOutStyle.textContent = `
+        @keyframes mailChampFadeOut {
+          0% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
         }
       `;
-      document.head.appendChild(goldStyle);
+      document.head.appendChild(fadeOutStyle);
       
-      // Show achievement
-      showAchievement('Gold Member', 'Everything is better with gold!');
-    });
-    
-    document.getElementById('vipConfettiButton').addEventListener('click', function() {
-      // Create gold confetti
-      for (let i = 0; i < 200; i++) {
-        createGoldConfetti();
-      }
-      
-      // Show achievement
-      showAchievement('Golden Shower', 'That came out wrong...');
-    });
-    
-    document.getElementById('secretMessageButton').addEventListener('click', function() {
-      // Show secret message
-      const secretMessage = document.createElement('div');
-      secretMessage.style.position = 'fixed';
-      secretMessage.style.top = '50%';
-      secretMessage.style.left = '50%';
-      secretMessage.style.transform = 'translate(-50%, -50%)';
-      secretMessage.style.background = 'rgba(0, 0, 0, 0.9)';
-      secretMessage.style.border = '2px solid #ffd700';
-      secretMessage.style.borderRadius = '10px';
-      secretMessage.style.padding = '20px';
-      secretMessage.style.color = '#ffd700';
-      secretMessage.style.fontFamily = 'monospace';
-      secretMessage.style.fontSize = '18px';
-      secretMessage.style.zIndex = '9999';
-      secretMessage.style.maxWidth = '80%';
-      secretMessage.style.textAlign = 'center';
-      
-      // Different message for each VIP
-      if (name === 'chris') {
-        secretMessage.innerHTML = "Hey Chris! You found the secret message. You're awesome and everyone thinks you're the best mail champ ever! 🏆";
-      } else if (name === 'rianna') {
-        secretMessage.innerHTML = "Hey Rianna! This secret message is just for you. You're amazing and everyone thinks you're the ultimate mail champ! 🏆";
-      } else if (name === 'mike') {
-        secretMessage.innerHTML = "Hey Mike! You discovered the secret message. You're incredible and everyone agrees you're the supreme mail champ! 🏆";
-      }
-      
-      // Add close button
-      const closeButton = document.createElement('button');
-      closeButton.textContent = 'Close';
-      closeButton.style.background = '#ffd700';
-      closeButton.style.color = '#000';
-      closeButton.style.border = 'none';
-      closeButton.style.padding = '5px 10px';
-      closeButton.style.marginTop = '15px';
-      closeButton.style.borderRadius = '5px';
-      closeButton.style.cursor = 'pointer';
-      
-      closeButton.addEventListener('click', function() {
-        secretMessage.remove();
-      });
-      
-      secretMessage.appendChild(document.createElement('br'));
-      secretMessage.appendChild(closeButton);
-      
-      document.body.appendChild(secretMessage);
-      
-      // Show achievement
-      showAchievement('Secret Keeper', 'You found the secret message!');
-    });
-  }
-  
-  // Function to create gold confetti
-  function createGoldConfetti() {
-    const confetti = document.createElement('div');
-    confetti.style.position = 'fixed';
-    confetti.style.width = Math.random() * 10 + 5 + 'px';
-    confetti.style.height = Math.random() * 10 + 5 + 'px';
-    confetti.style.background = Math.random() > 0.5 ? '#ffd700' : '#b8860b';
-    confetti.style.boxShadow = '0 0 10px rgba(255, 215, 0, 0.8)';
-    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-    confetti.style.top = '-20px';
-    confetti.style.left = Math.random() * 100 + 'vw';
-    confetti.style.zIndex = '9000';
-    confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
-    confetti.style.pointerEvents = 'none';
-    
-    document.body.appendChild(confetti);
-    
-    // Animate confetti
-    const animationDuration = Math.random() * 3 + 2;
-    confetti.style.animation = `confettiFall ${animationDuration}s forwards`;
-    
-    // Remove confetti after animation
-    setTimeout(() => {
-      confetti.remove();
-    }, animationDuration * 1000);
+      setTimeout(() => {
+        mailChampText.remove();
+      }, 1000);
+    }, 5000);
   }
 </script>
 </body>
