@@ -177,16 +177,18 @@
             display: inline-block;
             color: #ff4d00;
             font-weight: bold;
-            font-size: 1.2em;
-            padding: 5px;
-            border: 1px dashed #ff4d00;
+            font-size: 1.5em;
+            padding: 8px;
+            border: 2px solid #ff4d00;
             border-radius: 5px;
             animation: letterPulse 2s infinite alternate;
+            background: rgba(0,0,0,0.8);
+            box-shadow: 0 0 20px #ff4d00;
         }
         
         @keyframes letterPulse {
-            0% { text-shadow: 0 0 5px #ff4d00; }
-            100% { text-shadow: 0 0 15px #ff4d00; }
+            0% { text-shadow: 0 0 10px #ff4d00; transform: scale(1); }
+            100% { text-shadow: 0 0 20px #ff4d00; transform: scale(1.2); }
         }
     </style>
 </head>
@@ -291,7 +293,7 @@
         </div>
     </div>
 
-    <div class="hidden-letter-container" style="position: fixed; top: 20px; right: 20px; font-size: 12px; opacity: 0.7;">
+    <div class="hidden-letter-container" style="display: none; position: fixed; top: 150px; right: 50px; font-size: 18px; opacity: 1; z-index: 2000; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px; border: 2px solid #ff4d00;">
         <p>Found a secret letter: <span class="hidden-letter">O</span></p>
     </div>
 
@@ -325,6 +327,15 @@
                 const sound = new Audio('https://www.soundjay.com/button/button-30.mp3');
                 sound.play().catch(error => console.log('Audio play failed:', error));
             });
+        });
+
+        // Make the letter appear when hovering over the title
+        document.querySelector('.epic-title').addEventListener('mouseover', function() {
+            document.querySelector('.hidden-letter-container').style.display = 'block';
+            // Play discovery sound
+            const sound = new Audio('https://www.myinstants.com/media/sounds/ding-sound-effect_2.mp3');
+            sound.volume = 0.5;
+            sound.play().catch(e => console.log('Sound failed:', e));
         });
     </script>
 </body>

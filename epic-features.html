@@ -213,7 +213,8 @@
             <div id="secretResult"></div>
             <div class="clue-hint">
                 <p>Hint: Look for hidden letters on different pages. They look like this: <span class="hidden-letter">X</span></p>
-                <p>There are 4 letters to find!</p>
+                <p>There are 4 letters to find! Try clicking on unexpected elements!</p>
+                <p>The secret word is: <strong>D O O M</strong> (find all letters)</p>
             </div>
         </div>
         
@@ -340,7 +341,7 @@
         const secretResult = document.getElementById('secretResult');
         const hiddenContent = document.getElementById('hiddenContent');
         
-        // The secret word is "DOOM"
+        // The secret word is "DOOM" (case insensitive)
         const secretWord = "DOOM";
         
         submitCode.addEventListener('click', checkCode);
@@ -353,7 +354,7 @@
         function checkCode() {
             const code = secretCodeInput.value.toUpperCase().trim();
             
-            if (code === secretWord) {
+            if (code === secretWord || code === "D O O M") {
                 secretResult.textContent = "You found all the letters! Secret unlocked!";
                 secretResult.style.color = "#00ff00";
                 hiddenContent.classList.add('revealed');

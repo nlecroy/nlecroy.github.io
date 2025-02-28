@@ -1779,6 +1779,22 @@
     <h1>Nash's Epic Gaming Realm</h1>
   </div>
 
+  <!-- Add hidden letter that appears when clicking the title -->
+  <div class="hidden-letter-container" style="display: none; position: fixed; top: 150px; left: 50px; font-size: 18px; opacity: 1; z-index: 2000; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px; border: 2px solid #ff4d00;">
+    <p>Found a secret letter: <span class="hidden-letter">D</span></p>
+  </div>
+
+  <script>
+    // Make the letter appear when clicking the title
+    document.querySelector('.gaming-title').addEventListener('click', function() {
+      document.querySelector('.hidden-letter-container').style.display = 'block';
+      // Play discovery sound
+      const sound = new Audio('https://www.myinstants.com/media/sounds/ding-sound-effect_2.mp3');
+      sound.volume = 0.5;
+      sound.play().catch(e => console.log('Sound failed:', e));
+    });
+  </script>
+
   <div class="content-container">
     <div class="game-box">
       <div class="game-title">
@@ -1903,11 +1919,6 @@
 
   <div class="epic-features-link">
     <a href="epic-features.html" class="epic-button">🔥 UNLOCK EPIC FEATURES 🔥</a>
-  </div>
-
-  <!-- Add this somewhere in the index.html page, maybe in a footer or sidebar -->
-  <div class="hidden-letter-container" style="position: fixed; bottom: 10px; left: 10px; font-size: 12px; opacity: 0.7;">
-    <p>Found a secret letter: <span class="hidden-letter">D</span></p>
   </div>
 
   <script>
