@@ -193,6 +193,22 @@
             from { transform: scale(1); }
             to { transform: scale(1.1); }
         }
+
+        .hidden-letter {
+            display: inline-block;
+            color: #ff4d00;
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 5px;
+            border: 1px dashed #ff4d00;
+            border-radius: 5px;
+            animation: letterPulse 2s infinite alternate;
+        }
+        
+        @keyframes letterPulse {
+            0% { text-shadow: 0 0 5px #ff4d00; }
+            100% { text-shadow: 0 0 15px #ff4d00; }
+        }
     </style>
 </head>
 <body>
@@ -210,6 +226,10 @@
             <p class="contact-info">🔥 OR FIND ME AT SCHOOL</p>
             <p class="contact-info epic-text">I AM THE POWERFUL BEING!</p>
         </div>
+    </div>
+
+    <div class="hidden-letter-container" style="position: fixed; top: 50px; left: 20px; font-size: 12px; opacity: 0.7;">
+        <p>Found a secret letter: <span class="hidden-letter">M</span></p>
     </div>
 
     <script>

@@ -1553,6 +1553,22 @@
       0% { box-shadow: 0 0 20px rgba(255, 77, 0, 0.5); }
       100% { box-shadow: 0 0 30px rgba(255, 77, 0, 0.8); }
     }
+
+    .hidden-letter {
+        display: inline-block;
+        color: #ff4d00;
+        font-weight: bold;
+        font-size: 1.2em;
+        padding: 5px;
+        border: 1px dashed #ff4d00;
+        border-radius: 5px;
+        animation: letterPulse 2s infinite alternate;
+    }
+    
+    @keyframes letterPulse {
+        0% { text-shadow: 0 0 5px #ff4d00; }
+        100% { text-shadow: 0 0 15px #ff4d00; }
+    }
   </style>
 </head>
 <body>
@@ -1689,6 +1705,11 @@
 
   <div class="epic-features-link">
     <a href="epic-features.html" class="epic-button">🔥 UNLOCK EPIC FEATURES 🔥</a>
+  </div>
+
+  <!-- Add this somewhere in the index.html page, maybe in a footer or sidebar -->
+  <div class="hidden-letter-container" style="position: fixed; bottom: 10px; left: 10px; font-size: 12px; opacity: 0.7;">
+    <p>Found a secret letter: <span class="hidden-letter">D</span></p>
   </div>
 
   <script>
@@ -2057,5 +2078,53 @@
         }
     });
   </script>
+  <!-- Add this at the end of the body tag in index.html and other pages -->
+  <script>
+    // Flame cursor for all pages
+    (function() {
+        // Check if flame cursor is enabled
+        if (localStorage.getItem('flameCursorEnabled') === 'true') {
+            // Add necessary styles
+            const style = document.createElement('style');
+            style.textContent = `
+                body {
+                    cursor: none;
+                }
+                
+                .cursor-flame {
+                    position: fixed;
+                    width: 30px;
+                    height: 30px;
+                    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff4d00"><path d="M12 2C10.5 4 9 6 9 8.5c0 1.1.5 2 1.5 2.5.8.4 1.5 0 1.5-.5v-.5c0-.8.7-1.5 1.5-1.5.7 0 1.5.7 1.5 1.5 0 1.2-.5 2-1.5 2.5 1.2.5 2 1.5 2 2.5 0 1.7-1.3 3-3 3s-3-1.3-3-3c0-.5.1-1 .4-1.5C8.5 11.5 7 9.5 7 7c0-3.5 2-6.5 5-8z"/></svg>');
+                    pointer-events: none;
+                    z-index: 10000;
+                    transform: translate(-50%, -50%);
+                    transition: transform 0.1s ease;
+                    animation: flicker 0.5s infinite;
+                }
+                
+                @keyframes flicker {
+                    0% { transform: scale(1) rotate(0deg); }
+                    25% { transform: scale(1.1) rotate(5deg); }
+                    50% { transform: scale(0.9) rotate(-5deg); }
+                    75% { transform: scale(1.2) rotate(10deg); }
+                    100% { transform: scale(1) rotate(0deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Create flame element
+            const cursorFlame = document.createElement('div');
+            cursorFlame.className = 'cursor-flame';
+            document.body.appendChild(cursorFlame);
+            
+            // Update flame position on mouse move
+            document.addEventListener('mousemove', function(e) {
+                cursorFlame.style.left = e.clientX + 'px';
+                cursorFlame.style.top = e.clientY + 'px';
+            });
+        }
+    })();
+</script>
 </body>
 </html>

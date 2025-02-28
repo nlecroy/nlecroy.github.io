@@ -216,6 +216,22 @@
       50% { text-shadow: 0 0 20px rgba(255, 77, 0, 0.9); }
       100% { text-shadow: 0 0 10px rgba(255, 77, 0, 0.7); }
     }
+
+    .hidden-letter {
+      display: inline-block;
+      color: #ff4d00;
+      font-weight: bold;
+      font-size: 1.2em;
+      padding: 5px;
+      border: 1px dashed #ff4d00;
+      border-radius: 5px;
+      animation: letterPulse 2s infinite alternate;
+    }
+    
+    @keyframes letterPulse {
+      0% { text-shadow: 0 0 5px #ff4d00; }
+      100% { text-shadow: 0 0 15px #ff4d00; }
+    }
   </style>
 </head>
 <body>
@@ -304,6 +320,10 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="hidden-letter-container" style="position: fixed; bottom: 20px; right: 20px; font-size: 12px; opacity: 0.7;">
+    <p>Found a secret letter: <span class="hidden-letter">O</span></p>
   </div>
 
   <script>
