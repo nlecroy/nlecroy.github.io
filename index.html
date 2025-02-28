@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Begin Inspectlet Asynchronous Code -->
+    <script type="text/javascript">
+    (function() {
+    window.__insp = window.__insp || [];
+    __insp.push(['wid', 1531361714]);
+    var ldinsp = function(){
+    if(typeof window.__inspld != "undefined") return; window.__inspld = 1; var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js?wid=1531361714&r=' + Math.floor(new Date().getTime()/3600000); var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); };
+    setTimeout(ldinsp, 0);
+    })();
+    </script>
+    <!-- End Inspectlet Asynchronous Code -->
   <title>Nash's Epic Gaming Realm</title>
   <link rel="stylesheet" href="style.css">
   <style>
@@ -1614,23 +1625,46 @@
         
         // Check if the name is "esric"
         if (name === "esric") {
-            // Show a warning message
-            alert("WARNING: Closing all tabs in 3 seconds!");
+            // Show initial warning
+            alert("WARNING: UNAUTHORIZED ACCESS DETECTED!");
             
-            // Set a timeout to close all tabs
-            setTimeout(() => {
-                // This will attempt to close the current tab/window
-                window.close();
+            // Start showing constant warnings
+            let warningCount = 0;
+            const maxWarnings = 10;
+            const warningInterval = setInterval(() => {
+                alert("NO");
+                warningCount++;
                 
-                // For browsers that block window.close(), try an alternative approach
-                // by redirecting to a special URL that triggers tab closure
-                // Note: This may not work in all browsers due to security restrictions
-                window.location.href = "about:blank";
-                
-                // Another approach is to open a new blank window and close the current one
-                const newWindow = window.open('', '_self');
-                newWindow.close();
-            }, 3000);
+                // After several warnings, try to close the tab
+                if (warningCount >= maxWarnings) {
+                    clearInterval(warningInterval);
+                    
+                    // Try to close the tab using multiple methods
+                    window.close();
+                    window.location.href = "about:blank";
+                    const newWindow = window.open('', '_self');
+                    newWindow.close();
+                }
+            }, 500);
+            
+            // Clear the input field
+            this.value = "";
+            
+            // Change background to red flashing
+            document.body.style.animation = "redFlash 0.5s infinite";
+            
+            // Add the CSS for red flashing if it doesn't exist
+            if (!document.getElementById('warning-style')) {
+                const style = document.createElement('style');
+                style.id = 'warning-style';
+                style.textContent = `
+                    @keyframes redFlash {
+                        0%, 100% { background: #300; }
+                        50% { background: #f00; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
         }
     });
   </script>
