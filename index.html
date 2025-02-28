@@ -2726,5 +2726,452 @@
         }
     })();
 </script>
+
+<!-- Add this epic animated hello text -->
+<div class="epic-hello">
+  <span class="epic-letter">H</span>
+  <span class="epic-letter">E</span>
+  <span class="epic-letter">L</span>
+  <span class="epic-letter">L</span>
+  <span class="epic-letter">O</span>
+  <span class="epic-letter">O</span>
+  <span class="epic-letter">O</span>
+  <span class="epic-letter">O</span>
+  <span class="epic-letter">O</span>
+  <span class="epic-letter">O</span>
+  <span class="epic-letter">!</span>
+</div>
+
+<style>
+  /* Epic Hello Animation */
+  .epic-hello {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Impact", sans-serif;
+    font-size: 80px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 9999;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: 
+      0 0 20px #ff4d00,
+      0 0 40px #ff4d00,
+      0 0 60px #ff4d00;
+    animation: epicHelloFade 5s forwards;
+  }
+  
+  .epic-letter {
+    display: inline-block;
+    color: #ff4d00;
+    animation: epicLetterJump 0.5s infinite alternate;
+    transform-origin: bottom center;
+  }
+  
+  .epic-letter:nth-child(1) { animation-delay: 0.0s; }
+  .epic-letter:nth-child(2) { animation-delay: 0.1s; }
+  .epic-letter:nth-child(3) { animation-delay: 0.2s; }
+  .epic-letter:nth-child(4) { animation-delay: 0.3s; }
+  .epic-letter:nth-child(5) { animation-delay: 0.4s; }
+  .epic-letter:nth-child(6) { animation-delay: 0.5s; }
+  .epic-letter:nth-child(7) { animation-delay: 0.6s; }
+  .epic-letter:nth-child(8) { animation-delay: 0.7s; }
+  .epic-letter:nth-child(9) { animation-delay: 0.8s; }
+  .epic-letter:nth-child(10) { animation-delay: 0.9s; }
+  .epic-letter:nth-child(11) { animation-delay: 1.0s; }
+  
+  @keyframes epicLetterJump {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-20px) scale(1.2); }
+  }
+  
+  @keyframes epicHelloFade {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    10% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    20% { transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+  }
+</style>
+
+<script>
+  // Fix for matrix voice command and other epic commands
+  document.getElementById('enableVoiceCommands').addEventListener('click', function() {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert("Voice recognition is not supported in your browser. Try Chrome!");
+      return;
+    }
+    
+    // Check if voice commands are already active
+    if (window.voiceCommandsActive) {
+      alert("Voice commands are already active!");
+      return;
+    }
+    
+    window.voiceCommandsActive = true;
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    
+    // Show feedback that voice commands are active
+    const voiceIndicator = document.createElement('div');
+    voiceIndicator.id = 'voiceCommandIndicator';
+    voiceIndicator.style.position = 'fixed';
+    voiceIndicator.style.top = '20px';
+    voiceIndicator.style.left = '50%';
+    voiceIndicator.style.transform = 'translateX(-50%)';
+    voiceIndicator.style.background = 'rgba(255, 77, 0, 0.8)';
+    voiceIndicator.style.color = 'white';
+    voiceIndicator.style.padding = '10px 20px';
+    voiceIndicator.style.borderRadius = '20px';
+    voiceIndicator.style.fontFamily = 'Impact, sans-serif';
+    voiceIndicator.style.zIndex = '9999';
+    voiceIndicator.textContent = '🎤 Voice Commands Active - Try saying "confetti", "matrix", "shake", "hello"';
+    document.body.appendChild(voiceIndicator);
+    
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      console.log("Voice detected: " + transcript);
+      
+      // Update indicator to show what was heard
+      voiceIndicator.textContent = '🎤 Heard: "' + transcript + '"';
+      
+      // Process commands
+      if (transcript.includes('confetti')) {
+        for (let i = 0; i < 100; i++) {
+          createConfetti();
+        }
+        voiceIndicator.textContent = '🎤 Command recognized: "confetti"';
+      } else if (transcript.includes('matrix')) {
+        createMatrixEffect();
+        voiceIndicator.textContent = '🎤 Command recognized: "matrix"';
+      } else if (transcript.includes('shake')) {
+        shakeScreen();
+        voiceIndicator.textContent = '🎤 Command recognized: "shake"';
+      } else if (transcript.includes('rain')) {
+        startRain();
+        voiceIndicator.textContent = '🎤 Command recognized: "rain"';
+      } else if (transcript.includes('snow')) {
+        startSnow();
+        voiceIndicator.textContent = '🎤 Command recognized: "snow"';
+      } else if (transcript.includes('storm')) {
+        startStorm();
+        voiceIndicator.textContent = '🎤 Command recognized: "storm"';
+      } else if (transcript.includes('hello')) {
+        showEpicHello();
+        voiceIndicator.textContent = '🎤 Command recognized: "hello"';
+      } else if (transcript.includes('3d') || transcript.includes('three d')) {
+        toggle3DMode();
+        voiceIndicator.textContent = '🎤 Command recognized: "3D mode"';
+      } else if (transcript.includes('power')) {
+        togglePowerUpMode();
+        voiceIndicator.textContent = '🎤 Command recognized: "power up"';
+      } else {
+        voiceIndicator.textContent = '🎤 Command not recognized. Try again.';
+      }
+      
+      // Restart recognition after processing
+      setTimeout(() => {
+        if (window.voiceCommandsActive) {
+          recognition.start();
+        }
+      }, 1000);
+    };
+    
+    recognition.onend = function() {
+      // Only restart if still active and not manually stopped
+      if (window.voiceCommandsActive) {
+        recognition.start();
+      }
+    };
+    
+    recognition.onerror = function(event) {
+      console.log('Speech recognition error:', event.error);
+      voiceIndicator.textContent = '🎤 Error: ' + event.error + '. Restarting...';
+      
+      // Restart on error after a short delay
+      setTimeout(() => {
+        if (window.voiceCommandsActive) {
+          recognition.start();
+        }
+      }, 2000);
+    };
+    
+    recognition.start();
+    
+    // Add stop button
+    const stopButton = document.createElement('button');
+    stopButton.id = 'voiceCommandStopButton';
+    stopButton.textContent = 'Stop Voice Commands';
+    stopButton.style.position = 'fixed';
+    stopButton.style.top = '60px';
+    stopButton.style.left = '50%';
+    stopButton.style.transform = 'translateX(-50%)';
+    stopButton.style.background = '#ff0000';
+    stopButton.style.color = 'white';
+    stopButton.style.border = 'none';
+    stopButton.style.padding = '5px 10px';
+    stopButton.style.borderRadius = '5px';
+    stopButton.style.cursor = 'pointer';
+    stopButton.style.zIndex = '9999';
+    
+    stopButton.addEventListener('click', function() {
+      window.voiceCommandsActive = false;
+      recognition.stop();
+      voiceIndicator.remove();
+      stopButton.remove();
+    });
+    
+    document.body.appendChild(stopButton);
+  });
+  
+  // New matrix effect function
+  function createMatrixEffect() {
+    // Remove existing matrix effect if any
+    const existingMatrix = document.querySelector('.matrix-effect');
+    if (existingMatrix) {
+      existingMatrix.remove();
+    }
+    
+    // Create new matrix effect
+    const matrixEffect = document.createElement('div');
+    matrixEffect.className = 'matrix-effect';
+    matrixEffect.style.position = 'fixed';
+    matrixEffect.style.top = '0';
+    matrixEffect.style.left = '0';
+    matrixEffect.style.width = '100%';
+    matrixEffect.style.height = '100%';
+    matrixEffect.style.background = 'rgba(0, 0, 0, 0.9)';
+    matrixEffect.style.zIndex = '9000';
+    matrixEffect.style.overflow = 'hidden';
+    matrixEffect.style.display = 'block';
+    document.body.appendChild(matrixEffect);
+    
+    // Add matrix characters
+    for (let i = 0; i < 50; i++) {
+      const column = document.createElement('div');
+      column.style.position = 'absolute';
+      column.style.left = Math.random() * 100 + 'vw';
+      column.style.top = '0';
+      
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>/?";
+      const columnHeight = Math.floor(Math.random() * 20) + 10;
+      
+      for (let j = 0; j < columnHeight; j++) {
+        const char = document.createElement('div');
+        char.style.position = 'absolute';
+        char.style.color = '#00ff00';
+        char.style.fontFamily = 'monospace';
+        char.style.fontSize = '20px';
+        char.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+        char.style.top = j * 20 + 'px';
+        char.style.animation = `matrixFall ${Math.random() * 5 + 2}s linear infinite`;
+        char.style.animationDelay = Math.random() * 2 + 's';
+        column.appendChild(char);
+      }
+      
+      matrixEffect.appendChild(column);
+    }
+    
+    // Add click event to exit
+    matrixEffect.addEventListener('click', function() {
+      matrixEffect.remove();
+    });
+  }
+  
+  // Show epic hello animation
+  function showEpicHello() {
+    // Remove existing hello if any
+    const existingHello = document.querySelector('.epic-hello');
+    if (existingHello) {
+      existingHello.remove();
+    }
+    
+    // Create new hello animation
+    const epicHello = document.createElement('div');
+    epicHello.className = 'epic-hello';
+    epicHello.innerHTML = `
+      <span class="epic-letter">H</span>
+      <span class="epic-letter">E</span>
+      <span class="epic-letter">L</span>
+      <span class="epic-letter">L</span>
+      <span class="epic-letter">O</span>
+      <span class="epic-letter">O</span>
+      <span class="epic-letter">O</span>
+      <span class="epic-letter">O</span>
+      <span class="epic-letter">O</span>
+      <span class="epic-letter">O</span>
+      <span class="epic-letter">!</span>
+    `;
+    document.body.appendChild(epicHello);
+    
+    // Play epic sound
+    const helloSound = new Audio('https://www.myinstants.com/media/sounds/epic-sax-guy.mp3');
+    helloSound.volume = 0.5;
+    helloSound.play().catch(e => console.log('Sound failed:', e));
+    
+    // Remove after animation completes
+    setTimeout(() => {
+      epicHello.remove();
+    }, 5000);
+  }
+  
+  // 3D Mode toggle
+  function toggle3DMode() {
+    document.body.classList.toggle('mode-3d');
+    
+    if (document.body.classList.contains('mode-3d')) {
+      // Add 3D effect to elements
+      const style = document.createElement('style');
+      style.id = '3d-mode-style';
+      style.textContent = `
+        .mode-3d {
+          transform-style: preserve-3d;
+          perspective: 1000px;
+        }
+        
+        .mode-3d .game-box,
+        .mode-3d .links a,
+        .mode-3d .mega-feature,
+        .mode-3d .feature-button {
+          transform: translateZ(20px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+          transition: transform 0.3s;
+        }
+        
+        .mode-3d .game-box:hover,
+        .mode-3d .links a:hover,
+        .mode-3d .mega-feature:hover,
+        .mode-3d .feature-button:hover {
+          transform: translateZ(40px) scale(1.05);
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Add mouse movement effect
+      document.addEventListener('mousemove', apply3DEffect);
+      
+      // Show notification
+      showAchievement('3D Vision', 'You activated 3D mode!');
+    } else {
+      // Remove 3D effect
+      const style = document.getElementById('3d-mode-style');
+      if (style) style.remove();
+      
+      // Remove mouse movement effect
+      document.removeEventListener('mousemove', apply3DEffect);
+    }
+  }
+  
+  function apply3DEffect(e) {
+    if (!document.body.classList.contains('mode-3d')) return;
+    
+    const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+    const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+    
+    document.querySelectorAll('.game-box, .links a, .mega-feature, .feature-button').forEach(el => {
+      el.style.transform = `translateZ(20px) rotateY(${xAxis}deg) rotateX(${-yAxis}deg)`;
+    });
+  }
+  
+  // Power-Up Mode toggle
+  function togglePowerUpMode() {
+    document.body.classList.toggle('power-up-active');
+    
+    if (document.body.classList.contains('power-up-active')) {
+      // Add power-up effect
+      const style = document.createElement('style');
+      style.id = 'power-up-style';
+      style.textContent = `
+        .power-up-active {
+          animation: powerPulse 2s infinite;
+        }
+        
+        @keyframes powerPulse {
+          0% { filter: brightness(1); }
+          50% { filter: brightness(1.5) saturate(1.5); }
+          100% { filter: brightness(1); }
+        }
+        
+        .power-up-active .game-box,
+        .power-up-active .links a,
+        .power-up-active .feature-button {
+          animation: powerUpEffect 2s infinite;
+        }
+        
+        @keyframes powerUpEffect {
+          0% { box-shadow: 0 0 10px rgba(255, 77, 0, 0.5); }
+          50% { box-shadow: 0 0 30px rgba(255, 77, 0, 1); }
+          100% { box-shadow: 0 0 10px rgba(255, 77, 0, 0.5); }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Create power-up particles
+      const interval = setInterval(() => {
+        createPowerParticle();
+      }, 200);
+      
+      // Store interval ID for cleanup
+      window.powerUpInterval = interval;
+      
+      // Show notification
+      showAchievement('Power Surge', 'Ultimate power activated!');
+    } else {
+      // Remove power-up effect
+      const style = document.getElementById('power-up-style');
+      if (style) style.remove();
+      
+      // Clear particle interval
+      if (window.powerUpInterval) {
+        clearInterval(window.powerUpInterval);
+      }
+    }
+  }
+  
+  function createPowerParticle() {
+    const particle = document.createElement('div');
+    particle.style.position = 'fixed';
+    particle.style.width = '10px';
+    particle.style.height = '10px';
+    particle.style.background = '#ff4d00';
+    particle.style.borderRadius = '50%';
+    particle.style.boxShadow = '0 0 10px #ff4d00';
+    particle.style.zIndex = '1000';
+    particle.style.pointerEvents = 'none';
+    
+    // Random position around an element
+    const elements = document.querySelectorAll('.game-box, .links a, .feature-button');
+    const randomElement = elements[Math.floor(Math.random() * elements.length)];
+    const rect = randomElement.getBoundingClientRect();
+    
+    const x = rect.left + Math.random() * rect.width;
+    const y = rect.top + Math.random() * rect.height;
+    
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    
+    document.body.appendChild(particle);
+    
+    // Animate and remove
+    particle.animate([
+      { transform: 'scale(0)', opacity: 1 },
+      { transform: 'scale(2)', opacity: 0 }
+    ], {
+      duration: 1000,
+      easing: 'ease-out'
+    }).onfinish = () => particle.remove();
+  }
+  
+  // Add event listeners for the buttons
+  document.getElementById('enable3dMode').addEventListener('click', toggle3DMode);
+  document.getElementById('enablePowerUp').addEventListener('click', togglePowerUpMode);
+  
+  // Show the epic hello on page load
+  setTimeout(showEpicHello, 1000);
+</script>
 </body>
 </html>
