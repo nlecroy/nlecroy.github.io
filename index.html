@@ -1335,6 +1335,224 @@
             opacity: 0;
         }
     }
+
+    .mode-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+    
+    .toggle-checkbox {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+    
+    .toggle-label {
+        display: block;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid #ff4d00;
+        border-radius: 20px;
+        width: 60px;
+        height: 30px;
+        position: relative;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+    }
+    
+    .toggle-inner {
+        display: block;
+        width: 200%;
+        margin-left: -100%;
+        transition: margin 0.3s ease;
+    }
+    
+    .toggle-inner:before, .toggle-inner:after {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 30px;
+        padding: 0;
+        line-height: 30px;
+        color: white;
+        box-sizing: border-box;
+    }
+    
+    .toggle-active, .toggle-inactive {
+        display: block;
+        float: left;
+        width: 50%;
+        text-align: center;
+        line-height: 28px;
+    }
+    
+    .toggle-switch {
+        display: block;
+        width: 22px;
+        height: 22px;
+        background: #fff;
+        position: absolute;
+        top: 4px;
+        bottom: 0;
+        right: 32px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    
+    .toggle-checkbox:checked + .toggle-label .toggle-inner {
+        margin-left: 0;
+    }
+    
+    .toggle-checkbox:checked + .toggle-label .toggle-switch {
+        right: 4px;
+        background: #ff4d00;
+    }
+    
+    .dark-mode {
+        background: linear-gradient(45deg, #000, #1a0f1f) !important;
+    }
+
+    .music-player {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 30px;
+        border: 2px solid #ff4d00;
+        z-index: 1000;
+        box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+        transition: all 0.3s ease;
+    }
+    
+    .music-button {
+        background: linear-gradient(45deg, #ff0000, #ff4d00);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .music-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 10px rgba(255, 77, 0, 0.8);
+    }
+    
+    .music-info {
+        color: #ff4d00;
+        font-size: 14px;
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba(255, 77, 0, 0.5);
+        animation: musicPulse 2s infinite alternate;
+    }
+    
+    @keyframes musicPulse {
+        0% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+
+    #achievementContainer {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        width: 300px;
+        z-index: 1000;
+    }
+    
+    .achievement-notification {
+        background: linear-gradient(45deg, #1a0000, #000000);
+        border: 2px solid #ff4d00;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        color: #fff;
+        box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+        transform: translateX(120%);
+        animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .achievement-notification::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 77, 0, 0.2), transparent);
+        transform: translateX(-100%);
+        animation: shine 2s infinite;
+    }
+    
+    .achievement-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #ff4d00;
+        margin-bottom: 5px;
+    }
+    
+    .achievement-description {
+        font-size: 14px;
+    }
+    
+    @keyframes slideIn {
+        to { transform: translateX(0); }
+    }
+    
+    @keyframes fadeOut {
+        to { opacity: 0; transform: translateX(120%); }
+    }
+    
+    @keyframes shine {
+        100% { transform: translateX(100%); }
+    }
+
+    .epic-features-link {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    
+    .epic-button {
+      display: inline-block;
+      background: linear-gradient(45deg, #ff0000, #ff4d00);
+      color: white;
+      padding: 15px 25px;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 10px;
+      border: 2px solid #ff4d00;
+      box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite alternate;
+    }
+    
+    .epic-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255, 77, 0, 0.8);
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px rgba(255, 77, 0, 0.5); }
+      100% { box-shadow: 0 0 30px rgba(255, 77, 0, 0.8); }
+    }
   </style>
 </head>
 <body>
@@ -1449,6 +1667,28 @@
         </a>
         <div class="sparkle-effect"></div>
     </div>
+  </div>
+
+  <div class="mode-toggle">
+    <input type="checkbox" id="darkModeToggle" class="toggle-checkbox">
+    <label for="darkModeToggle" class="toggle-label">
+      <span class="toggle-inner">
+        <span class="toggle-active">🌙</span>
+        <span class="toggle-inactive">☀️</span>
+      </span>
+      <span class="toggle-switch"></span>
+    </label>
+  </div>
+
+  <div class="music-player">
+    <button id="toggleMusic" class="music-button">🎵</button>
+    <div class="music-info">Now Playing: DOOM - BFG Division</div>
+  </div>
+
+  <div id="achievementContainer"></div>
+
+  <div class="epic-features-link">
+    <a href="epic-features.html" class="epic-button">🔥 UNLOCK EPIC FEATURES 🔥</a>
   </div>
 
   <script>
@@ -1665,6 +1905,155 @@
                 `;
                 document.head.appendChild(style);
             }
+        }
+    });
+
+    // Fix for dark mode toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      
+      if (!darkModeToggle) {
+        console.error('Dark mode toggle not found, creating it');
+        // Create the toggle if it doesn't exist in DOM yet
+        const toggleHTML = `
+          <div class="mode-toggle">
+            <input type="checkbox" id="darkModeToggle" class="toggle-checkbox">
+            <label for="darkModeToggle" class="toggle-label">
+              <span class="toggle-inner">
+                <span class="toggle-active">🌙</span>
+                <span class="toggle-inactive">☀️</span>
+              </span>
+              <span class="toggle-switch"></span>
+            </label>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', toggleHTML);
+      }
+      
+      // Re-get the element in case it was just created
+      const toggle = document.getElementById('darkModeToggle');
+      
+      toggle.addEventListener('change', function() {
+        if (this.checked) {
+          document.body.classList.add('dark-mode');
+          localStorage.setItem('darkMode', 'enabled');
+        } else {
+          document.body.classList.remove('dark-mode');
+          localStorage.setItem('darkMode', 'disabled');
+        }
+      });
+      
+      // Check for saved dark mode preference
+      if (localStorage.getItem('darkMode') === 'enabled') {
+        toggle.checked = true;
+        document.body.classList.add('dark-mode');
+      }
+      
+      // Fix for music player
+      const musicPlayer = document.querySelector('.music-player');
+      if (!musicPlayer) {
+        console.error('Music player not found, creating it');
+        // Create the music player if it doesn't exist
+        const musicHTML = `
+          <div class="music-player">
+            <button id="toggleMusic" class="music-button">🎵</button>
+            <div class="music-info">Now Playing: DOOM - BFG Division</div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', musicHTML);
+      }
+      
+      // Fix for achievement container
+      const achievementContainer = document.getElementById('achievementContainer');
+      if (!achievementContainer) {
+        console.error('Achievement container not found, creating it');
+        // Create the achievement container if it doesn't exist
+        const achievementHTML = `<div id="achievementContainer"></div>`;
+        document.body.insertAdjacentHTML('beforeend', achievementHTML);
+      }
+      
+      // Initialize the music player
+      const toggleMusic = document.getElementById('toggleMusic');
+      if (toggleMusic) {
+        const bgMusic = new Audio('https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=BFG+Division+-+DOOM+OST&filename=mz/MzU1ODMxNTU1MzU1ODM3_JzthsfvUY24.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+        
+        let isMusicPlaying = false;
+        
+        toggleMusic.addEventListener('click', function() {
+          if (isMusicPlaying) {
+            bgMusic.pause();
+            toggleMusic.textContent = '🎵';
+          } else {
+            bgMusic.play().catch(e => console.log('Audio play failed:', e));
+            toggleMusic.textContent = '⏸️';
+          }
+          isMusicPlaying = !isMusicPlaying;
+          
+          // Trigger achievement if not already unlocked
+          if (!isMusicPlaying && unlockedAchievements && !unlockedAchievements.includes(2)) {
+            unlockAchievement(2);
+          }
+        });
+      }
+    });
+
+    // Achievement system
+    const achievements = [
+        { title: "Welcome to Hell", description: "You've entered the gaming realm" },
+        { title: "Curious Explorer", description: "Checked out the navigation menu" },
+        { title: "Music Lover", description: "Played the DOOM soundtrack" },
+        { title: "Dark Side", description: "Activated dark mode" },
+        { title: "Loyal Fan", description: "Visited multiple pages" }
+    ];
+    
+    let unlockedAchievements = JSON.parse(localStorage.getItem('achievements') || '[]');
+    
+    function unlockAchievement(index) {
+        if (unlockedAchievements.includes(index)) return;
+        
+        const achievement = achievements[index];
+        const notification = document.createElement('div');
+        notification.className = 'achievement-notification';
+        notification.innerHTML = `
+          <div class="achievement-title">🏆 ${achievement.title}</div>
+          <div class="achievement-description">${achievement.description}</div>
+        `;
+        
+        document.getElementById('achievementContainer').appendChild(notification);
+        
+        // Play sound
+        const sound = new Audio('https://www.soundjay.com/button/button-09.mp3');
+        sound.play().catch(e => console.log('Audio play failed:', e));
+        
+        // Save to localStorage
+        unlockedAchievements.push(index);
+        localStorage.setItem('achievements', JSON.stringify(unlockedAchievements));
+        
+        // Remove notification after animation
+        setTimeout(() => notification.remove(), 5000);
+    }
+    
+    // Unlock first achievement on page load
+    setTimeout(() => unlockAchievement(0), 2000);
+    
+    // Unlock second achievement when clicking nav
+    document.querySelector('.nav-links').addEventListener('click', () => {
+        unlockAchievement(1);
+    });
+    
+    // Unlock third achievement when toggling music
+    document.getElementById('toggleMusic').addEventListener('click', () => {
+        if (!isMusicPlaying) {
+            unlockAchievement(2);
+        }
+    });
+    
+    // Unlock fourth achievement when toggling dark mode
+    document.getElementById('darkModeToggle').addEventListener('change', function() {
+        if (this.checked) {
+            unlockAchievement(3);
         }
     });
   </script>

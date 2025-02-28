@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic Gaming Features</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1a0f1f, #2d1635);
+            color: #ff4d00;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            text-shadow: 0 0 10px #ff4d00;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff4d00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+        }
+        
+        .feature-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ff4d00;
+        }
+        
+        .feature-description {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .button {
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 10px;
+            text-decoration: none;
+        }
+        
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 77, 0, 0.7);
+        }
+        
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .achievement {
+            background: rgba(255, 77, 0, 0.2);
+            border: 1px solid #ff4d00;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        
+        .achievement.unlocked {
+            background: rgba(255, 77, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Epic Gaming Features</h1>
+        
+        <div class="feature-card">
+            <div class="feature-title">🎵 DOOM Music Player</div>
+            <div class="feature-description">Experience the epic DOOM soundtrack while you browse!</div>
+            <div class="music-controls">
+                <button id="playMusic" class="button">Play Music</button>
+                <button id="pauseMusic" class="button">Pause Music</button>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🌙 Dark Mode</div>
+            <div class="feature-description">Toggle between light and dark mode for your gaming experience.</div>
+            <button id="darkModeToggle" class="button">Enable Dark Mode</button>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🏆 Achievements</div>
+            <div class="feature-description">Unlock epic achievements as you explore the site!</div>
+            <div id="achievements-list">
+                <div class="achievement" id="achievement-1">Welcome to Hell - Visit the main page</div>
+                <div class="achievement" id="achievement-2">Music Lover - Play the DOOM soundtrack</div>
+                <div class="achievement" id="achievement-3">Dark Side - Enable dark mode</div>
+            </div>
+        </div>
+        
+        <a href="index.html" class="button">Return to Main Site</a>
+    </div>
+    
+    <script>
+        // Music Player
+        const playMusic = document.getElementById('playMusic');
+        const pauseMusic = document.getElementById('pauseMusic');
+        const audio = new Audio('https://www.101soundboards.com/storage/board_sounds_rendered/25950.mp3');
+        audio.loop = true;
+        audio.volume = 0.3;
+        
+        playMusic.addEventListener('click', function() {
+            audio.play().then(() => {
+                console.log('Music started');
+                unlockAchievement('achievement-2');
+            }).catch(error => {
+                console.error('Failed to play audio:', error);
+                alert('Click again to play music. Some browsers require user interaction first.');
+            });
+        });
+        
+        pauseMusic.addEventListener('click', function() {
+            audio.pause();
+            console.log('Music paused');
+        });
+        
+        // Dark Mode
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        let darkModeEnabled = false;
+        
+        darkModeToggle.addEventListener('click', function() {
+            darkModeEnabled = !darkModeEnabled;
+            
+            if (darkModeEnabled) {
+                document.body.style.background = '#000';
+                darkModeToggle.textContent = 'Disable Dark Mode';
+                unlockAchievement('achievement-3');
+            } else {
+                document.body.style.background = 'linear-gradient(45deg, #1a0f1f, #2d1635)';
+                darkModeToggle.textContent = 'Enable Dark Mode';
+            }
+        });
+        
+        // Achievements
+        function unlockAchievement(id) {
+            const achievement = document.getElementById(id);
+            if (achievement && !achievement.classList.contains('unlocked')) {
+                achievement.classList.add('unlocked');
+                achievement.textContent = '✅ ' + achievement.textContent;
+                
+                // Play achievement sound
+                const achievementSound = new Audio('https://www.soundjay.com/button/button-09.mp3');
+                achievementSound.play().catch(e => console.log('Achievement sound failed:', e));
+                
+                // Save to localStorage
+                localStorage.setItem(id, 'unlocked');
+            }
+        }
+        
+        // Check for saved achievements
+        document.querySelectorAll('.achievement').forEach(achievement => {
+            if (localStorage.getItem(achievement.id) === 'unlocked') {
+                achievement.classList.add('unlocked');
+                achievement.textContent = '✅ ' + achievement.textContent;
+            }
+        });
+        
+        // Unlock first achievement on page load
+        unlockAchievement('achievement-1');
+    </script>
+</body>
+</html> 
