@@ -1767,6 +1767,284 @@
             20%, 40%, 60%, 80% { transform: translateX(10px); }
         }
     </style>
+
+    <!-- Add these awesome new features to your site -->
+    <div class="mega-features-container">
+      <!-- Voice Commands Feature -->
+      <div class="mega-feature" id="voiceCommandsFeature">
+        <div class="mega-feature-icon">🎤</div>
+        <div class="mega-feature-title">VOICE COMMANDS</div>
+        <button class="mega-feature-button" id="enableVoiceCommands">ENABLE</button>
+      </div>
+      
+      <!-- 3D Mode Feature -->
+      <div class="mega-feature" id="3dModeFeature">
+        <div class="mega-feature-icon">👓</div>
+        <div class="mega-feature-title">3D MODE</div>
+        <button class="mega-feature-button" id="enable3dMode">ENABLE</button>
+      </div>
+      
+      <!-- Weather Effects -->
+      <div class="mega-feature" id="weatherEffectsFeature">
+        <div class="mega-feature-icon">⚡</div>
+        <div class="mega-feature-title">WEATHER EFFECTS</div>
+        <div class="weather-buttons">
+          <button class="weather-button" id="rainButton">🌧️</button>
+          <button class="weather-button" id="snowButton">❄️</button>
+          <button class="weather-button" id="stormButton">⚡</button>
+        </div>
+      </div>
+      
+      <!-- Power-Up Mode -->
+      <div class="mega-feature" id="powerUpFeature">
+        <div class="mega-feature-icon">💪</div>
+        <div class="mega-feature-title">POWER-UP MODE</div>
+        <button class="mega-feature-button" id="enablePowerUp">ACTIVATE</button>
+      </div>
+    </div>
+
+    <style>
+      /* Mega Features Styling - Repositioned to not overlap with other elements */
+      .mega-features-container {
+        position: fixed;
+        right: 20px;
+        top: 150px; /* Moved down to avoid overlapping with name input */
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        z-index: 900; /* Lower z-index so it doesn't cover important elements */
+      }
+      
+      .mega-feature {
+        background: linear-gradient(45deg, #1a0000, #3a0000);
+        border: 2px solid #ff4d00;
+        border-radius: 10px;
+        padding: 15px;
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+        transition: all 0.3s;
+      }
+      
+      .mega-feature:hover {
+        transform: translateX(-5px) scale(1.05);
+        box-shadow: 0 0 25px rgba(255, 77, 0, 0.8);
+      }
+      
+      /* Move the new features buttons to a better position */
+      .new-features {
+        position: fixed;
+        bottom: 100px; /* Moved up to avoid overlapping with epic features button */
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 900;
+      }
+    </style>
+
+    <script>
+      // Voice Commands Feature - Improved version
+      document.getElementById('enableVoiceCommands').addEventListener('click', function() {
+        if (!('webkitSpeechRecognition' in window)) {
+          alert("Voice recognition is not supported in your browser. Try Chrome!");
+          return;
+        }
+        
+        // Check if voice commands are already active
+        if (window.voiceCommandsActive) {
+          alert("Voice commands are already active!");
+          return;
+        }
+        
+        window.voiceCommandsActive = true;
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = false; // Changed to false to prevent overlapping commands
+        recognition.interimResults = false; // Changed to false for more accurate results
+        recognition.lang = 'en-US'; // Set language explicitly
+        
+        // Show feedback that voice commands are active
+        const voiceIndicator = document.createElement('div');
+        voiceIndicator.id = 'voiceCommandIndicator';
+        voiceIndicator.style.position = 'fixed';
+        voiceIndicator.style.top = '20px';
+        voiceIndicator.style.left = '50%';
+        voiceIndicator.style.transform = 'translateX(-50%)';
+        voiceIndicator.style.background = 'rgba(255, 77, 0, 0.8)';
+        voiceIndicator.style.color = 'white';
+        voiceIndicator.style.padding = '10px 20px';
+        voiceIndicator.style.borderRadius = '20px';
+        voiceIndicator.style.fontFamily = 'Impact, sans-serif';
+        voiceIndicator.style.zIndex = '9999';
+        voiceIndicator.textContent = '🎤 Voice Commands Active - Try saying "confetti", "matrix", "shake"';
+        document.body.appendChild(voiceIndicator);
+        
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript.toLowerCase();
+          console.log("Voice detected: " + transcript);
+          
+          // Update indicator to show what was heard
+          voiceIndicator.textContent = '🎤 Heard: "' + transcript + '"';
+          
+          // Process commands
+          if (transcript.includes('confetti')) {
+            for (let i = 0; i < 100; i++) {
+              createConfetti();
+            }
+            voiceIndicator.textContent = '🎤 Command recognized: "confetti"';
+          } else if (transcript.includes('matrix')) {
+            // Fix for matrix command - create a new function that doesn't rely on existing elements
+            createMatrixEffect();
+            voiceIndicator.textContent = '🎤 Command recognized: "matrix"';
+          } else if (transcript.includes('shake')) {
+            shakeScreen();
+            voiceIndicator.textContent = '🎤 Command recognized: "shake"';
+          } else if (transcript.includes('rain')) {
+            startRain();
+            voiceIndicator.textContent = '🎤 Command recognized: "rain"';
+          } else if (transcript.includes('snow')) {
+            startSnow();
+            voiceIndicator.textContent = '🎤 Command recognized: "snow"';
+          } else if (transcript.includes('storm')) {
+            startStorm();
+            voiceIndicator.textContent = '🎤 Command recognized: "storm"';
+          } else {
+            voiceIndicator.textContent = '🎤 Command not recognized. Try again.';
+          }
+          
+          // Restart recognition after processing
+          setTimeout(() => {
+            if (window.voiceCommandsActive) {
+              recognition.start();
+            }
+          }, 1000);
+        };
+        
+        recognition.onend = function() {
+          // Only restart if still active and not manually stopped
+          if (window.voiceCommandsActive) {
+            recognition.start();
+          }
+        };
+        
+        recognition.onerror = function(event) {
+          console.log('Speech recognition error:', event.error);
+          voiceIndicator.textContent = '🎤 Error: ' + event.error + '. Restarting...';
+          
+          // Restart on error after a short delay
+          setTimeout(() => {
+            if (window.voiceCommandsActive) {
+              recognition.start();
+            }
+          }, 2000);
+        };
+        
+        recognition.start();
+        
+        // Add stop button
+        const stopButton = document.createElement('button');
+        stopButton.id = 'voiceCommandStopButton';
+        stopButton.textContent = 'Stop Voice Commands';
+        stopButton.style.position = 'fixed';
+        stopButton.style.top = '60px';
+        stopButton.style.left = '50%';
+        stopButton.style.transform = 'translateX(-50%)';
+        stopButton.style.background = '#ff0000';
+        stopButton.style.color = 'white';
+        stopButton.style.border = 'none';
+        stopButton.style.padding = '5px 10px';
+        stopButton.style.borderRadius = '5px';
+        stopButton.style.cursor = 'pointer';
+        stopButton.style.zIndex = '9999';
+        
+        stopButton.addEventListener('click', function() {
+          window.voiceCommandsActive = false;
+          recognition.stop();
+          voiceIndicator.remove();
+          stopButton.remove();
+        });
+        
+        document.body.appendChild(stopButton);
+      });
+      
+      // New matrix effect function that doesn't rely on existing elements
+      function createMatrixEffect() {
+        // Remove existing matrix effect if any
+        const existingMatrix = document.querySelector('.matrix-effect');
+        if (existingMatrix) {
+          existingMatrix.remove();
+        }
+        
+        // Create new matrix effect
+        const matrixEffect = document.createElement('div');
+        matrixEffect.className = 'matrix-effect';
+        matrixEffect.style.position = 'fixed';
+        matrixEffect.style.top = '0';
+        matrixEffect.style.left = '0';
+        matrixEffect.style.width = '100%';
+        matrixEffect.style.height = '100%';
+        matrixEffect.style.background = 'rgba(0, 0, 0, 0.9)';
+        matrixEffect.style.zIndex = '9000';
+        matrixEffect.style.overflow = 'hidden';
+        matrixEffect.style.display = 'block';
+        document.body.appendChild(matrixEffect);
+        
+        // Add matrix characters
+        for (let i = 0; i < 50; i++) {
+          const column = document.createElement('div');
+          column.style.position = 'absolute';
+          column.style.left = Math.random() * 100 + 'vw';
+          column.style.top = '0';
+          
+          const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>/?";
+          const columnHeight = Math.floor(Math.random() * 20) + 10;
+          
+          for (let j = 0; j < columnHeight; j++) {
+            const char = document.createElement('div');
+            char.style.position = 'absolute';
+            char.style.color = '#00ff00';
+            char.style.fontFamily = 'monospace';
+            char.style.fontSize = '20px';
+            char.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
+            char.style.top = j * 20 + 'px';
+            char.style.animation = `matrixFall ${Math.random() * 5 + 2}s linear infinite`;
+            char.style.animationDelay = Math.random() * 2 + 's';
+            column.appendChild(char);
+          }
+          
+          matrixEffect.appendChild(column);
+        }
+        
+        // Add click event to exit
+        matrixEffect.addEventListener('click', function() {
+          matrixEffect.remove();
+        });
+        
+        // Add exit button
+        const exitButton = document.createElement('button');
+        exitButton.textContent = 'Exit Matrix';
+        exitButton.style.position = 'fixed';
+        exitButton.style.top = '20px';
+        exitButton.style.right = '20px';
+        exitButton.style.zIndex = '9001';
+        exitButton.style.background = '#00ff00';
+        exitButton.style.color = '#000';
+        exitButton.style.border = 'none';
+        exitButton.style.padding = '10px 20px';
+        exitButton.style.borderRadius = '5px';
+        exitButton.style.cursor = 'pointer';
+        exitButton.style.fontFamily = 'monospace';
+        
+        exitButton.addEventListener('click', function() {
+          matrixEffect.remove();
+          exitButton.remove();
+        });
+        
+        document.body.appendChild(exitButton);
+      }
+    </script>
   </style>
 </head>
 <body>
