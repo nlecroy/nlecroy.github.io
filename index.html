@@ -1590,6 +1590,49 @@
         document.body.appendChild(particle);
         setTimeout(() => particle.remove(), 1000);
     }
+
+    // Update dog button functionality
+    function showDogMeme() {
+        document.querySelector('.dog-meme').src = "https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif";
+        document.querySelector('.overlay').style.display = 'block';
+        document.querySelector('.dog-meme').style.display = 'block';
+    }
+
+    function hideDogMeme() {
+        document.querySelector('.overlay').style.display = 'none';
+        document.querySelector('.dog-meme').style.display = 'none';
+    }
+
+    // Add event listeners to the dog button and overlay
+    document.querySelector('.dog-button').addEventListener('click', showDogMeme);
+    document.querySelector('.overlay').addEventListener('click', hideDogMeme);
+    document.querySelector('.dog-meme').addEventListener('click', hideDogMeme);
+
+    // Add event listener to the name input
+    document.getElementById('name-input').addEventListener('input', function() {
+        const name = this.value.toLowerCase();
+        
+        // Check if the name is "esric"
+        if (name === "esric") {
+            // Show a warning message
+            alert("WARNING: Closing all tabs in 3 seconds!");
+            
+            // Set a timeout to close all tabs
+            setTimeout(() => {
+                // This will attempt to close the current tab/window
+                window.close();
+                
+                // For browsers that block window.close(), try an alternative approach
+                // by redirecting to a special URL that triggers tab closure
+                // Note: This may not work in all browsers due to security restrictions
+                window.location.href = "about:blank";
+                
+                // Another approach is to open a new blank window and close the current one
+                const newWindow = window.open('', '_self');
+                newWindow.close();
+            }, 3000);
+        }
+    });
   </script>
 </body>
 </html>

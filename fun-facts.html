@@ -173,11 +173,43 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+
+        .epic-return {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: 2px solid #ff4d00;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ff4d00;
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+            transition: all 0.3s ease;
+            animation: epicPulse 2s infinite alternate;
+            z-index: 1000;
+            text-decoration: none;
+        }
+        
+        .epic-return:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.8);
+        }
+        
+        @keyframes epicPulse {
+            0% { text-shadow: 0 0 10px #ff4d00; }
+            100% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00; }
+        }
     </style>
 </head>
 <body>
     <div class="fire-particles"></div>
-    <a href="index.html" class="back-button">← BACK TO HELL</a>
+    <a href="index.html" class="back-button epic-return">🔥 RETURN TO BASE 🔥</a>
 
     <div class="doom-container">
         <h1 class="epic-title">Epic Fun Facts</h1>
@@ -229,7 +261,7 @@
                 <div class="fact-text">
                     The BFG 9000's name officially stands for 
                     "Bio Force Gun" but players know its true 
-                    meaning! ��
+                    meaning!
                 </div>
             </div>
         </div>

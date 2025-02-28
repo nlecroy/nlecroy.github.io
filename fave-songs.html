@@ -171,6 +171,38 @@
         }
 
         /* ... rest of nav styles ... */
+
+        .epic-return {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: 2px solid #ff4d00;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ff4d00;
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+            transition: all 0.3s ease;
+            animation: epicPulse 2s infinite alternate;
+            z-index: 1000;
+            text-decoration: none;
+        }
+        
+        .epic-return:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.8);
+        }
+        
+        @keyframes epicPulse {
+            0% { text-shadow: 0 0 10px #ff4d00; }
+            100% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00; }
+        }
     </style>
 </head>
 <body>
@@ -247,6 +279,8 @@
         <a href="clans.html" class="glowing-link">Clans & Crews</a>
         <a href="contact-me.html" class="glowing-link">Contact Me</a>
     </nav>
+
+    <a href="index.html" class="back-button epic-return">🔥 RETURN TO BASE 🔥</a>
 
     <script>
         // Add click sound and animation to play buttons

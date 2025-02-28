@@ -167,6 +167,33 @@
             0% { opacity: 0.3; height: 35px; }
             100% { opacity: 0.6; height: 45px; }
         }
+
+        .epic-return {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: 2px solid #ff4d00;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ff4d00;
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+            transition: all 0.3s ease;
+            animation: epicPulse 2s infinite alternate;
+        }
+        
+        .epic-return:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 77, 0, 0.8);
+        }
+        
+        @keyframes epicPulse {
+            0% { text-shadow: 0 0 10px #ff4d00; }
+            100% { text-shadow: 0 0 20px #ff4d00, 0 0 30px #ff4d00; }
+        }
     </style>
 </head>
 <body class="bob-news-page">
@@ -200,7 +227,7 @@
     </div>
 
     <nav class="nav-links">
-        <a href="bob-news.html" class="back-link">← RETURN TO BASE</a>
+        <a href="index.html" class="back-link epic-return">🔥 RETURN TO BASE 🔥</a>
     </nav>
 
     <div class="epic-donation-container">
