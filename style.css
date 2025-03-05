@@ -633,26 +633,3 @@ body {
     color: black;
     transform: scale(1.1);
 }
-
-/* Add this to your style.css file */
-.floating-gif {
-    position: fixed;
-    z-index: 9999;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(255, 77, 0, 0.7);
-    pointer-events: none; /* This makes the GIF not block clicks */
-    animation: float 3s ease-in-out infinite;
-}
-
-.floating-gif.bottom-right {
-    right: 50px;
-    bottom: 50px;
-    width: 200px;
-}
-
-.floating-gif.top-left {
-    left: 50px;
-    top: 50px;
-    width: 150px;
-    transform: scaleX(-1);
-}
