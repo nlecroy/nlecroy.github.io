@@ -414,21 +414,21 @@
                 <h2 class="clan-name">KAAKAA CLAN</h2>
                 <p class="clan-description">LED BY THE MIGHTY ANDRUIS</p>
                 <p class="clan-motto">SPREADING KAAKAA CARNAGE!</p>
-                <button class="join-button">JOIN THE KAAKAA</button>
+                <button class="join-button" onclick="sendJoinEmail('KAAKAA CLAN')">JOIN THE KAAKAA</button>
             </div>
 
             <div class="clan-card">
                 <h2 class="clan-name">DA BOBS</h2>
                 <p class="clan-description">LED BY KING BOB BRAYDEN</p>
                 <p class="clan-motto">RIGS WITH EYES!</p>
-                <button class="join-button">BECOME A BOB</button>
+                <button class="join-button" onclick="sendJoinEmail('DA BOBS')">BECOME A BOB</button>
             </div>
 
             <div class="clan-card">
                 <h2 class="clan-name">LEATHER CREW</h2>
                 <p class="clan-description">THE JACKET WARRIORS</p>
                 <p class="clan-motto">LEATHER OR DEATH!</p>
-                <button class="join-button">DON THE JACKET</button>
+                <button class="join-button" onclick="sendJoinEmail('LEATHER CREW')">DON THE JACKET</button>
             </div>
         </div>
     </div>
@@ -516,6 +516,25 @@
                 card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
             });
         });
+
+        // Function to send join email
+        function sendJoinEmail(clanName) {
+            // Get user's name or use "Gamer" as default
+            let userName = localStorage.getItem('visitorName') || "Gamer";
+            
+            // Create the email subject and body
+            let subject = `Join Request: ${clanName}`;
+            let body = `Hi Nash,\n\nI would like to join the ${clanName} clan.\n\nGamer name: ${userName}\n\nLooking forward to gaming with you!\n\nRegards,\n${userName}`;
+            
+            // Encode the subject and body for the mailto link
+            let mailtoLink = `mailto:nashlecroy@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Open the email client
+            window.location.href = mailtoLink;
+            
+            // Show confirmation message
+            alert(`Your join request for ${clanName} has been prepared! Your email client will open now.`);
+        }
     </script>
 </body>
 </html> 
