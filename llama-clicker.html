@@ -447,53 +447,53 @@
                 description: 'Click the llama for the first time',
                 icon: '👆',
                 unlocked: false,
-                condition: () => true // Always unlocked on first click
+                condition: () => false // Special unlock
             },
             {
                 id: 'llama100',
                 name: 'Llama Novice',
                 description: 'Collect 100 llamas',
-                icon: '🦙',
+                icon: '🔰',
                 unlocked: false,
                 condition: () => llamas >= 100
             },
             {
                 id: 'llama1000',
-                name: 'Llama Expert',
+                name: 'Llama Enthusiast',
                 description: 'Collect 1,000 llamas',
-                icon: '🦙🦙',
+                icon: '🥉',
                 unlocked: false,
                 condition: () => llamas >= 1000
             },
             {
                 id: 'llama10000',
-                name: 'Llama Master',
+                name: 'Llama Expert',
                 description: 'Collect 10,000 llamas',
-                icon: '🦙🦙🦙',
+                icon: '🥈',
                 unlocked: false,
                 condition: () => llamas >= 10000
             },
             {
                 id: 'llama100000',
-                name: 'Llama God',
+                name: 'Llama Master',
                 description: 'Collect 100,000 llamas',
-                icon: '👑',
+                icon: '🥇',
                 unlocked: false,
                 condition: () => llamas >= 100000
             },
             {
                 id: 'cps10',
-                name: 'Small Business',
+                name: 'Llama Business',
                 description: 'Reach 10 llamas per second',
-                icon: '📈',
+                icon: '💼',
                 unlocked: false,
                 condition: () => llamasPerSecond >= 10
             },
             {
                 id: 'cps100',
-                name: 'Llama Empire',
+                name: 'Llama Corporation',
                 description: 'Reach 100 llamas per second',
-                icon: '🏭',
+                icon: '🏢',
                 unlocked: false,
                 condition: () => llamasPerSecond >= 100
             },
@@ -522,34 +522,6 @@
         const upgradesContainer = document.getElementById('upgradesContainer');
         const achievementsContainer = document.getElementById('achievementsContainer');
         const specialEffects = document.getElementById('specialEffects');
-        
-        // Initialize the game
-        function initGame() {
-            // Load saved game if exists
-            loadGame();
-            
-            // Render initial state
-            updateCounters();
-            renderUpgrades();
-            renderAchievements();
-            
-            // Set up event listeners
-            llamaClicker.addEventListener('click', clickLlama);
-            
-            // Start game loops
-            setInterval(gameLoop, 1000); // Main game loop - every second
-            setInterval(checkGoldenLlama, 5000); // Check for golden llama every 5 seconds
-            setInterval(saveGame, 30000); // Auto-save every 30 seconds
-            setInterval(checkAchievements, 1000); // Check achievements every second
-        }
-        
-        // Main game loop
-        function gameLoop() {
-            // Add llamas from automatic production
-            if (llamasPerSecond > 0) {
-                addLlamas(llamasPerSecond);
-            }
-        }
         
         // Click the llama
         function clickLlama(event) {
@@ -585,7 +557,7 @@
             } else if (num >= 1000) {
                 return (num / 1000).toFixed(1) + 'K';
             } else {
-                return num.toFixed(0);
+                return num.toString();
             }
         }
         
@@ -596,12 +568,15 @@
         
         // Buy an upgrade
         function buyUpgrade(upgradeId) {
+            console.log("Attempting to buy upgrade:", upgradeId);
             const upgrade = upgrades.find(u => u.id === upgradeId);
             
             if (upgrade) {
                 const cost = calculateUpgradeCost(upgrade);
+                console.log("Cost:", cost, "Llamas:", llamas);
                 
                 if (llamas >= cost) {
+                    console.log("Purchase successful!");
                     // Deduct the cost
                     llamas -= cost;
                     
@@ -621,6 +596,9 @@
                     
                     // Save the game
                     saveGame();
+                } else {
+                    console.log("Not enough llamas!");
+                    showNotification(`Not enough llamas! Need ${formatNumber(cost)} llamas.`);
                 }
             }
         }
@@ -635,7 +613,6 @@
                 
                 const upgradeElement = document.createElement('div');
                 upgradeElement.className = `upgrade ${canAfford ? '' : 'upgrade-disabled'}`;
-                upgradeElement.onclick = canAfford ? () => buyUpgrade(upgrade.id) : null;
                 
                 upgradeElement.innerHTML = `
                     <div class="upgrade-info">
@@ -645,6 +622,15 @@
                     </div>
                     <div class="upgrade-count">${upgrade.count}</div>
                 `;
+                
+                // Add click event directly
+                upgradeElement.onclick = function() {
+                    if (canAfford) {
+                        buyUpgrade(upgrade.id);
+                    } else {
+                        showNotification(`Not enough llamas! Need ${formatNumber(cost)} llamas.`);
+                    }
+                };
                 
                 upgradesContainer.appendChild(upgradeElement);
             });
@@ -744,7 +730,7 @@
         // Spawn golden llama
         function spawnGoldenLlama() {
             const goldenLlama = document.createElement('img');
-            goldenLlama.src = 'https://cdn.pixabay.com/photo/2021/02/07/19/48/llama-5992501_1280.png';
+            goldenLlama.src = 'https://freepngimg.com/thumb/llama/8-2-llama-transparent.png';
             goldenLlama.className = 'golden-llama';
             goldenLlama.style.left = `${Math.random() * 80 + 10}%`;
             goldenLlama.style.top = `${Math.random() * 80 + 10}%`;
@@ -777,8 +763,8 @@
                 llamas,
                 llamasPerClick,
                 llamasPerSecond,
-                upgrades,
-                achievements
+                upgrades: upgrades.map(u => ({ id: u.id, count: u.count })),
+                achievements: achievements.map(a => ({ id: a.id, unlocked: a.unlocked }))
             };
             
             localStorage.setItem('llamaClickerSave', JSON.stringify(gameData));
@@ -789,28 +775,34 @@
             const savedGame = localStorage.getItem('llamaClickerSave');
             
             if (savedGame) {
-                const gameData = JSON.parse(savedGame);
-                
-                llamas = gameData.llamas || 0;
-                llamasPerClick = gameData.llamasPerClick || 1;
-                llamasPerSecond = gameData.llamasPerSecond || 0;
-                
-                // Load upgrades
-                if (gameData.upgrades) {
-                    gameData.upgrades.forEach((savedUpgrade, index) => {
-                        if (index < upgrades.length) {
-                            upgrades[index].count = savedUpgrade.count || 0;
-                        }
-                    });
-                }
-                
-                // Load achievements
-                if (gameData.achievements) {
-                    gameData.achievements.forEach((savedAchievement, index) => {
-                        if (index < achievements.length) {
-                            achievements[index].unlocked = savedAchievement.unlocked || false;
-                        }
-                    });
+                try {
+                    const gameData = JSON.parse(savedGame);
+                    
+                    llamas = gameData.llamas || 0;
+                    llamasPerClick = gameData.llamasPerClick || 1;
+                    llamasPerSecond = gameData.llamasPerSecond || 0;
+                    
+                    // Load upgrades
+                    if (gameData.upgrades) {
+                        gameData.upgrades.forEach(savedUpgrade => {
+                            const upgrade = upgrades.find(u => u.id === savedUpgrade.id);
+                            if (upgrade) {
+                                upgrade.count = savedUpgrade.count || 0;
+                            }
+                        });
+                    }
+                    
+                    // Load achievements
+                    if (gameData.achievements) {
+                        gameData.achievements.forEach(savedAchievement => {
+                            const achievement = achievements.find(a => a.id === savedAchievement.id);
+                            if (achievement) {
+                                achievement.unlocked = savedAchievement.unlocked || false;
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error loading saved game:", e);
                 }
             }
         }
@@ -823,8 +815,35 @@
             }
         }
         
-        // Initialize the game when the page loads
-        window.addEventListener('load', initGame);
+        // Main game loop
+        function gameLoop() {
+            // Add llamas from automatic production
+            if (llamasPerSecond > 0) {
+                addLlamas(llamasPerSecond);
+            }
+        }
+        
+        // Initialize the game
+        function initGame() {
+            // Load saved game if exists
+            loadGame();
+            
+            // Render initial state
+            updateCounters();
+            renderUpgrades();
+            renderAchievements();
+            
+            // Set up event listeners
+            llamaClicker.addEventListener('click', clickLlama);
+            
+            // Start game loops
+            setInterval(gameLoop, 1000); // Main game loop - every second
+            setInterval(checkGoldenLlama, 5000); // Check for golden llama every 5 seconds
+            setInterval(saveGame, 30000); // Auto-save every 30 seconds
+        }
+        
+        // Start the game when the page loads
+        window.onload = initGame;
     </script>
 </body>
 </html>
