@@ -4730,5 +4730,79 @@
     showAchievement('Game Master', 'Space Invaders unlocked!');
   }
 </script>
+
+<!-- Fix for flame cursor on unlock effects page -->
+<script>
+  // Improved flame cursor function
+  function activateFireCursor() {
+    // Remove any existing fire cursor
+    const existingCursor = document.getElementById('fire-cursor');
+    if (existingCursor) {
+      existingCursor.remove();
+    }
+    
+    // Create cursor element
+    const cursor = document.createElement('img');
+    cursor.src = 'https://i.gifer.com/origin/90/90c5da3b8f73e7aab4bcd9a6c989c1f1_w200.gif';
+    cursor.id = 'fire-cursor';
+    cursor.style.position = 'fixed';
+    cursor.style.width = '40px';
+    cursor.style.height = '40px';
+    cursor.style.pointerEvents = 'none';
+    cursor.style.zIndex = '99999';
+    cursor.style.transform = 'translate(-50%, -50%)';
+    document.body.appendChild(cursor);
+    
+    // Hide default cursor
+    document.body.style.cursor = 'none';
+    
+    // Update cursor position
+    function updateCursorPosition(e) {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    }
+    
+    // Add event listener
+    document.addEventListener('mousemove', updateCursorPosition);
+    
+    // Store the event listener reference for potential cleanup
+    cursor.updateFunction = updateCursorPosition;
+    
+    // Show achievement
+    showAchievement('Fire Cursor', 'Your cursor is on fire!');
+  }
+  
+  // Add this to the unlockFeatures function
+  function unlockFeatures() {
+    // ... existing code ...
+    
+    // Activate fire cursor properly
+    activateFireCursor();
+    
+    // ... rest of existing code ...
+  }
+  
+  // Make sure the feature buttons work with the fire cursor
+  document.addEventListener('DOMContentLoaded', function() {
+    const featureButtons = document.querySelectorAll('.feature-button');
+    featureButtons.forEach(button => {
+      button.addEventListener('mouseenter', function() {
+        const cursor = document.getElementById('fire-cursor');
+        if (cursor) {
+          cursor.style.width = '50px';
+          cursor.style.height = '50px';
+        }
+      });
+      
+      button.addEventListener('mouseleave', function() {
+        const cursor = document.getElementById('fire-cursor');
+        if (cursor) {
+          cursor.style.width = '40px';
+          cursor.style.height = '40px';
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>

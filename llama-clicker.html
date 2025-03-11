@@ -437,6 +437,142 @@
             0% { transform: scale(1); opacity: 0.7; }
             100% { transform: scale(1.2); opacity: 1; }
         }
+        
+        /* News ticker */
+        .news-ticker {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 5px;
+            margin: 20px auto;
+            overflow: hidden;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+        
+        .news-ticker-content {
+            position: absolute;
+            white-space: nowrap;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            color: #ffcc00;
+            animation: tickerScroll 20s linear infinite;
+        }
+        
+        @keyframes tickerScroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        /* Ascension button */
+        .ascend-button {
+            background: linear-gradient(45deg, #ff00ff, #9900ff);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-family: 'Impact', sans-serif;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px #ff00ff;
+            display: none; /* Hidden until unlocked */
+        }
+        
+        .ascend-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px #ff00ff;
+        }
+        
+        /* Ascension modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .modal-content {
+            background: linear-gradient(45deg, #330066, #660066);
+            border: 3px solid #ff00ff;
+            border-radius: 15px;
+            padding: 30px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 30px #ff00ff;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-title {
+            font-size: 36px;
+            color: #ff00ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        
+        .modal-description {
+            font-size: 18px;
+            color: white;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .modal-button {
+            background: linear-gradient(45deg, #660066, #990099);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Impact', sans-serif;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ff00ff;
+        }
+        
+        .modal-button.confirm {
+            background: linear-gradient(45deg, #ff00ff, #9900ff);
+        }
+        
+        /* Prestige level display */
+        .prestige-display {
+            font-size: 18px;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -473,12 +609,36 @@
     
     <div class="special-effects" id="specialEffects"></div>
     
+    <div class="news-ticker">
+        <div class="news-ticker-content" id="newsTicker">Breaking news: Local llama enthusiast clicks first llama!</div>
+    </div>
+    
+    <button class="ascend-button" id="ascendButton">ASCEND</button>
+    <div class="prestige-display" id="prestigeDisplay">Prestige Level: 0</div>
+    
+    <div class="modal-overlay" id="ascensionModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Ascend to Llama Heaven?</h2>
+            <p class="modal-description">
+                You will lose all your llamas and upgrades, but gain <span id="prestigeGain">0</span> prestige points!
+                Each prestige point gives you +1% llama production permanently.
+            </p>
+            <div class="modal-buttons">
+                <button class="modal-button" id="cancelAscension">Cancel</button>
+                <button class="modal-button confirm" id="confirmAscension">Ascend</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Game state
         let llamas = 0;
         let llamasPerClick = 1;
         let llamasPerSecond = 0;
         let goldenLlamaChance = 0.02; // 2% chance per second
+        let prestigeLevel = 0;
+        let prestigeMultiplier = 1;
+        const PRESTIGE_REQUIREMENT = 1000000; // 1 million llamas for first ascension
         
         // Upgrades data
         const upgrades = [
@@ -630,16 +790,41 @@
         const upgradesContainer = document.getElementById('upgradesContainer');
         const achievementsContainer = document.getElementById('achievementsContainer');
         const specialEffects = document.getElementById('specialEffects');
+        const newsTicker = document.getElementById('newsTicker');
+        const ascendButton = document.getElementById('ascendButton');
+        const prestigeDisplay = document.getElementById('prestigeDisplay');
+        const ascensionModal = document.getElementById('ascensionModal');
+        const prestigeGain = document.getElementById('prestigeGain');
+        const cancelAscension = document.getElementById('cancelAscension');
+        const confirmAscension = document.getElementById('confirmAscension');
+        
+        // News ticker messages
+        const newsMessages = [
+            "Breaking news: Local llama enthusiast clicks first llama!",
+            "Llama population concerned about rapid growth in captivity.",
+            "Scientists discover new species: 'Clickus Llamacus'.",
+            "Local farmer amazed as llama farm produces record wool.",
+            "Llama factory opens downtown, neighbors complain about the smell.",
+            "Stock market crashes as llama-based economy takes over.",
+            "Aliens make contact, only request: 'We want your llamas'.",
+            "Time traveler from 2050: 'Llamas rule the world in my time'.",
+            "New religion forms around the worship of the Golden Llama.",
+            "Llamazon becomes world's largest company, buys Amazon.",
+            "Llamabook social network reaches 3 billion users.",
+            "Llamacoin cryptocurrency surpasses Bitcoin in value.",
+            "World peace achieved through international llama distribution.",
+            "Llama-powered vehicles solve global energy crisis.",
+            "Llamanet becomes self-aware, promises to serve llama clickers.",
+            "Interdimensional portal opens, reveals universe made entirely of llamas.",
+            "Llama clicker player ascends to godhood, creates new universe."
+        ];
         
         // Click the llama
         function clickLlama(event) {
-            // Add llamas based on click power
             addLlamas(llamasPerClick);
-            
-            // Create click effect
             createClickEffect(event);
             
-            // Check for first click achievement
+            // Unlock first click achievement
             if (!achievements.find(a => a.id === 'firstClick').unlocked) {
                 unlockAchievement('firstClick');
             }
@@ -647,10 +832,11 @@
         
         // Add llamas to the counter
         function addLlamas(amount) {
-            llamas += amount;
+            llamas += amount * prestigeMultiplier;
             updateCounters();
             updateUpgradeAffordability();
             checkAchievements();
+            checkAscension();
         }
         
         // Update the counters
@@ -750,7 +936,11 @@
         
         // Render achievements
         function renderAchievements() {
+            // Clear existing achievements
             achievementsContainer.innerHTML = '';
+            
+            // Create a document fragment for better performance
+            const fragment = document.createDocumentFragment();
             
             achievements.forEach(achievement => {
                 const achievementElement = document.createElement('div');
@@ -766,22 +956,26 @@
                     </div>
                 `;
                 
-                achievementsContainer.appendChild(achievementElement);
+                fragment.appendChild(achievementElement);
             });
+            
+            // Add all achievements at once
+            achievementsContainer.appendChild(fragment);
         }
         
         // Check achievements
         function checkAchievements() {
             let newUnlocks = false;
             
-            achievements.forEach(achievement => {
-                if (!achievement.unlocked && achievement.condition()) {
-                    unlockAchievement(achievement.id);
-                    newUnlocks = true;
-                }
-            });
+            // Only check achievements that aren't already unlocked
+            const unlockedAchievements = achievements.filter(a => !a.unlocked && a.condition());
             
-            if (newUnlocks) {
+            if (unlockedAchievements.length > 0) {
+                unlockedAchievements.forEach(achievement => {
+                    unlockAchievement(achievement.id);
+                });
+                
+                // Only re-render if we actually unlocked something
                 renderAchievements();
             }
         }
@@ -948,6 +1142,8 @@
                 llamas,
                 llamasPerClick,
                 llamasPerSecond,
+                prestigeLevel,
+                prestigeMultiplier,
                 upgrades: upgrades.map(u => ({ id: u.id, count: u.count })),
                 achievements: achievements.map(a => ({ id: a.id, unlocked: a.unlocked }))
             };
@@ -966,6 +1162,8 @@
                     llamas = gameData.llamas || 0;
                     llamasPerClick = gameData.llamasPerClick || 1;
                     llamasPerSecond = gameData.llamasPerSecond || 0;
+                    prestigeLevel = gameData.prestigeLevel || 0;
+                    prestigeMultiplier = gameData.prestigeMultiplier || 1;
                     
                     // Load upgrades
                     if (gameData.upgrades) {
@@ -986,6 +1184,12 @@
                             }
                         });
                     }
+                    
+                    // Update prestige display
+                    prestigeDisplay.textContent = `Prestige Level: ${prestigeLevel} (+${Math.floor(prestigeLevel * 100)}% production)`;
+                    
+                    // Check if ascension is available
+                    checkAscension();
                 } catch (e) {
                     console.error("Error loading saved game:", e);
                 }
@@ -1033,6 +1237,11 @@
                 // Even if no automatic production, still update affordability
                 updateUpgradeAffordability();
             }
+            
+            // Update news ticker every 20 seconds
+            if (Math.random() < 0.005) { // 0.5% chance per tick (10 ticks per second = ~once every 20 seconds)
+                updateNewsTicker();
+            }
         }
         
         // Make the game loop run more frequently for smoother updates
@@ -1044,9 +1253,11 @@
             updateCounters();
             renderUpgrades();
             renderAchievements();
+            updateNewsTicker();
             
             // Set up event listeners
             llamaClicker.addEventListener('click', clickLlama);
+            initAscension();
             
             // Start game loops
             setInterval(gameLoop, 100); // Run 10 times per second for smoother updates
@@ -1056,6 +1267,92 @@
         
         // Start the game when the page loads
         window.onload = initGame;
+        
+        // Update news ticker based on llama count
+        function updateNewsTicker() {
+            let messageIndex = Math.min(
+                Math.floor(Math.log10(Math.max(llamas, 1))),
+                newsMessages.length - 1
+            );
+            
+            // Randomly pick from available messages up to current level
+            messageIndex = Math.floor(Math.random() * (messageIndex + 1));
+            newsTicker.textContent = newsMessages[messageIndex];
+            
+            // Reset animation
+            newsTicker.style.animation = 'none';
+            void newsTicker.offsetWidth; // Trigger reflow
+            newsTicker.style.animation = 'tickerScroll 20s linear infinite';
+        }
+        
+        // Calculate prestige gain
+        function calculatePrestigeGain() {
+            return Math.floor(Math.sqrt(llamas / PRESTIGE_REQUIREMENT));
+        }
+        
+        // Check if ascension is available
+        function checkAscension() {
+            if (llamas >= PRESTIGE_REQUIREMENT) {
+                ascendButton.style.display = 'block';
+            }
+        }
+        
+        // Open ascension modal
+        function openAscensionModal() {
+            const gain = calculatePrestigeGain();
+            prestigeGain.textContent = gain;
+            ascensionModal.classList.add('active');
+        }
+        
+        // Close ascension modal
+        function closeAscensionModal() {
+            ascensionModal.classList.remove('active');
+        }
+        
+        // Perform ascension
+        function ascend() {
+            const gain = calculatePrestigeGain();
+            prestigeLevel += gain;
+            prestigeMultiplier = 1 + (prestigeLevel * 0.01); // Each prestige point gives +1%
+            
+            // Reset game state
+            llamas = 0;
+            llamasPerSecond = 0;
+            
+            // Keep llamasPerClick but apply prestige bonus
+            llamasPerClick = 1 * prestigeMultiplier;
+            
+            // Reset upgrades
+            upgrades.forEach(upgrade => {
+                upgrade.count = 0;
+            });
+            
+            // Keep achievements
+            
+            // Update UI
+            updateCounters();
+            renderUpgrades();
+            prestigeDisplay.textContent = `Prestige Level: ${prestigeLevel} (+${Math.floor(prestigeLevel * 100)}% production)`;
+            
+            // Hide ascend button until requirement met again
+            ascendButton.style.display = 'none';
+            
+            // Close modal
+            closeAscensionModal();
+            
+            // Show notification
+            showNotification(`Ascended! Gained ${gain} prestige points!`);
+            
+            // Save game
+            saveGame();
+        }
+        
+        // Add event listeners for ascension
+        function initAscension() {
+            ascendButton.addEventListener('click', openAscensionModal);
+            cancelAscension.addEventListener('click', closeAscensionModal);
+            confirmAscension.addEventListener('click', ascend);
+        }
     </script>
 </body>
 </html>
