@@ -526,6 +526,535 @@
         ctx.beginPath();
         ctx.arc(bird.x + bird.size/2, bird.y + bird.size/2, bird.size/2, 0, Math.PI * 2);
         ctx.fill();
+
+        // Add mode selection to Flappy Bird game
+        const modeContainer = document.createElement('div');
+        modeContainer.style.position = 'absolute';
+        modeContainer.style.top = '10px';
+        modeContainer.style.left = '50%';
+        modeContainer.style.transform = 'translateX(-50%)';
+        modeContainer.style.display = 'flex';
+        modeContainer.style.gap = '10px';
+        modeContainer.style.zIndex = '100';
+        
+        // Create classic mode button
+        const classicButton = document.createElement('button');
+        classicButton.textContent = 'CLASSIC MODE';
+        classicButton.className = 'difficulty-btn';
+        classicButton.style.background = 'linear-gradient(45deg, #ff0000, #ff4d00)';
+        
+        // Create doom mode button
+        const doomButton = document.createElement('button');
+        doomButton.textContent = 'DOOM MODE';
+        doomButton.className = 'difficulty-btn';
+        doomButton.style.background = 'linear-gradient(45deg, #990000, #660000)';
+        
+        // Add buttons to container
+        modeContainer.appendChild(classicButton);
+        modeContainer.appendChild(doomButton);
+        
+        // Add container to page
+        document.body.appendChild(modeContainer);
+        
+        // Store original game elements
+        const gameContainer = document.getElementById('gameContainer');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startMessage = document.getElementById('startMessage');
+        const scoreDisplay = document.getElementById('score');
+        
+        // Store original game state
+        let originalGameState = {
+            bird: bird,
+            pipes: pipes,
+            score: score,
+            gameStarted: gameStarted,
+            gameOver: gameOver
+        };
+        
+        // Classic mode click handler
+        classicButton.addEventListener('click', function() {
+            // Reset to original game
+            location.reload();
+        });
+        
+        // Doom mode click handler
+        doomButton.addEventListener('click', function() {
+            // Hide mode selection
+            modeContainer.style.display = 'none';
+            
+            // Clear existing game elements
+            startMessage.style.display = 'none';
+            
+            // Change game title
+            document.title = 'DOOM Bird';
+            
+            // Apply doom theme
+            document.body.style.background = '#000';
+            canvas.style.borderColor = '#ff0000';
+            canvas.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.7)';
+            
+            // Reset game state
+            resetGame();
+            
+            // Apply doom mode changes
+            applyDoomMode();
+        });
+        
+        // Apply Doom Mode changes
+        function applyDoomMode() {
+            // Change background color
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Add stars to background
+            for (let i = 0; i < 50; i++) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
+                ctx.beginPath();
+                ctx.arc(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    Math.random() * 2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+            }
+            
+            // Change bird color and add fire trail
+            bird.color = '#ff4d00';
+            
+            // Add fire trail effect
+            const originalUpdate = bird.update;
+            bird.update = function() {
+                originalUpdate.call(this);
+                
+                // Add fire particles
+                if (gameStarted && !gameOver && Math.random() < 0.3) {
+                    particles.push({
+                        x: this.x,
+                        y: this.y + this.size / 2,
+                        size: Math.random() * 5 + 3,
+                        color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
+                        vx: -Math.random() * 2 - 1,
+                        vy: Math.random() * 2 - 1,
+                        life: 30
+                    });
+                }
+            };
+            
+            // Change pipe appearance to look more dangerous
+            const originalDrawPipe = drawPipe;
+            drawPipe = function(pipe) {
+                ctx.fillStyle = '#660000';
+                ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
+                ctx.fillRect(pipe.x, pipe.bottomY, pipe.width, canvas.height - pipe.bottomY);
+                
+                // Add spikes to pipes
+                ctx.fillStyle = '#ff0000';
+                for (let i = 0; i < 4; i++) {
+                    // Top spikes
+                    ctx.beginPath();
+                    ctx.moveTo(pipe.x + 5 + i * 15, pipe.topHeight);
+                    ctx.lineTo(pipe.x + 10 + i * 15, pipe.topHeight + 15);
+                    ctx.lineTo(pipe.x + 15 + i * 15, pipe.topHeight);
+                    ctx.fill();
+                    
+                    // Bottom spikes
+                    ctx.beginPath();
+                    ctx.moveTo(pipe.x + 5 + i * 15, pipe.bottomY);
+                    ctx.lineTo(pipe.x + 10 + i * 15, pipe.bottomY - 15);
+                    ctx.lineTo(pipe.x + 15 + i * 15, pipe.bottomY);
+                    ctx.fill();
+                }
+            };
+            
+            // Add power-ups
+            let powerUps = [];
+            let shieldActive = false;
+            let shieldTime = 0;
+            let slowTimeActive = false;
+            let slowTimeEnd = 0;
+            
+            // Create power-up
+            function createPowerUp() {
+                if (Math.random() < 0.1 && pipes.length > 0) {
+                    const randomPipe = pipes[Math.floor(Math.random() * pipes.length)];
+                    const gapCenter = randomPipe.topHeight + (randomPipe.bottomY - randomPipe.topHeight) / 2;
+                    
+                    const types = [
+                        { type: 'shield', color: '#00ffff' },
+                        { type: 'slowTime', color: '#ffff00' },
+                        { type: 'extraLife', color: '#ff0000' }
+                    ];
+                    
+                    const powerUpType = types[Math.floor(Math.random() * types.length)];
+                    
+                    powerUps.push({
+                        x: randomPipe.x,
+                        y: gapCenter,
+                        type: powerUpType.type,
+                        color: powerUpType.color,
+                        size: 15,
+                        pulse: 0
+                    });
+                }
+            }
+            
+            // Update power-ups
+            function updatePowerUps() {
+                for (let i = powerUps.length - 1; i >= 0; i--) {
+                    const powerUp = powerUps[i];
+                    
+                    // Move power-up
+                    powerUp.x -= pipeSpeed * (slowTimeActive ? 0.5 : 1);
+                    
+                    // Pulse animation
+                    powerUp.pulse = (powerUp.pulse + 0.1) % (Math.PI * 2);
+                    
+                    // Draw power-up
+                    ctx.fillStyle = powerUp.color;
+                    ctx.beginPath();
+                    ctx.arc(
+                        powerUp.x,
+                        powerUp.y,
+                        powerUp.size * (1 + Math.sin(powerUp.pulse) * 0.2),
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    // Glow effect
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = powerUp.color;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                    
+                    // Check collision with bird
+                    const dx = powerUp.x - (bird.x + bird.size / 2);
+                    const dy = powerUp.y - (bird.y + bird.size / 2);
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < bird.size / 2 + powerUp.size) {
+                        // Collect power-up
+                        collectPowerUp(powerUp.type);
+                        
+                        // Create collection particles
+                        for (let j = 0; j < 10; j++) {
+                            particles.push({
+                                x: powerUp.x,
+                                y: powerUp.y,
+                                size: Math.random() * 5 + 3,
+                                color: powerUp.color,
+                                vx: Math.random() * 4 - 2,
+                                vy: Math.random() * 4 - 2,
+                                life: 30
+                            });
+                        }
+                        
+                        powerUps.splice(i, 1);
+                    }
+                    
+                    // Remove if off screen
+                    if (powerUp.x + powerUp.size < 0) {
+                        powerUps.splice(i, 1);
+                    }
+                }
+            }
+            
+            // Collect power-up
+            function collectPowerUp(type) {
+                switch (type) {
+                    case 'shield':
+                        shieldActive = true;
+                        shieldTime = Date.now() + 5000;
+                        showMessage('SHIELD ACTIVATED', '#00ffff');
+                        break;
+                    case 'slowTime':
+                        slowTimeActive = true;
+                        slowTimeEnd = Date.now() + 5000;
+                        showMessage('TIME SLOWED', '#ffff00');
+                        break;
+                    case 'extraLife':
+                        lives++;
+                        showMessage('EXTRA LIFE', '#ff0000');
+                        break;
+                }
+            }
+            
+            // Add lives system
+            let lives = 3;
+            
+            // Show message
+            function showMessage(text, color) {
+                const message = document.createElement('div');
+                message.textContent = text;
+                message.style.position = 'absolute';
+                message.style.top = '100px';
+                message.style.left = '50%';
+                message.style.transform = 'translateX(-50%)';
+                message.style.color = color;
+                message.style.fontFamily = 'Impact, sans-serif';
+                message.style.fontSize = '24px';
+                message.style.textShadow = `0 0 10px ${color}`;
+                message.style.zIndex = '100';
+                message.style.pointerEvents = 'none';
+                
+                gameContainer.appendChild(message);
+                
+                // Animate message
+                let opacity = 1;
+                const fadeInterval = setInterval(() => {
+                    opacity -= 0.05;
+                    message.style.opacity = opacity;
+                    
+                    if (opacity <= 0) {
+                        clearInterval(fadeInterval);
+                        message.remove();
+                    }
+                }, 50);
+            }
+            
+            // Add particles system
+            let particles = [];
+            
+            // Update particles
+            function updateParticles() {
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const particle = particles[i];
+                    
+                    // Move particle
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    // Decrease life
+                    particle.life--;
+                    
+                    // Draw particle
+                    ctx.fillStyle = particle.color;
+                    ctx.beginPath();
+                    ctx.arc(
+                        particle.x,
+                        particle.y,
+                        particle.size * (particle.life / 30),
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    // Remove if dead
+                    if (particle.life <= 0) {
+                        particles.splice(i, 1);
+                    }
+                }
+            }
+            
+            // Modify collision detection
+            const originalCheckCollision = checkCollision;
+            checkCollision = function() {
+                if (shieldActive) return false;
+                
+                const collision = originalCheckCollision();
+                
+                if (collision) {
+                    lives--;
+                    
+                    // Create hit particles
+                    for (let i = 0; i < 20; i++) {
+                        particles.push({
+                            x: bird.x + bird.size / 2,
+                            y: bird.y + bird.size / 2,
+                            size: Math.random() * 5 + 3,
+                            color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
+                            vx: Math.random() * 6 - 3,
+                            vy: Math.random() * 6 - 3,
+                            life: 30
+                        });
+                    }
+                    
+                    if (lives > 0) {
+                        // Reset bird position but continue game
+                        bird.y = canvas.height / 2;
+                        bird.velocity = 0;
+                        showMessage(`${lives} LIVES LEFT`, '#ff0000');
+                        return false;
+                    }
+                    
+                    return true;
+                }
+                
+                return false;
+            };
+            
+            // Update power-up timers
+            function updatePowerUpTimers() {
+                const now = Date.now();
+                
+                if (shieldActive && now > shieldTime) {
+                    shieldActive = false;
+                }
+                
+                if (slowTimeActive && now > slowTimeEnd) {
+                    slowTimeActive = false;
+                }
+                
+                setTimeout(updatePowerUpTimers, 100);
+            }
+            
+            // Modify game loop
+            const originalGameLoop = gameLoop;
+            gameLoop = function() {
+                originalGameLoop();
+                
+                // Create power-ups
+                if (gameStarted && !gameOver && Math.random() < 0.005) {
+                    createPowerUp();
+                }
+                
+                // Update power-ups
+                updatePowerUps();
+                
+                // Update particles
+                updateParticles();
+                
+                // Draw shield if active
+                if (shieldActive) {
+                    ctx.beginPath();
+                    ctx.arc(
+                        bird.x + bird.size / 2,
+                        bird.y + bird.size / 2,
+                        bird.size * 0.8,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.strokeStyle = '#00ffff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    
+                    // Shield glow
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = '#00ffff';
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+                
+                // Draw lives
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '20px Impact';
+                ctx.textAlign = 'left';
+                ctx.fillText(`LIVES: ${'❤️'.repeat(lives)}`, 10, 60);
+            };
+            
+            // Start power-up timer updates
+            updatePowerUpTimers();
+            
+            // Change game over screen
+            const originalGameOverScreen = showGameOverScreen;
+            showGameOverScreen = function() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '48px Impact';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Impact';
+                ctx.fillText(`FINAL SCORE: ${score}`, canvas.width / 2, canvas.height / 2);
+                
+                // Add restart button
+                const restartButton = document.createElement('button');
+                restartButton.textContent = 'PLAY AGAIN';
+                restartButton.className = 'difficulty-btn';
+                restartButton.style.position = 'absolute';
+                restartButton.style.top = '60%';
+                restartButton.style.left = '50%';
+                restartButton.style.transform = 'translate(-50%, -50%)';
+                
+                restartButton.onclick = () => {
+                    location.reload();
+                };
+                
+                gameContainer.appendChild(restartButton);
+            };
+            
+            // Start the game
+            resetGame();
+        }
+
+        // Create mode switcher immediately (not inside DOMContentLoaded)
+        const modeSwitcher = document.createElement('div');
+        modeSwitcher.style.position = 'absolute';
+        modeSwitcher.style.top = '10px';
+        modeSwitcher.style.right = '10px';
+        modeSwitcher.style.zIndex = '1000';
+        
+        const switchButton = document.createElement('button');
+        switchButton.textContent = 'SWITCH MODE';
+        switchButton.style.background = 'linear-gradient(45deg, #ff4d00, #990000)';
+        switchButton.style.color = 'white';
+        switchButton.style.padding = '10px 15px';
+        switchButton.style.border = 'none';
+        switchButton.style.borderRadius = '5px';
+        switchButton.style.fontFamily = 'Impact, sans-serif';
+        switchButton.style.cursor = 'pointer';
+        
+        switchButton.addEventListener('click', function() {
+            // Toggle between modes
+            if (document.title === 'DOOM Bird') {
+                // Switch to classic
+                window.location.href = 'flappy.html';
+            } else {
+                // Switch to doom
+                window.location.href = 'flappy.html?mode=doom';
+            }
+        });
+        
+        modeSwitcher.appendChild(switchButton);
+        document.body.appendChild(modeSwitcher);
+        
+        // Function to directly apply Doom mode
+        function activateDoomMode() {
+            // Hide mode selection
+            const modeContainer = document.querySelector('div[style*="transform: translateX(-50%)"]');
+            if (modeContainer) {
+                modeContainer.style.display = 'none';
+            }
+            
+            // Change game title
+            document.title = 'DOOM Bird';
+            
+            // Apply doom theme
+            document.body.style.background = '#000';
+            const canvas = document.getElementById('gameCanvas');
+            if (canvas) {
+                canvas.style.borderColor = '#ff0000';
+                canvas.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.7)';
+            }
+            
+            // Call the applyDoomMode function if it exists
+            if (typeof applyDoomMode === 'function') {
+                applyDoomMode();
+            }
+        }
+        
+        // Check URL parameters for mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        
+        // If mode is specified as doom, activate doom mode
+        if (mode === 'doom') {
+            // Try immediately
+            if (typeof applyDoomMode === 'function') {
+                activateDoomMode();
+            } else {
+                // Try again after a delay
+                setTimeout(activateDoomMode, 1000);
+            }
+        }
     </script>
 </body>
 </html> 

@@ -6214,5 +6214,91 @@
   // Run when DOM is loaded
   document.addEventListener('DOMContentLoaded', addTouchSupport);
 </script>
+
+<!-- Add a specific button for Doom Bird -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Create a container for the Doom Bird button if the features container doesn't exist
+    let featuresContainer = document.querySelector('.new-features');
+    if (!featuresContainer) {
+      featuresContainer = document.createElement('div');
+      featuresContainer.className = 'new-features';
+      featuresContainer.style.position = 'fixed';
+      featuresContainer.style.bottom = '20px';
+      featuresContainer.style.right = '20px';
+      featuresContainer.style.display = 'flex';
+      featuresContainer.style.flexDirection = 'column';
+      featuresContainer.style.gap = '10px';
+      featuresContainer.style.zIndex = '1000';
+      document.body.appendChild(featuresContainer);
+    }
+    
+    // Create Doom Bird button
+    const doomBirdButton = document.createElement('div');
+    doomBirdButton.className = 'feature-button';
+    doomBirdButton.textContent = 'DOOM BIRD';
+    doomBirdButton.style.background = 'linear-gradient(45deg, #ff0000, #990000)';
+    doomBirdButton.style.color = 'white';
+    doomBirdButton.style.padding = '15px 25px';
+    doomBirdButton.style.fontSize = '1.2em';
+    doomBirdButton.style.fontWeight = 'bold';
+    doomBirdButton.style.textTransform = 'uppercase';
+    doomBirdButton.style.borderRadius = '10px';
+    doomBirdButton.style.border = '2px solid #ff4d00';
+    doomBirdButton.style.boxShadow = '0 0 20px rgba(255, 77, 0, 0.5)';
+    doomBirdButton.style.cursor = 'pointer';
+    doomBirdButton.style.animation = 'pulse 2s infinite alternate';
+    
+    // Add click event to open flappy.html with doom mode
+    doomBirdButton.addEventListener('click', function() {
+      window.open('flappy.html?mode=doom', '_blank');
+    });
+    
+    // Add to the features container
+    featuresContainer.appendChild(doomBirdButton);
+  });
+</script>
+
+<!-- Add a prominent Doom Bird button to index.html -->
+<div id="doomBirdButtonContainer" style="position: fixed; bottom: 100px; right: 20px; z-index: 2000;">
+  <a href="flappy.html?mode=doom" target="_blank" style="display: block; background: linear-gradient(45deg, #ff0000, #990000); color: white; padding: 15px 25px; font-size: 1.2em; font-weight: bold; text-transform: uppercase; text-decoration: none; border-radius: 10px; border: 2px solid #ff4d00; box-shadow: 0 0 20px rgba(255, 77, 0, 0.5); cursor: pointer; animation: pulse 2s infinite alternate;">
+    PLAY DOOM BIRD
+  </a>
+</div>
+
+<script>
+  // Ensure the button is added to the page
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!document.getElementById('doomBirdButtonContainer')) {
+      const buttonContainer = document.createElement('div');
+      buttonContainer.id = 'doomBirdButtonContainer';
+      buttonContainer.style.position = 'fixed';
+      buttonContainer.style.bottom = '100px';
+      buttonContainer.style.right = '20px';
+      buttonContainer.style.zIndex = '2000';
+      
+      const button = document.createElement('a');
+      button.href = 'flappy.html?mode=doom';
+      button.target = '_blank';
+      button.style.display = 'block';
+      button.style.background = 'linear-gradient(45deg, #ff0000, #990000)';
+      button.style.color = 'white';
+      button.style.padding = '15px 25px';
+      button.style.fontSize = '1.2em';
+      button.style.fontWeight = 'bold';
+      button.style.textTransform = 'uppercase';
+      button.style.textDecoration = 'none';
+      button.style.borderRadius = '10px';
+      button.style.border = '2px solid #ff4d00';
+      button.style.boxShadow = '0 0 20px rgba(255, 77, 0, 0.5)';
+      button.style.cursor = 'pointer';
+      button.style.animation = 'pulse 2s infinite alternate';
+      button.textContent = 'PLAY DOOM BIRD';
+      
+      buttonContainer.appendChild(button);
+      document.body.appendChild(buttonContainer);
+    }
+  });
+</script>
 </body>
 </html>
