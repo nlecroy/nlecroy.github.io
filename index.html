@@ -2164,9 +2164,54 @@
 
   <div id="achievementContainer"></div>
 
-  <div class="epic-features-link">
-    <a href="epic-features.html" class="epic-button">🔥 UNLOCK EPIC FEATURES 🔥</a>
-  </div>
+  <!-- Remove epic features button and add achievements link -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Remove epic features button if it exists
+      const epicFeaturesLink = document.querySelector('.epic-features-link');
+      if (epicFeaturesLink) {
+        epicFeaturesLink.remove();
+      }
+      
+      // Add achievements button
+      let featuresContainer = document.querySelector('.new-features');
+      if (!featuresContainer) {
+        featuresContainer = document.createElement('div');
+        featuresContainer.className = 'new-features';
+        featuresContainer.style.position = 'fixed';
+        featuresContainer.style.bottom = '20px';
+        featuresContainer.style.right = '20px';
+        featuresContainer.style.display = 'flex';
+        featuresContainer.style.flexDirection = 'column';
+        featuresContainer.style.gap = '10px';
+        featuresContainer.style.zIndex = '1000';
+        document.body.appendChild(featuresContainer);
+      }
+      
+      // Create achievements button
+      const achievementsButton = document.createElement('div');
+      achievementsButton.className = 'feature-button';
+      achievementsButton.textContent = 'ACHIEVEMENTS';
+      achievementsButton.style.background = 'linear-gradient(45deg, #ffcc00, #ff8800)';
+      achievementsButton.style.color = 'white';
+      achievementsButton.style.padding = '15px 25px';
+      achievementsButton.style.fontSize = '1.2em';
+      achievementsButton.style.fontWeight = 'bold';
+      achievementsButton.style.textTransform = 'uppercase';
+      achievementsButton.style.borderRadius = '10px';
+      achievementsButton.style.border = '2px solid #ffcc00';
+      achievementsButton.style.boxShadow = '0 0 20px rgba(255, 204, 0, 0.5)';
+      achievementsButton.style.cursor = 'pointer';
+      
+      // Add click event to open achievements page
+      achievementsButton.addEventListener('click', function() {
+        window.open('achievements.html', '_blank');
+      });
+      
+      // Add to the features container
+      featuresContainer.appendChild(achievementsButton);
+    });
+  </script>
 
   <script>
     const nameInput = document.getElementById('name-input');

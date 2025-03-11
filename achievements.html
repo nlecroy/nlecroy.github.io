@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1a0000, #000000);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .title {
+            font-size: 48px;
+            color: #ff4d00;
+            text-shadow: 0 0 20px rgba(255, 77, 0, 0.7);
+            margin-bottom: 10px;
+            font-family: 'Impact', sans-serif;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #ccc;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .achievement {
+            background: linear-gradient(45deg, #330000, #000000);
+            border: 2px solid #ff4d00;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .achievement::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 77, 0, 0.2), transparent);
+            transform: translateX(-100%);
+            animation: shine 3s infinite;
+        }
+        
+        .achievement.locked {
+            filter: grayscale(100%);
+            opacity: 0.7;
+            border-color: #666;
+        }
+        
+        .achievement:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 77, 0, 0.3);
+        }
+        
+        .achievement-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .achievement-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff4d00;
+            margin-bottom: 10px;
+        }
+        
+        .achievement-description {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .achievement-date {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+        
+        .achievement-progress {
+            height: 10px;
+            background-color: #330000;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .achievement-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff4d00);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 77, 0, 0.5);
+        }
+        
+        @keyframes shine {
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Stats section */
+        .stats-section {
+            background: linear-gradient(45deg, #330000, #000000);
+            border: 2px solid #ff4d00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stats-title {
+            font-size: 24px;
+            color: #ff4d00;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">ACHIEVEMENTS</h1>
+            <p class="subtitle">Track your progress and unlock rewards</p>
+        </div>
+        
+        <div class="stats-section">
+            <h2 class="stats-title">Your Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalClicks">0</div>
+                    <div class="stat-label">Total Clicks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalLlamas">0</div>
+                    <div class="stat-label">Llamas Owned</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="highScore">0</div>
+                    <div class="stat-label">Highest Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="achievementsUnlocked">0/20</div>
+                    <div class="stat-label">Achievements</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="achievements-grid" id="achievementsContainer">
+            <!-- Achievements will be loaded here -->
+        </div>
+        
+        <a href="index.html" class="back-button">Back to Game</a>
+    </div>
+    
+    <script>
+        // Define all possible achievements
+        const allAchievements = [
+            {
+                id: 'firstClick',
+                icon: '👆',
+                title: 'First Click',
+                description: 'Click the llama for the first time',
+                condition: stats => stats.clicks >= 1,
+                progress: stats => Math.min(stats.clicks, 1)
+            },
+            {
+                id: 'clickMaster',
+                icon: '🔥',
+                title: 'Click Master',
+                description: 'Click 1,000 times',
+                condition: stats => stats.clicks >= 1000,
+                progress: stats => Math.min(stats.clicks / 1000, 1)
+            },
+            {
+                id: 'clickLegend',
+                icon: '👑',
+                title: 'Click Legend',
+                description: 'Click 10,000 times',
+                condition: stats => stats.clicks >= 10000,
+                progress: stats => Math.min(stats.clicks / 10000, 1)
+            },
+            {
+                id: 'firstLlama',
+                icon: '🦙',
+                title: 'Llama Owner',
+                description: 'Buy your first llama',
+                condition: stats => stats.llamas >= 1,
+                progress: stats => Math.min(stats.llamas, 1)
+            },
+            {
+                id: 'llamaFarm',
+                icon: '🌾',
+                title: 'Llama Farm',
+                description: 'Own 10 llamas',
+                condition: stats => stats.llamas >= 10,
+                progress: stats => Math.min(stats.llamas / 10, 1)
+            },
+            {
+                id: 'llamaEmpire',
+                icon: '🏰',
+                title: 'Llama Empire',
+                description: 'Own 100 llamas',
+                condition: stats => stats.llamas >= 100,
+                progress: stats => Math.min(stats.llamas / 100, 1)
+            },
+            {
+                id: 'firstUpgrade',
+                icon: '⬆️',
+                title: 'Upgrader',
+                description: 'Purchase your first upgrade',
+                condition: stats => stats.upgrades >= 1,
+                progress: stats => Math.min(stats.upgrades, 1)
+            },
+            {
+                id: 'upgradeAddict',
+                icon: '📈',
+                title: 'Upgrade Addict',
+                description: 'Purchase 10 upgrades',
+                condition: stats => stats.upgrades >= 10,
+                progress: stats => Math.min(stats.upgrades / 10, 1)
+            },
+            {
+                id: 'flappyNovice',
+                icon: '🐦',
+                title: 'Flappy Novice',
+                description: 'Score 10 points in Flappy Bird',
+                condition: stats => stats.flappyScore >= 10,
+                progress: stats => Math.min(stats.flappyScore / 10, 1)
+            },
+            {
+                id: 'flappyMaster',
+                icon: '🦅',
+                title: 'Flappy Master',
+                description: 'Score 50 points in Flappy Bird',
+                condition: stats => stats.flappyScore >= 50,
+                progress: stats => Math.min(stats.flappyScore / 50, 1)
+            },
+            {
+                id: 'doomBirdSurvival',
+                icon: '🔥',
+                title: 'Doom Bird Survivor',
+                description: 'Score 30 points in Doom Bird mode',
+                condition: stats => stats.doomBirdScore >= 30,
+                progress: stats => Math.min(stats.doomBirdScore / 30, 1)
+            },
+            {
+                id: 'spaceInvaderNovice',
+                icon: '👾',
+                title: 'Space Defender',
+                description: 'Defeat 10 aliens in Space Invaders',
+                condition: stats => stats.aliensDefeated >= 10,
+                progress: stats => Math.min(stats.aliensDefeated / 10, 1)
+            },
+            {
+                id: 'spaceInvaderMaster',
+                icon: '🚀',
+                title: 'Galactic Hero',
+                description: 'Defeat 50 aliens in Space Invaders',
+                condition: stats => stats.aliensDefeated >= 50,
+                progress: stats => Math.min(stats.aliensDefeated / 50, 1)
+            },
+            {
+                id: 'matrixVisitor',
+                icon: '💊',
+                title: 'Matrix Visitor',
+                description: 'Enter the Matrix mode',
+                condition: stats => stats.matrixVisits >= 1,
+                progress: stats => Math.min(stats.matrixVisits, 1)
+            },
+            {
+                id: 'confettiLover',
+                icon: '🎉',
+                title: 'Confetti Lover',
+                description: 'Trigger the confetti explosion 5 times',
+                condition: stats => stats.confettiTriggers >= 5,
+                progress: stats => Math.min(stats.confettiTriggers / 5, 1)
+            },
+            {
+                id: 'powerUpCollector',
+                icon: '⚡',
+                title: 'Power-Up Collector',
+                description: 'Collect 5 power-ups in Doom Bird',
+                condition: stats => stats.powerUpsCollected >= 5,
+                progress: stats => Math.min(stats.powerUpsCollected / 5, 1)
+            },
+            {
+                id: 'shieldMaster',
+                icon: '🛡️',
+                title: 'Shield Master',
+                description: 'Use the shield power-up 3 times',
+                condition: stats => stats.shieldsUsed >= 3,
+                progress: stats => Math.min(stats.shieldsUsed / 3, 1)
+            },
+            {
+                id: 'timeLord',
+                icon: '⏱️',
+                title: 'Time Lord',
+                description: 'Use the slow time power-up 3 times',
+                condition: stats => stats.slowTimesUsed >= 3,
+                progress: stats => Math.min(stats.slowTimesUsed / 3, 1)
+            },
+            {
+                id: 'dailyVisitor',
+                icon: '📅',
+                title: 'Daily Visitor',
+                description: 'Visit the site for 3 different days',
+                condition: stats => stats.daysVisited >= 3,
+                progress: stats => Math.min(stats.daysVisited / 3, 1)
+            },
+            {
+                id: 'completionist',
+                icon: '🏆',
+                title: 'Completionist',
+                description: 'Unlock all other achievements',
+                condition: stats => stats.achievementsUnlocked >= 19, // All except this one
+                progress: stats => Math.min(stats.achievementsUnlocked / 19, 1)
+            }
+        ];
+        
+        // Load stats from localStorage
+        function loadStats() {
+            const defaultStats = {
+                clicks: 0,
+                llamas: 0,
+                upgrades: 0,
+                flappyScore: 0,
+                doomBirdScore: 0,
+                aliensDefeated: 0,
+                matrixVisits: 0,
+                confettiTriggers: 0,
+                powerUpsCollected: 0,
+                shieldsUsed: 0,
+                slowTimesUsed: 0,
+                daysVisited: 0,
+                achievementsUnlocked: 0,
+                unlockedAchievements: {}
+            };
+            
+            const savedStats = JSON.parse(localStorage.getItem('gameStats')) || {};
+            return { ...defaultStats, ...savedStats };
+        }
+        
+        // Update stats display
+        function updateStatsDisplay(stats) {
+            document.getElementById('totalClicks').textContent = stats.clicks.toLocaleString();
+            document.getElementById('totalLlamas').textContent = stats.llamas.toLocaleString();
+            
+            // Get highest score between flappy and doom bird
+            const highScore = Math.max(stats.flappyScore, stats.doomBirdScore);
+            document.getElementById('highScore').textContent = highScore.toLocaleString();
+            
+            // Count unlocked achievements
+            const unlockedCount = Object.values(stats.unlockedAchievements).filter(Boolean).length;
+            document.getElementById('achievementsUnlocked').textContent = `${unlockedCount}/${allAchievements.length}`;
+        }
+        
+        // Render achievements
+        function renderAchievements(stats) {
+            const container = document.getElementById('achievementsContainer');
+            container.innerHTML = '';
+            
+            allAchievements.forEach(achievement => {
+                const isUnlocked = stats.unlockedAchievements[achievement.id] || false;
+                const progress = achievement.progress(stats);
+                
+                const achievementElement = document.createElement('div');
+                achievementElement.className = `achievement ${isUnlocked ? '' : 'locked'}`;
+                
+                const unlockedDate = stats.unlockedAchievements[achievement.id] ? 
+                    new Date(stats.unlockedAchievements[achievement.id]).toLocaleDateString() : null;
+                
+                achievementElement.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-description">${achievement.description}</div>
+                    ${unlockedDate ? `<div class="achievement-date">Unlocked on ${unlockedDate}</div>` : ''}
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-bar" style="width: ${progress * 100}%"></div>
+                    </div>
+                `;
+                
+                container.appendChild(achievementElement);
+            });
+        }
+        
+        // Initialize page
+        function initPage() {
+            const stats = loadStats();
+            updateStatsDisplay(stats);
+            renderAchievements(stats);
+        }
+        
+        // Run initialization when page loads
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html> 
