@@ -5476,7 +5476,6 @@
       }
       if (bird.y + bird.height > canvas.height) {
         bird.y = canvas.height - bird.height;
-        bird.velocity = 0;
         birdHit(); // Hit the ground
       }
       
@@ -6344,6 +6343,327 @@
       document.body.appendChild(buttonContainer);
     }
   });
+</script>
+
+<!-- Add achievement tracking to index.html -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize or update stats
+    const defaultStats = {
+      clicks: 0,
+      llamas: 0,
+      upgrades: 0,
+      flappyScore: 0,
+      doomBirdScore: 0,
+      aliensDefeated: 0,
+      matrixVisits: 0,
+      confettiTriggers: 0,
+      powerUpsCollected: 0,
+      shieldsUsed: 0,
+      slowTimesUsed: 0,
+      daysVisited: 1,
+      lastVisit: new Date().toDateString(),
+      achievementsUnlocked: 0,
+      unlockedAchievements: {}
+    };
+    
+    const savedStats = JSON.parse(localStorage.getItem('gameStats')) || {};
+    const stats = { ...defaultStats, ...savedStats };
+    
+    // Check if this is a new day
+    const today = new Date().toDateString();
+    if (stats.lastVisit !== today) {
+      stats.daysVisited = (stats.daysVisited || 0) + 1;
+      stats.lastVisit = today;
+      
+      // Check for daily visitor achievement
+      if (stats.daysVisited >= 3) {
+        trackAchievement('dailyVisitor');
+      }
+    }
+    
+    // Save updated stats
+    localStorage.setItem('gameStats', JSON.stringify(stats));
+    
+    // Hook into existing click handlers
+    const llamaButton = document.getElementById('llamaButton');
+    if (llamaButton) {
+      const originalOnClick = llamaButton.onclick;
+      llamaButton.onclick = function(e) {
+        if (originalOnClick) originalOnClick.call(this, e);
+        
+        // Update click count
+        const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+        stats.clicks = (stats.clicks || 0) + 1;
+        localStorage.setItem('gameStats', JSON.stringify(stats));
+        
+        // Check for click achievements
+        if (stats.clicks === 1) {
+          trackAchievement('firstClick');
+        }
+        if (stats.clicks >= 1000) {
+          trackAchievement('clickMaster');
+        }
+        if (stats.clicks >= 10000) {
+          trackAchievement('clickLegend');
+        }
+      };
+    }
+    
+    // Hook into confetti button
+    const confettiButton = document.getElementById('confettiButton');
+    if (confettiButton) {
+      const originalOnClick = confettiButton.onclick;
+      confettiButton.onclick = function(e) {
+        if (originalOnClick) originalOnClick.call(this, e);
+        
+        // Update confetti triggers
+        const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+        stats.confettiTriggers = (stats.confettiTriggers || 0) + 1;
+        localStorage.setItem('gameStats', JSON.stringify(stats));
+        
+        // Check for confetti achievement
+        if (stats.confettiTriggers >= 5) {
+          trackAchievement('confettiLover');
+        }
+      };
+    }
+    
+    // Hook into matrix button
+    const matrixButton = document.getElementById('matrixButton');
+    if (matrixButton) {
+      const originalOnClick = matrixButton.onclick;
+      matrixButton.onclick = function(e) {
+        if (originalOnClick) originalOnClick.call(this, e);
+        
+        // Update matrix visits
+        const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+        stats.matrixVisits = (stats.matrixVisits || 0) + 1;
+        localStorage.setItem('gameStats', JSON.stringify(stats));
+        
+        // Check for matrix achievement
+        if (stats.matrixVisits >= 1) {
+          trackAchievement('matrixVisitor');
+        }
+      };
+    }
+  });
+  
+  // Track achievement function
+  function trackAchievement(achievementId) {
+    // Load current stats
+    const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+    
+    // Check if achievement is already unlocked
+    if (stats.unlockedAchievements && stats.unlockedAchievements[achievementId]) {
+      return; // Already unlocked
+    }
+    
+    // Find the achievement definition
+    const allAchievements = [
+      { id: 'firstClick', title: 'First Click', description: 'Click the llama for the first time' },
+      { id: 'clickMaster', title: 'Click Master', description: 'Click 1,000 times' },
+      { id: 'clickLegend', title: 'Click Legend', description: 'Click 10,000 times' },
+      { id: 'firstLlama', title: 'Llama Owner', description: 'Buy your first llama' },
+      { id: 'llamaFarm', title: 'Llama Farm', description: 'Own 10 llamas' },
+      { id: 'llamaEmpire', title: 'Llama Empire', description: 'Own 100 llamas' },
+      { id: 'firstUpgrade', title: 'Upgrader', description: 'Purchase your first upgrade' },
+      { id: 'upgradeAddict', title: 'Upgrade Addict', description: 'Purchase 10 upgrades' },
+      { id: 'flappyNovice', title: 'Flappy Novice', description: 'Score 10 points in Flappy Bird' },
+      { id: 'flappyMaster', title: 'Flappy Master', description: 'Score 50 points in Flappy Bird' },
+      { id: 'doomBirdSurvival', title: 'Doom Bird Survivor', description: 'Score 30 points in Doom Bird mode' },
+      { id: 'spaceInvaderNovice', title: 'Space Defender', description: 'Defeat 10 aliens in Space Invaders' },
+      { id: 'spaceInvaderMaster', title: 'Galactic Hero', description: 'Defeat 50 aliens in Space Invaders' },
+      { id: 'matrixVisitor', title: 'Matrix Visitor', description: 'Enter the Matrix mode' },
+      { id: 'confettiLover', title: 'Confetti Lover', description: 'Trigger the confetti explosion 5 times' },
+      { id: 'powerUpCollector', title: 'Power-Up Collector', description: 'Collect 5 power-ups in Doom Bird' },
+      { id: 'shieldMaster', title: 'Shield Master', description: 'Use the shield power-up 3 times' },
+      { id: 'timeLord', title: 'Time Lord', description: 'Use the slow time power-up 3 times' },
+      { id: 'dailyVisitor', title: 'Daily Visitor', description: 'Visit the site for 3 different days' },
+      { id: 'completionist', title: 'Completionist', description: 'Unlock all other achievements' }
+    ];
+    
+    const achievement = allAchievements.find(a => a.id === achievementId);
+    if (!achievement) return;
+    
+    // Unlock achievement
+    if (!stats.unlockedAchievements) stats.unlockedAchievements = {};
+    stats.unlockedAchievements[achievementId] = new Date().toISOString();
+    stats.achievementsUnlocked = Object.keys(stats.unlockedAchievements).length;
+    
+    // Save stats
+    localStorage.setItem('gameStats', JSON.stringify(stats));
+    
+    // Show notification
+    showAchievement(achievement.title, achievement.description);
+  }
+</script>
+
+<!-- Add missing showAchievement function -->
+<script>
+  // Function to show achievement notification
+  function showAchievement(title, description) {
+    const achievementContainer = document.getElementById('achievementContainer');
+    if (!achievementContainer) return;
+    
+    const notification = document.createElement('div');
+    notification.className = 'achievement-notification';
+    notification.innerHTML = `
+      <div class="achievement-title">${title}</div>
+      <div class="achievement-description">${description}</div>
+    `;
+    
+    achievementContainer.appendChild(notification);
+    
+    // Remove notification after animation
+    setTimeout(() => {
+      notification.remove();
+    }, 5000);
+  }
+</script>
+
+<!-- Fix achievement tracking in index.html -->
+<script>
+  // Fix llama and upgrade tracking
+  document.addEventListener('DOMContentLoaded', function() {
+    // Hook into llama purchase
+    const buyLlamaButtons = document.querySelectorAll('.buy-llama-btn');
+    if (buyLlamaButtons.length > 0) {
+      buyLlamaButtons.forEach(button => {
+        const originalOnClick = button.onclick;
+        button.onclick = function(e) {
+          if (originalOnClick) originalOnClick.call(this, e);
+          
+          // Update llama count
+          const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+          stats.llamas = (stats.llamas || 0) + 1;
+          localStorage.setItem('gameStats', JSON.stringify(stats));
+          
+          // Check for llama achievements
+          if (stats.llamas === 1) {
+            trackAchievement('firstLlama');
+          }
+          if (stats.llamas >= 10) {
+            trackAchievement('llamaFarm');
+          }
+          if (stats.llamas >= 100) {
+            trackAchievement('llamaEmpire');
+          }
+        };
+      });
+    }
+    
+    // Hook into upgrade purchase
+    const buyUpgradeButtons = document.querySelectorAll('.buy-upgrade-btn');
+    if (buyUpgradeButtons.length > 0) {
+      buyUpgradeButtons.forEach(button => {
+        const originalOnClick = button.onclick;
+        button.onclick = function(e) {
+          if (originalOnClick) originalOnClick.call(this, e);
+          
+          // Update upgrade count
+          const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+          stats.upgrades = (stats.upgrades || 0) + 1;
+          localStorage.setItem('gameStats', JSON.stringify(stats));
+          
+          // Check for upgrade achievements
+          if (stats.upgrades === 1) {
+            trackAchievement('firstUpgrade');
+          }
+          if (stats.upgrades >= 10) {
+            trackAchievement('upgradeAddict');
+          }
+        };
+      });
+    }
+  });
+  
+  // Fix achievement notification display
+  function showAchievement(title, description) {
+    const achievementContainer = document.getElementById('achievementContainer');
+    if (!achievementContainer) {
+      // Create container if it doesn't exist
+      const container = document.createElement('div');
+      container.id = 'achievementContainer';
+      container.style.position = 'fixed';
+      container.style.top = '80px';
+      container.style.right = '20px';
+      container.style.width = '300px';
+      container.style.zIndex = '1000';
+      document.body.appendChild(container);
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = 'achievement-notification';
+    notification.innerHTML = `
+      <div class="achievement-title">${title}</div>
+      <div class="achievement-description">${description}</div>
+    `;
+    
+    // Add notification styles if not already in document
+    if (!document.getElementById('achievement-styles')) {
+      const styles = document.createElement('style');
+      styles.id = 'achievement-styles';
+      styles.textContent = `
+        .achievement-notification {
+          background: linear-gradient(45deg, #1a0000, #000000);
+          border: 2px solid #ff4d00;
+          border-radius: 10px;
+          padding: 15px;
+          margin-bottom: 10px;
+          color: #fff;
+          box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+          transform: translateX(120%);
+          animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .achievement-notification::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 77, 0, 0.2), transparent);
+          transform: translateX(-100%);
+          animation: shine 2s infinite;
+        }
+        
+        .achievement-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #ff4d00;
+          margin-bottom: 5px;
+        }
+        
+        .achievement-description {
+          font-size: 14px;
+        }
+        
+        @keyframes slideIn {
+          to { transform: translateX(0); }
+        }
+        
+        @keyframes fadeOut {
+          to { opacity: 0; transform: translateX(120%); }
+        }
+        
+        @keyframes shine {
+          100% { transform: translateX(100%); }
+        }
+      `;
+      document.head.appendChild(styles);
+    }
+    
+    document.getElementById('achievementContainer').appendChild(notification);
+    
+    // Remove notification after animation
+    setTimeout(() => {
+      notification.remove();
+    }, 5000);
+  }
 </script>
 </body>
 </html>

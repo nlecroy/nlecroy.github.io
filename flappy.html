@@ -171,13 +171,16 @@
         // Audio
         let music = {
             classic: new Audio('https://assets.codepen.io/21542/howler-demo.mp3'),
-            doom: new Audio('https://assets.codepen.io/21542/howler-demo.mp3')
+            doom: new Audio('https://ia800504.us.archive.org/33/items/DoomE1m1/Doom-e1m1.mp3') // BFG Division-like music
         };
         
         music.classic.loop = true;
         music.doom.loop = true;
         
         let currentMusic = null;
+        
+        // Create a counter to track power-ups collected in the current game session
+        let powerUpsCollectedThisSession = 0;
         
         // Functions
         function jump() {
@@ -379,8 +382,7 @@
                 
                 if (distance < bird.size / 2 + powerUp.size / 2) {
                     // Collect power-up
-                    collectPowerUp(powerUp.type);
-                    powerUps.splice(i, 1);
+                    collectPowerUp(powerUp);
                 }
                 
                 // Remove if off screen
@@ -390,27 +392,57 @@
             }
         }
         
-        function collectPowerUp(type) {
-            switch (type) {
-                case 'shield':
-                    shieldActive = true;
-                    shieldTime = Date.now() + 5000;
-                    showMessage('Shield Activated!', '#00ffff');
-                    break;
-                case 'slowTime':
-                    slowTimeActive = true;
-                    slowTimeEnd = Date.now() + 5000;
-                    showMessage('Time Slowed!', '#ffff00');
-                    break;
-                case 'extraLife':
-                    if (lives < 5) {
-                        lives++;
-                        showMessage('Extra Life!', '#ff0000');
-                    } else {
-                        score += 500;
-                        showMessage('+500 Points!', '#ff0000');
-                    }
-                    break;
+        // Override the collectPowerUp function to properly track achievements
+        function collectPowerUp(powerUp) {
+            // Original power-up collection logic
+            if (powerUp.type === 'shield') {
+                shieldActive = true;
+                shieldTime = Date.now() + 5000; // 5 seconds of shield
+                showMessage('Shield Activated!', '#00ffff');
+                
+                // Track shield usage
+                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                stats.shieldsUsed = (stats.shieldsUsed || 0) + 1;
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+                
+                if (stats.shieldsUsed >= 3) {
+                    trackAchievement('shieldMaster');
+                }
+            } else if (powerUp.type === 'slowTime') {
+                slowTimeActive = true;
+                slowTimeEnd = Date.now() + 5000; // 5 seconds of slow time
+                pipeSpeed = 1; // Slow down pipes
+                showMessage('Time Slowed!', '#ffff00');
+                
+                // Track slow time usage
+                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                stats.slowTimesUsed = (stats.slowTimesUsed || 0) + 1;
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+                
+                if (stats.slowTimesUsed >= 3) {
+                    trackAchievement('timeLord');
+                }
+            } else if (powerUp.type === 'extraLife') {
+                if (lives < 5) {
+                    lives++;
+                    showMessage('Extra Life!', '#ff0000');
+                } else {
+                    score += 500;
+                    showMessage('+500 Points!', '#ff0000');
+                }
+            }
+            
+            // Increment session counter
+            powerUpsCollectedThisSession++;
+            
+            // Track power-up collection in stats
+            const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+            stats.powerUpsCollected = (stats.powerUpsCollected || 0) + 1;
+            localStorage.setItem('gameStats', JSON.stringify(stats));
+            
+            // Check for achievement
+            if (stats.powerUpsCollected >= 5) {
+                trackAchievement('powerUpCollector');
             }
             
             // Create collection particles
@@ -419,11 +451,17 @@
                     x: bird.x + bird.size / 2,
                     y: bird.y + bird.size / 2,
                     size: Math.random() * 5 + 5,
-                    color: type === 'shield' ? '#00ffff' : type === 'slowTime' ? '#ffff00' : '#ff0000',
+                    color: powerUp.type === 'shield' ? '#00ffff' : powerUp.type === 'slowTime' ? '#ffff00' : '#ff0000',
                     vx: Math.random() * 6 - 3,
                     vy: Math.random() * 6 - 3,
                     life: 30
                 });
+            }
+            
+            // Remove the power-up
+            const index = powerUps.indexOf(powerUp);
+            if (index > -1) {
+                powerUps.splice(index, 1);
             }
         }
         
@@ -525,6 +563,9 @@
                 currentMusic.pause();
                 currentMusic.currentTime = 0;
             }
+            
+            // Reset the session counter when the game is reset
+            powerUpsCollectedThisSession = 0;
         }
         
         function showGameOverScreen() {
@@ -743,6 +784,37 @@
                 }
             }
             
+            // Track achievements based on score
+            if (isDoomMode) {
+                // Update doom bird score in stats
+                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                if (score > (stats.doomBirdScore || 0)) {
+                    stats.doomBirdScore = score;
+                    localStorage.setItem('gameStats', JSON.stringify(stats));
+                    
+                    // Check for achievements
+                    if (score >= 30) {
+                        trackAchievement('doomBirdSurvival');
+                    }
+                }
+            } else {
+                // Update flappy score in stats
+                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                if (score > (stats.flappyScore || 0)) {
+                    stats.flappyScore = score;
+                    localStorage.setItem('gameStats', JSON.stringify(stats));
+                    
+                    // Check for achievements
+                    if (score >= 10) {
+                        trackAchievement('flappyNovice');
+                    }
+                    
+                    if (score >= 50) {
+                        trackAchievement('flappyMaster');
+                    }
+                }
+            }
+            
             // Request next frame
             requestAnimationFrame(gameLoop);
         }
@@ -824,6 +896,152 @@
         // Initial draw
         drawBackground();
         bird.draw();
+        
+        // Track achievements
+        function trackAchievement(achievementId) {
+            // Load current stats
+            const defaultStats = {
+                clicks: 0,
+                llamas: 0,
+                upgrades: 0,
+                flappyScore: 0,
+                doomBirdScore: 0,
+                aliensDefeated: 0,
+                matrixVisits: 0,
+                confettiTriggers: 0,
+                powerUpsCollected: 0,
+                shieldsUsed: 0,
+                slowTimesUsed: 0,
+                daysVisited: 1,
+                achievementsUnlocked: 0,
+                unlockedAchievements: {}
+            };
+            
+            const savedStats = JSON.parse(localStorage.getItem('gameStats')) || {};
+            const stats = { ...defaultStats, ...savedStats };
+            
+            // Check if achievement is already unlocked
+            if (stats.unlockedAchievements && stats.unlockedAchievements[achievementId]) {
+                return; // Already unlocked
+            }
+            
+            // Find the achievement
+            const achievement = allAchievements.find(a => a.id === achievementId);
+            if (!achievement) return;
+            
+            // Check if condition is met
+            if (achievement.condition(stats)) {
+                // Unlock achievement
+                if (!stats.unlockedAchievements) stats.unlockedAchievements = {};
+                stats.unlockedAchievements[achievementId] = new Date().toISOString();
+                stats.achievementsUnlocked = Object.keys(stats.unlockedAchievements).length;
+                
+                // Save stats
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+                
+                // Show notification
+                showAchievementNotification(achievement.title, achievement.description);
+            }
+        }
+        
+        // Show achievement notification
+        function showAchievementNotification(title, description) {
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.innerHTML = `
+                <div class="achievement-title">${title}</div>
+                <div class="achievement-description">${description}</div>
+            `;
+            
+            // Add notification styles if not already in document
+            if (!document.getElementById('achievement-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'achievement-styles';
+                styles.textContent = `
+                    .achievement-notification {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: linear-gradient(45deg, #1a0000, #000000);
+                        border: 2px solid #ff4d00;
+                        border-radius: 10px;
+                        padding: 15px;
+                        color: #fff;
+                        box-shadow: 0 0 20px rgba(255, 77, 0, 0.5);
+                        z-index: 10000;
+                        animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+                    }
+                    
+                    .achievement-title {
+                        font-size: 18px;
+                        font-weight: bold;
+                        color: #ff4d00;
+                        margin-bottom: 5px;
+                    }
+                    
+                    .achievement-description {
+                        font-size: 14px;
+                    }
+                    
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); }
+                        to { transform: translateX(0); }
+                    }
+                    
+                    @keyframes fadeOut {
+                        to { opacity: 0; transform: translateX(100%); }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Define all possible achievements (simplified version for flappy.html)
+        const allAchievements = [
+            {
+                id: 'flappyNovice',
+                title: 'Flappy Novice',
+                description: 'Score 10 points in Flappy Bird',
+                condition: stats => stats.flappyScore >= 10
+            },
+            {
+                id: 'flappyMaster',
+                title: 'Flappy Master',
+                description: 'Score 50 points in Flappy Bird',
+                condition: stats => stats.flappyScore >= 50
+            },
+            {
+                id: 'doomBirdSurvival',
+                title: 'Doom Bird Survivor',
+                description: 'Score 30 points in Doom Bird mode',
+                condition: stats => stats.doomBirdScore >= 30
+            },
+            {
+                id: 'powerUpCollector',
+                title: 'Power-Up Collector',
+                description: 'Collect 5 power-ups in Doom Bird',
+                condition: stats => stats.powerUpsCollected >= 5
+            },
+            {
+                id: 'shieldMaster',
+                title: 'Shield Master',
+                description: 'Use the shield power-up 3 times',
+                condition: stats => stats.shieldsUsed >= 3
+            },
+            {
+                id: 'timeLord',
+                title: 'Time Lord',
+                description: 'Use the slow time power-up 3 times',
+                condition: stats => stats.slowTimesUsed >= 3
+            }
+        ];
     </script>
 </body>
 </html> 

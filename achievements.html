@@ -220,6 +220,7 @@
                 icon: '👆',
                 title: 'First Click',
                 description: 'Click the llama for the first time',
+                secretDescription: '???',
                 condition: stats => stats.clicks >= 1,
                 progress: stats => Math.min(stats.clicks, 1)
             },
@@ -227,15 +228,20 @@
                 id: 'clickMaster',
                 icon: '🔥',
                 title: 'Click Master',
+                secretTitle: 'Click ???',
                 description: 'Click 1,000 times',
+                secretDescription: 'Keep clicking...',
                 condition: stats => stats.clicks >= 1000,
                 progress: stats => Math.min(stats.clicks / 1000, 1)
             },
             {
                 id: 'clickLegend',
                 icon: '👑',
+                secretIcon: '❓',
                 title: 'Click Legend',
+                secretTitle: 'Click ???',
                 description: 'Click 10,000 times',
+                secretDescription: 'Keep clicking even more...',
                 condition: stats => stats.clicks >= 10000,
                 progress: stats => Math.min(stats.clicks / 10000, 1)
             },
@@ -244,6 +250,7 @@
                 icon: '🦙',
                 title: 'Llama Owner',
                 description: 'Buy your first llama',
+                secretDescription: 'Purchase something from the store',
                 condition: stats => stats.llamas >= 1,
                 progress: stats => Math.min(stats.llamas, 1)
             },
@@ -251,15 +258,20 @@
                 id: 'llamaFarm',
                 icon: '🌾',
                 title: 'Llama Farm',
+                secretTitle: 'Llama ???',
                 description: 'Own 10 llamas',
+                secretDescription: 'Collect more llamas',
                 condition: stats => stats.llamas >= 10,
                 progress: stats => Math.min(stats.llamas / 10, 1)
             },
             {
                 id: 'llamaEmpire',
                 icon: '🏰',
+                secretIcon: '❓',
                 title: 'Llama Empire',
+                secretTitle: 'Llama ???',
                 description: 'Own 100 llamas',
+                secretDescription: 'Build your llama collection',
                 condition: stats => stats.llamas >= 100,
                 progress: stats => Math.min(stats.llamas / 100, 1)
             },
@@ -268,6 +280,7 @@
                 icon: '⬆️',
                 title: 'Upgrader',
                 description: 'Purchase your first upgrade',
+                secretDescription: 'Improve something',
                 condition: stats => stats.upgrades >= 1,
                 progress: stats => Math.min(stats.upgrades, 1)
             },
@@ -275,7 +288,9 @@
                 id: 'upgradeAddict',
                 icon: '📈',
                 title: 'Upgrade Addict',
+                secretTitle: 'Upgrade ???',
                 description: 'Purchase 10 upgrades',
+                secretDescription: 'Keep upgrading',
                 condition: stats => stats.upgrades >= 10,
                 progress: stats => Math.min(stats.upgrades / 10, 1)
             },
@@ -284,14 +299,18 @@
                 icon: '🐦',
                 title: 'Flappy Novice',
                 description: 'Score 10 points in Flappy Bird',
+                secretDescription: 'Play Flappy Bird',
                 condition: stats => stats.flappyScore >= 10,
                 progress: stats => Math.min(stats.flappyScore / 10, 1)
             },
             {
                 id: 'flappyMaster',
                 icon: '🦅',
+                secretIcon: '🐦❓',
                 title: 'Flappy Master',
+                secretTitle: 'Flappy ???',
                 description: 'Score 50 points in Flappy Bird',
+                secretDescription: 'Get better at Flappy Bird',
                 condition: stats => stats.flappyScore >= 50,
                 progress: stats => Math.min(stats.flappyScore / 50, 1)
             },
@@ -299,7 +318,9 @@
                 id: 'doomBirdSurvival',
                 icon: '🔥',
                 title: 'Doom Bird Survivor',
+                secretTitle: 'Doom ???',
                 description: 'Score 30 points in Doom Bird mode',
+                secretDescription: 'Try the Doom version of Flappy Bird',
                 condition: stats => stats.doomBirdScore >= 30,
                 progress: stats => Math.min(stats.doomBirdScore / 30, 1)
             },
@@ -308,14 +329,18 @@
                 icon: '👾',
                 title: 'Space Defender',
                 description: 'Defeat 10 aliens in Space Invaders',
+                secretDescription: 'Play Space Invaders',
                 condition: stats => stats.aliensDefeated >= 10,
                 progress: stats => Math.min(stats.aliensDefeated / 10, 1)
             },
             {
                 id: 'spaceInvaderMaster',
                 icon: '🚀',
+                secretIcon: '👾❓',
                 title: 'Galactic Hero',
+                secretTitle: 'Space ???',
                 description: 'Defeat 50 aliens in Space Invaders',
+                secretDescription: 'Keep playing Space Invaders',
                 condition: stats => stats.aliensDefeated >= 50,
                 progress: stats => Math.min(stats.aliensDefeated / 50, 1)
             },
@@ -324,6 +349,7 @@
                 icon: '💊',
                 title: 'Matrix Visitor',
                 description: 'Enter the Matrix mode',
+                secretDescription: 'Find the hidden Matrix',
                 condition: stats => stats.matrixVisits >= 1,
                 progress: stats => Math.min(stats.matrixVisits, 1)
             },
@@ -331,7 +357,9 @@
                 id: 'confettiLover',
                 icon: '🎉',
                 title: 'Confetti Lover',
+                secretTitle: 'Party ???',
                 description: 'Trigger the confetti explosion 5 times',
+                secretDescription: 'Find something festive',
                 condition: stats => stats.confettiTriggers >= 5,
                 progress: stats => Math.min(stats.confettiTriggers / 5, 1)
             },
@@ -339,23 +367,31 @@
                 id: 'powerUpCollector',
                 icon: '⚡',
                 title: 'Power-Up Collector',
+                secretTitle: 'Power ???',
                 description: 'Collect 5 power-ups in Doom Bird',
+                secretDescription: 'Find special items in Doom Bird',
                 condition: stats => stats.powerUpsCollected >= 5,
                 progress: stats => Math.min(stats.powerUpsCollected / 5, 1)
             },
             {
                 id: 'shieldMaster',
                 icon: '🛡️',
+                secretIcon: '❓',
                 title: 'Shield Master',
+                secretTitle: 'Shield ???',
                 description: 'Use the shield power-up 3 times',
+                secretDescription: 'Find protection in Doom Bird',
                 condition: stats => stats.shieldsUsed >= 3,
                 progress: stats => Math.min(stats.shieldsUsed / 3, 1)
             },
             {
                 id: 'timeLord',
                 icon: '⏱️',
+                secretIcon: '❓',
                 title: 'Time Lord',
+                secretTitle: 'Time ???',
                 description: 'Use the slow time power-up 3 times',
+                secretDescription: 'Manipulate time in Doom Bird',
                 condition: stats => stats.slowTimesUsed >= 3,
                 progress: stats => Math.min(stats.slowTimesUsed / 3, 1)
             },
@@ -363,15 +399,20 @@
                 id: 'dailyVisitor',
                 icon: '📅',
                 title: 'Daily Visitor',
+                secretTitle: 'Regular ???',
                 description: 'Visit the site for 3 different days',
+                secretDescription: 'Come back tomorrow',
                 condition: stats => stats.daysVisited >= 3,
                 progress: stats => Math.min(stats.daysVisited / 3, 1)
             },
             {
                 id: 'completionist',
                 icon: '🏆',
+                secretIcon: '❓',
                 title: 'Completionist',
+                secretTitle: '???',
                 description: 'Unlock all other achievements',
+                secretDescription: 'Complete all other achievements',
                 condition: stats => stats.achievementsUnlocked >= 19, // All except this one
                 progress: stats => Math.min(stats.achievementsUnlocked / 19, 1)
             }
@@ -414,25 +455,26 @@
             document.getElementById('achievementsUnlocked').textContent = `${unlockedCount}/${allAchievements.length}`;
         }
         
-        // Render achievements
+        // Render achievements with hidden details for locked ones
         function renderAchievements(stats) {
             const container = document.getElementById('achievementsContainer');
             container.innerHTML = '';
             
             allAchievements.forEach(achievement => {
-                const isUnlocked = stats.unlockedAchievements[achievement.id] || false;
+                const isUnlocked = stats.unlockedAchievements && stats.unlockedAchievements[achievement.id];
                 const progress = achievement.progress(stats);
                 
                 const achievementElement = document.createElement('div');
                 achievementElement.className = `achievement ${isUnlocked ? '' : 'locked'}`;
                 
-                const unlockedDate = stats.unlockedAchievements[achievement.id] ? 
+                const unlockedDate = isUnlocked ? 
                     new Date(stats.unlockedAchievements[achievement.id]).toLocaleDateString() : null;
                 
+                // Show different content based on locked/unlocked status
                 achievementElement.innerHTML = `
-                    <div class="achievement-icon">${achievement.icon}</div>
-                    <div class="achievement-title">${achievement.title}</div>
-                    <div class="achievement-description">${achievement.description}</div>
+                    <div class="achievement-icon">${isUnlocked ? achievement.icon : (achievement.secretIcon || '❓')}</div>
+                    <div class="achievement-title">${isUnlocked ? achievement.title : (achievement.secretTitle || 'Secret Achievement')}</div>
+                    <div class="achievement-description">${isUnlocked ? achievement.description : (achievement.secretDescription || 'Keep playing to discover')}</div>
                     ${unlockedDate ? `<div class="achievement-date">Unlocked on ${unlockedDate}</div>` : ''}
                     <div class="achievement-progress">
                         <div class="achievement-progress-bar" style="width: ${progress * 100}%"></div>
@@ -452,6 +494,45 @@
         
         // Run initialization when page loads
         document.addEventListener('DOMContentLoaded', initPage);
+        
+        // Fix the shield master achievement icon
+        const shieldMasterAchievement = allAchievements.find(a => a.id === 'shieldMaster');
+        if (shieldMasterAchievement) {
+            shieldMasterAchievement.icon = '🛡️';
+        }
+        
+        // Re-render achievements to show the fixed icon
+        function fixAchievementIcons() {
+            const stats = loadStats();
+            renderAchievements(stats);
+        }
+        
+        // Run the fix when the page loads
+        document.addEventListener('DOMContentLoaded', fixAchievementIcons);
+        
+        // Update the completionist achievement check
+        function checkCompletionistAchievement() {
+            const stats = loadStats();
+            const unlockedCount = Object.keys(stats.unlockedAchievements || {}).length;
+            
+            // Check if all other achievements are unlocked (19 out of 20)
+            if (unlockedCount >= 19 && !stats.unlockedAchievements?.completionist) {
+                // Unlock completionist achievement
+                stats.unlockedAchievements.completionist = new Date().toISOString();
+                stats.achievementsUnlocked = unlockedCount + 1;
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+                
+                // Refresh the page to show the new achievement
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+        }
+        
+        // Run the check when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(checkCompletionistAchievement, 1000);
+        });
     </script>
 </body>
 </html> 
