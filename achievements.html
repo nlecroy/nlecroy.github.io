@@ -533,6 +533,154 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(checkCompletionistAchievement, 1000);
         });
+        
+        // Add erase achievements button
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create the erase button
+            const eraseButton = document.createElement('button');
+            eraseButton.textContent = 'ERASE ALL ACHIEVEMENTS';
+            eraseButton.className = 'erase-button';
+            eraseButton.style.background = 'linear-gradient(45deg, #990000, #660000)';
+            eraseButton.style.color = 'white';
+            eraseButton.style.padding = '10px 15px';
+            eraseButton.style.border = 'none';
+            eraseButton.style.borderRadius = '5px';
+            eraseButton.style.fontFamily = 'Impact, sans-serif';
+            eraseButton.style.cursor = 'pointer';
+            eraseButton.style.margin = '20px auto';
+            eraseButton.style.display = 'block';
+            
+            // Add click event
+            eraseButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to erase all achievements? This cannot be undone!')) {
+                    // Reset stats
+                    const defaultStats = {
+                        clicks: 0,
+                        llamas: 0,
+                        upgrades: 0,
+                        flappyScore: 0,
+                        doomBirdScore: 0,
+                        aliensDefeated: 0,
+                        matrixVisits: 0,
+                        confettiTriggers: 0,
+                        powerUpsCollected: 0,
+                        shieldsUsed: 0,
+                        slowTimesUsed: 0,
+                        daysVisited: 1,
+                        lastVisit: new Date().toDateString(),
+                        achievementsUnlocked: 0,
+                        unlockedAchievements: {}
+                    };
+                    
+                    // Save reset stats
+                    localStorage.setItem('gameStats', JSON.stringify(defaultStats));
+                    
+                    // Refresh page
+                    location.reload();
+                }
+            });
+            
+            // Add to page
+            const container = document.querySelector('.container');
+            container.appendChild(eraseButton);
+        });
+        
+        // Fix achievement tracking for Space Invaders
+        function fixSpaceInvadersAchievements() {
+            // Check if we need to migrate old stats
+            const stats = loadStats();
+            
+            // If Space Invaders achievements are glitching, reset them
+            if (stats.unlockedAchievements && 
+                (stats.unlockedAchievements.spaceInvaderNovice || stats.unlockedAchievements.spaceInvaderMaster) && 
+                stats.aliensDefeated < 10) {
+                
+                // Reset Space Invaders achievements
+                delete stats.unlockedAchievements.spaceInvaderNovice;
+                delete stats.unlockedAchievements.spaceInvaderMaster;
+                
+                // Update achievements count
+                stats.achievementsUnlocked = Object.keys(stats.unlockedAchievements).length;
+                
+                // Save updated stats
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+            }
+        }
+        
+        // Fix achievement tracking for Doom Bird
+        function fixDoomBirdAchievements() {
+            const stats = loadStats();
+            
+            // If Doom Bird achievements are glitching, reset them
+            if (stats.unlockedAchievements && 
+                stats.unlockedAchievements.powerUpCollector && 
+                stats.powerUpsCollected < 5) {
+                
+                // Reset power-up collector achievement
+                delete stats.unlockedAchievements.powerUpCollector;
+                
+                // Update achievements count
+                stats.achievementsUnlocked = Object.keys(stats.unlockedAchievements).length;
+                
+                // Save updated stats
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+            }
+        }
+        
+        // Fix achievement tracking for Llama Clicker
+        function fixLlamaAchievements() {
+            const stats = loadStats();
+            
+            // If Llama achievements are glitching, reset them
+            if (stats.unlockedAchievements) {
+                let needsUpdate = false;
+                
+                // Check each llama achievement
+                if (stats.unlockedAchievements.firstLlama && stats.llamas < 1) {
+                    delete stats.unlockedAchievements.firstLlama;
+                    needsUpdate = true;
+                }
+                
+                if (stats.unlockedAchievements.llamaFarm && stats.llamas < 10) {
+                    delete stats.unlockedAchievements.llamaFarm;
+                    needsUpdate = true;
+                }
+                
+                if (stats.unlockedAchievements.llamaEmpire && stats.llamas < 100) {
+                    delete stats.unlockedAchievements.llamaEmpire;
+                    needsUpdate = true;
+                }
+                
+                // Check each upgrade achievement
+                if (stats.unlockedAchievements.firstUpgrade && stats.upgrades < 1) {
+                    delete stats.unlockedAchievements.firstUpgrade;
+                    needsUpdate = true;
+                }
+                
+                if (stats.unlockedAchievements.upgradeAddict && stats.upgrades < 10) {
+                    delete stats.unlockedAchievements.upgradeAddict;
+                    needsUpdate = true;
+                }
+                
+                // Update if needed
+                if (needsUpdate) {
+                    stats.achievementsUnlocked = Object.keys(stats.unlockedAchievements).length;
+                    localStorage.setItem('gameStats', JSON.stringify(stats));
+                }
+            }
+        }
+        
+        // Run all fixes when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fixSpaceInvadersAchievements();
+            fixDoomBirdAchievements();
+            fixLlamaAchievements();
+            
+            // Refresh the page after fixes
+            setTimeout(function() {
+                initPage();
+            }, 100);
+        });
     </script>
 </body>
 </html> 

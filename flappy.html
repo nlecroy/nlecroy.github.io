@@ -392,7 +392,7 @@
             }
         }
         
-        // Override the collectPowerUp function to properly track achievements
+        // Fix power-up collection tracking to prevent glitching
         function collectPowerUp(powerUp) {
             // Original power-up collection logic
             if (powerUp.type === 'shield') {
@@ -400,13 +400,17 @@
                 shieldTime = Date.now() + 5000; // 5 seconds of shield
                 showMessage('Shield Activated!', '#00ffff');
                 
-                // Track shield usage
-                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
-                stats.shieldsUsed = (stats.shieldsUsed || 0) + 1;
-                localStorage.setItem('gameStats', JSON.stringify(stats));
-                
-                if (stats.shieldsUsed >= 3) {
-                    trackAchievement('shieldMaster');
+                // Track shield usage - only once per game session
+                if (!powerUp.tracked) {
+                    const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                    stats.shieldsUsed = (stats.shieldsUsed || 0) + 1;
+                    localStorage.setItem('gameStats', JSON.stringify(stats));
+                    
+                    if (stats.shieldsUsed >= 3) {
+                        trackAchievement('shieldMaster');
+                    }
+                    
+                    powerUp.tracked = true;
                 }
             } else if (powerUp.type === 'slowTime') {
                 slowTimeActive = true;
@@ -414,13 +418,17 @@
                 pipeSpeed = 1; // Slow down pipes
                 showMessage('Time Slowed!', '#ffff00');
                 
-                // Track slow time usage
-                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
-                stats.slowTimesUsed = (stats.slowTimesUsed || 0) + 1;
-                localStorage.setItem('gameStats', JSON.stringify(stats));
-                
-                if (stats.slowTimesUsed >= 3) {
-                    trackAchievement('timeLord');
+                // Track slow time usage - only once per game session
+                if (!powerUp.tracked) {
+                    const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                    stats.slowTimesUsed = (stats.slowTimesUsed || 0) + 1;
+                    localStorage.setItem('gameStats', JSON.stringify(stats));
+                    
+                    if (stats.slowTimesUsed >= 3) {
+                        trackAchievement('timeLord');
+                    }
+                    
+                    powerUp.tracked = true;
                 }
             } else if (powerUp.type === 'extraLife') {
                 if (lives < 5) {
@@ -432,17 +440,22 @@
                 }
             }
             
-            // Increment session counter
-            powerUpsCollectedThisSession++;
-            
-            // Track power-up collection in stats
-            const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
-            stats.powerUpsCollected = (stats.powerUpsCollected || 0) + 1;
-            localStorage.setItem('gameStats', JSON.stringify(stats));
-            
-            // Check for achievement
-            if (stats.powerUpsCollected >= 5) {
-                trackAchievement('powerUpCollector');
+            // Track power-up collection - only once per game session
+            if (!powerUp.tracked) {
+                powerUpsCollectedThisSession++;
+                
+                // Only update the global counter once per session
+                if (powerUpsCollectedThisSession <= 5) {
+                    const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                    stats.powerUpsCollected = (stats.powerUpsCollected || 0) + 1;
+                    localStorage.setItem('gameStats', JSON.stringify(stats));
+                    
+                    if (stats.powerUpsCollected >= 5) {
+                        trackAchievement('powerUpCollector');
+                    }
+                }
+                
+                powerUp.tracked = true;
             }
             
             // Create collection particles
@@ -653,138 +666,45 @@
             }
         }
         
-        function gameLoop() {
-            if (gameOver) {
-                showGameOverScreen();
-                return;
-            }
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw background
-            drawBackground();
-            
-            // Update bird
-            bird.update();
-            bird.draw();
-            
-            // Add fire trail in doom mode
-            if (isDoomMode && gameStarted && Math.random() < 0.3) {
-                particles.push({
-                    x: bird.x,
-                    y: bird.y + bird.size / 2,
-                    size: Math.random() * 5 + 3,
-                    color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
-                    vx: -Math.random() * 2 - 1,
-                    vy: Math.random() * 2 - 1,
-                    life: 30
-                });
-            }
-            
-            // Update and draw pipes
-            if (gameStarted) {
-                frameCount++;
+        // Fix game loop to properly track scores
+        const originalGameLoop = gameLoop;
+        gameLoop = function() {
+            // Call original game loop if it exists
+            if (typeof originalGameLoop === 'function') {
+                originalGameLoop();
+            } else {
+                // Default game loop behavior
+                if (gameOver || !gameStarted) return;
                 
-                // Create new pipe
-                if (frameCount % pipeSpawnRate === 0) {
-                    createPipe();
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw background
+                drawBackground();
+                
+                // Update and draw bird
+                bird.update();
+                bird.draw();
+                
+                // Update and draw pipes
+                updatePipes();
+                
+                // Update and draw power-ups
+                if (isDoomMode) {
+                    updatePowerUps();
                 }
                 
-                // Create power-up in doom mode
-                if (isDoomMode && Math.random() < 0.005) {
-                    createPowerUp();
-                }
-                
-                // Update pipes
-                for (let i = pipes.length - 1; i >= 0; i--) {
-                    const pipe = pipes[i];
-                    
-                    // Move pipe
-                    pipe.x -= pipeSpeed * (isDoomMode && slowTimeActive ? 0.5 : 1);
-                    
-                    // Draw pipe
-                    drawPipe(pipe);
-                    
-                    // Check if pipe is passed
-                    if (!pipe.passed && pipe.x + pipe.width < bird.x) {
-                        pipe.passed = true;
-                        score += 10;
-                        scoreDisplay.textContent = score;
-                        
-                        // Increase difficulty
-                        if (score % 100 === 0 && pipeSpeed < 5) {
-                            pipeSpeed += 0.5;
-                            pipeSpawnRate = Math.max(60, pipeSpawnRate - 10);
-                        }
-                    }
-                    
-                    // Remove pipe if off screen
-                    if (pipe.x + pipe.width < 0) {
-                        pipes.splice(i, 1);
-                    }
-                }
-                
-                // Check collision
-                if (checkCollision()) {
-                    gameOver = true;
-                    
-                    // Stop music
-                    if (currentMusic) {
-                        currentMusic.pause();
-                    }
-                }
-            }
-            
-            // Update power-ups in doom mode
-            if (isDoomMode) {
-                updatePowerUps();
+                // Update and draw particles
                 updateParticles();
                 
-                // Draw shield if active
-                if (shieldActive) {
-                    ctx.beginPath();
-                    ctx.arc(
-                        bird.x + bird.size / 2,
-                        bird.y + bird.size / 2,
-                        bird.size * 0.8,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.strokeStyle = '#00ffff';
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
-                    
-                    // Shield glow
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = '#00ffff';
-                    ctx.stroke();
-                    ctx.shadowBlur = 0;
-                }
+                // Update score display
+                scoreDisplay.textContent = score;
                 
-                // Draw lives
-                ctx.fillStyle = '#ff0000';
-                ctx.font = '20px Impact';
-                ctx.textAlign = 'left';
-                ctx.fillText(`LIVES: ${'❤️'.repeat(lives)}`, 10, 60);
-                
-                // Draw power-up timers
-                if (shieldActive) {
-                    const timeLeft = Math.ceil((shieldTime - Date.now()) / 1000);
-                    ctx.fillStyle = '#00ffff';
-                    ctx.textAlign = 'right';
-                    ctx.fillText(`SHIELD: ${timeLeft}s`, canvas.width - 10, 30);
-                }
-                
-                if (slowTimeActive) {
-                    const timeLeft = Math.ceil((slowTimeEnd - Date.now()) / 1000);
-                    ctx.fillStyle = '#ffff00';
-                    ctx.textAlign = 'right';
-                    ctx.fillText(`SLOW TIME: ${timeLeft}s`, canvas.width - 10, 60);
-                }
+                // Request next frame
+                requestAnimationFrame(gameLoop);
             }
             
-            // Track achievements based on score
+            // Track achievements based on score - only update once per session
             if (isDoomMode) {
                 // Update doom bird score in stats
                 const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
@@ -814,10 +734,7 @@
                     }
                 }
             }
-            
-            // Request next frame
-            requestAnimationFrame(gameLoop);
-        }
+        };
         
         // Switch between modes
         function switchMode() {
