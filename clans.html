@@ -447,13 +447,13 @@
         }
 
         document.querySelector('.clan-card:nth-child(1) .join-button')
-            .onclick = () => showMessage('TALK TO DA KAAKAA KING HE WILL KNOW WHAT TO DO');
+            .onclick = () => sendJoinEmail('KAAKAA CLAN');
 
         document.querySelector('.clan-card:nth-child(2) .join-button')
-            .onclick = () => showMessage('TALK TO DA KING BOB YES YESSSSSSSSSS');
+            .onclick = () => sendJoinEmail('DA BOBS');
 
         document.querySelector('.clan-card:nth-child(3) .join-button')
-            .onclick = () => showMessage('TALK TO ANDRUIS NASHAND DAMIEN!');
+            .onclick = () => sendJoinEmail('LEATHER CREW');
 
         // Create floating runes
         function createRunes() {
@@ -516,25 +516,6 @@
                 card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
             });
         });
-
-        // Function to send join email
-        function sendJoinEmail(clanName) {
-            // Get user's name or use "Gamer" as default
-            let userName = localStorage.getItem('visitorName') || "Gamer";
-            
-            // Create the email subject and body
-            let subject = `Join Request: ${clanName}`;
-            let body = `Hi Nash,\n\nI would like to join the ${clanName} clan.\n\nGamer name: ${userName}\n\nLooking forward to gaming with you!\n\nRegards,\n${userName}`;
-            
-            // Encode the subject and body for the mailto link
-            let mailtoLink = `mailto:nashlecroy@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            // Open the email client
-            window.location.href = mailtoLink;
-            
-            // Show confirmation message
-            alert(`Your join request for ${clanName} has been prepared! Your email client will open now.`);
-        }
     </script>
 </body>
 </html> 

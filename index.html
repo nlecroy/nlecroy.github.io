@@ -1570,14 +1570,8 @@
         100% { text-shadow: 0 0 15px #ff4d00; }
     }
 
-    /* Add these new features to the index.html page */
-    <div class="new-features">
-        <div class="feature-button" id="confettiButton">🎉 CONFETTI EXPLOSION</div>
-        <div class="feature-button" id="matrixButton">🖥️ MATRIX MODE</div>
-        <div class="feature-button" id="screenShakeButton">💥 SCREEN SHAKE</div>
-    </div>
-
-    <style>
+  
+        /* Add these styles for the new features */
         .new-features {
             position: fixed;
             bottom: 20px;
@@ -1586,7 +1580,6 @@
             flex-direction: column;
             gap: 10px;
             z-index: 1000;
-        }
         
         .feature-button {
             background: linear-gradient(45deg, #ff0000, #ff4d00);
@@ -1605,27 +1598,8 @@
             transform: scale(1.1);
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
         }
-        
-        .matrix-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9000;
-            overflow: hidden;
-            display: none;
-        }
-        
-        .matrix-character {
-            position: absolute;
-            color: #00ff00;
-            font-family: monospace;
-            font-size: 20px;
-            animation: matrixFall linear infinite;
-        }
-    </style>
+    }
+  </style>
 
     <script>
         // Add confetti explosion feature
@@ -2062,6 +2036,9 @@
     <div class="feature-button" id="confettiButton">🎉 CONFETTI EXPLOSION</div>
     <div class="feature-button" id="matrixButton">🖥️ MATRIX MODE</div>
     <div class="feature-button" id="screenShakeButton">💥 SCREEN SHAKE</div>
+    <div class="feature-button" id="discoButton">🕺 DISCO MODE</div>
+    <div class="feature-button" id="rainbowTextButton">🌈 RAINBOW TEXT</div>
+    <div class="feature-button" id="explosionButton">💣 EXPLOSION EFFECT</div>
   </div>
 
   <div class="content-container">
@@ -2100,7 +2077,8 @@
     <a href="memes.html">🔪 MEMES</a>
     <a href="gaming-sites.html">🎯 GAMING SITES</a>
     <a href="fave-songs.html">🎵 EPIC MUSIC</a>
-    <a href="clans.html">�� CLANS & CREWS</a>
+    <a href="clans.html">👥 CLANS & CREWS</a>
+    <a href="#" id="unlockFeaturesButton">🔓 UNLOCK EPIC FEATURES</a>
   </div>
 
   <!-- Add fire particles container -->
@@ -3837,6 +3815,919 @@
         mailChampText.remove();
       }, 1000);
     }, 5000);
+  }
+</script>
+
+<!-- Add a random GIF as requested -->
+<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDBjc2RvZTlrNmdjMDNvODk5Y3BndDlkd253aHdueWhzeGhjYmJqYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/U2nN0ridM4lXy/giphy.gif" 
+     alt="Random GIF" 
+     style="position: fixed; right: 50px; top: 50px; width: 150px; z-index: 999; border-radius: 10px; box-shadow: 0 0 15px rgba(255, 77, 0, 0.7);">
+
+<script>
+  // Add event listeners for the new buttons
+  document.getElementById('discoButton').addEventListener('click', startDiscoMode);
+  document.getElementById('rainbowTextButton').addEventListener('click', startRainbowText);
+  document.getElementById('explosionButton').addEventListener('click', createExplosion);
+  
+  // Disco Mode function
+  function startDiscoMode() {
+    // Create disco ball
+    const discoBall = document.createElement('div');
+    discoBall.style.position = 'fixed';
+    discoBall.style.top = '50px';
+    discoBall.style.left = '50%';
+    discoBall.style.transform = 'translateX(-50%)';
+    discoBall.style.width = '100px';
+    discoBall.style.height = '100px';
+    discoBall.style.borderRadius = '50%';
+    discoBall.style.background = 'radial-gradient(circle, white 10%, silver 70%)';
+    discoBall.style.boxShadow = '0 0 30px white';
+    discoBall.style.zIndex = '9999';
+    discoBall.style.animation = 'spin 3s linear infinite';
+    document.body.appendChild(discoBall);
+    
+    // Add disco lights
+    const colors = ['red', 'blue', 'green', 'purple', 'yellow', 'cyan'];
+    for (let i = 0; i < 20; i++) {
+      setTimeout(() => {
+        const light = document.createElement('div');
+        light.style.position = 'fixed';
+        light.style.top = Math.random() * 100 + '%';
+        light.style.left = Math.random() * 100 + '%';
+        light.style.width = '50px';
+        light.style.height = '50px';
+        light.style.borderRadius = '50%';
+        light.style.background = colors[Math.floor(Math.random() * colors.length)];
+        light.style.opacity = '0.7';
+        light.style.filter = 'blur(10px)';
+        light.style.zIndex = '998';
+        document.body.appendChild(light);
+        
+        // Remove light after animation
+        setTimeout(() => light.remove(), 2000);
+      }, i * 100);
+    }
+    
+    // Add disco style
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: translateX(-50%) rotate(0deg); }
+        100% { transform: translateX(-50%) rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Play disco music
+    const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Audio failed to play:', e));
+    
+    // Remove disco ball after 5 seconds
+    setTimeout(() => {
+      discoBall.remove();
+      style.remove();
+      audio.pause();
+    }, 5000);
+    
+    // Show achievement
+    showAchievement('Disco King', 'You started a dance party!');
+  }
+  
+  // Rainbow Text function
+  function startRainbowText() {
+    const allText = document.querySelectorAll('h1, h2, h3, p, a, span, div');
+    
+    // Add rainbow animation to all text
+    allText.forEach(element => {
+      element.style.animation = 'rainbowText 2s linear infinite';
+      element.style.animationDelay = Math.random() + 's';
+    });
+    
+    // Add rainbow style
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes rainbowText {
+        0% { color: red; }
+        14% { color: orange; }
+        28% { color: yellow; }
+        42% { color: green; }
+        57% { color: blue; }
+        71% { color: indigo; }
+        85% { color: violet; }
+        100% { color: red; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Remove rainbow effect after 5 seconds
+    setTimeout(() => {
+      allText.forEach(element => {
+        element.style.animation = '';
+      });
+      style.remove();
+    }, 5000);
+    
+    // Show achievement
+    showAchievement('Rainbow Warrior', 'You\'ve unleashed the colors!');
+  }
+  
+  // Explosion Effect function
+  function createExplosion() {
+    // Create explosion container
+    const explosionContainer = document.createElement('div');
+    explosionContainer.style.position = 'fixed';
+    explosionContainer.style.top = '50%';
+    explosionContainer.style.left = '50%';
+    explosionContainer.style.transform = 'translate(-50%, -50%)';
+    explosionContainer.style.width = '1px';
+    explosionContainer.style.height = '1px';
+    explosionContainer.style.zIndex = '9999';
+    document.body.appendChild(explosionContainer);
+    
+    // Create explosion particles
+    for (let i = 0; i < 100; i++) {
+      const particle = document.createElement('div');
+      particle.style.position = 'absolute';
+      particle.style.width = Math.random() * 10 + 5 + 'px';
+      particle.style.height = particle.style.width;
+      particle.style.background = `hsl(${Math.random() * 60 + 10}, 100%, 50%)`;
+      particle.style.borderRadius = '50%';
+      particle.style.boxShadow = '0 0 10px rgba(255, 200, 0, 0.8)';
+      
+      // Random direction and speed
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 15 + 5;
+      const x = Math.cos(angle) * speed;
+      const y = Math.sin(angle) * speed;
+      
+      // Animate particle
+      particle.animate([
+        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+        { transform: `translate(${x * 20}px, ${y * 20}px) scale(0)`, opacity: 0 }
+      ], {
+        duration: Math.random() * 1000 + 500,
+        easing: 'cubic-bezier(0,0,0.2,1)'
+      });
+      
+      explosionContainer.appendChild(particle);
+    }
+    
+    // Play explosion sound
+    const audio = new Audio('https://www.soundjay.com/mechanical/sounds/explosion-01.mp3');
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Audio failed to play:', e));
+    
+    // Screen shake effect
+    document.body.style.animation = 'shake 0.5s linear';
+    
+    // Add shake style
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        20%, 40%, 60%, 80% { transform: translateX(10px); }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Remove explosion after animation
+    setTimeout(() => {
+      explosionContainer.remove();
+      document.body.style.animation = '';
+      style.remove();
+    }, 1500);
+    
+    // Show achievement
+    showAchievement('Demolition Expert', 'BOOM! That was explosive!');
+  }
+</script>
+
+<!-- Add script for the unlock features button -->
+<script>
+  // Add event listener for the unlock features button
+  document.getElementById('unlockFeaturesButton').addEventListener('click', unlockEpicFeatures);
+  
+  // Function to unlock epic features
+  function unlockEpicFeatures() {
+    // Create a modal dialog
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '10000';
+    
+    // Create modal content
+    const content = document.createElement('div');
+    content.style.width = '500px';
+    content.style.backgroundColor = '#1a0f1f';
+    content.style.border = '3px solid #ff4d00';
+    content.style.borderRadius = '10px';
+    content.style.padding = '30px';
+    content.style.boxShadow = '0 0 30px #ff4d00';
+    content.style.textAlign = 'center';
+    
+    // Add title
+    const title = document.createElement('h2');
+    title.textContent = '🔥 UNLOCK EPIC FEATURES 🔥';
+    title.style.color = '#ff4d00';
+    title.style.marginBottom = '20px';
+    title.style.textShadow = '0 0 10px #ff4d00';
+    
+    // Add feature buttons
+    const featuresContainer = document.createElement('div');
+    featuresContainer.style.display = 'grid';
+    featuresContainer.style.gridTemplateColumns = 'repeat(2, 1fr)';
+    featuresContainer.style.gap = '15px';
+    featuresContainer.style.marginBottom = '20px';
+    
+    const features = [
+      { name: '🎮 DOOM MODE', func: activateDoomMode },
+      { name: '🔥 FIRE CURSOR', func: activateFireCursor },
+      { name: '💥 CLICK EXPLOSIONS', func: activateClickExplosions },
+      { name: '🎵 BACKGROUND MUSIC', func: activateBackgroundMusic },
+      { name: '🌈 COLOR THEME', func: changeColorTheme },
+      { name: '👾 GAME INVADERS', func: startGameInvaders }
+    ];
+    
+    features.forEach(feature => {
+      const button = document.createElement('button');
+      button.textContent = feature.name;
+      button.style.padding = '15px';
+      button.style.backgroundColor = '#2d1635';
+      button.style.color = '#ff4d00';
+      button.style.border = '2px solid #ff4d00';
+      button.style.borderRadius = '5px';
+      button.style.cursor = 'pointer';
+      button.style.fontFamily = 'Impact, sans-serif';
+      button.style.fontSize = '16px';
+      button.style.transition = 'all 0.3s';
+      
+      button.addEventListener('mouseover', () => {
+        button.style.backgroundColor = '#ff4d00';
+        button.style.color = '#000';
+        button.style.transform = 'scale(1.05)';
+      });
+      
+      button.addEventListener('mouseout', () => {
+        button.style.backgroundColor = '#2d1635';
+        button.style.color = '#ff4d00';
+        button.style.transform = 'scale(1)';
+      });
+      
+      button.addEventListener('click', () => {
+        feature.func();
+        modal.remove();
+      });
+      
+      featuresContainer.appendChild(button);
+    });
+    
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'CLOSE';
+    closeButton.style.padding = '10px 20px';
+    closeButton.style.backgroundColor = '#ff4d00';
+    closeButton.style.color = '#000';
+    closeButton.style.border = 'none';
+    closeButton.style.borderRadius = '5px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.style.fontFamily = 'Impact, sans-serif';
+    closeButton.style.fontSize = '16px';
+    closeButton.style.marginTop = '20px';
+    
+    closeButton.addEventListener('click', () => {
+      modal.remove();
+    });
+    
+    // Assemble modal
+    content.appendChild(title);
+    content.appendChild(featuresContainer);
+    content.appendChild(closeButton);
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+  }
+  
+  // Feature functions
+  function activateDoomMode() {
+    // Change background to DOOM theme
+    document.body.style.backgroundImage = 'url("https://raw.githubusercontent.com/nlecroy/nlecroy.github.io/main/assets/doom-bg.jpg")';
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundAttachment = 'fixed';
+    
+    // Add blood drips
+    for (let i = 0; i < 20; i++) {
+      const drip = document.createElement('div');
+      drip.style.position = 'fixed';
+      drip.style.top = '0';
+      drip.style.left = Math.random() * 100 + 'vw';
+      drip.style.width = Math.random() * 5 + 3 + 'px';
+      drip.style.height = Math.random() * 100 + 50 + 'px';
+      drip.style.background = 'linear-gradient(to bottom, #8b0000, #ff0000)';
+      drip.style.zIndex = '100';
+      drip.style.opacity = '0.7';
+      drip.style.borderRadius = '0 0 3px 3px';
+      document.body.appendChild(drip);
+    }
+    
+    // Play DOOM sound
+    const audio = new Audio('https://www.101soundboards.com/storage/board_sounds_rendered/10334.mp3');
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Audio failed to play:', e));
+    
+    // Show achievement
+    showAchievement('DOOM Slayer', 'Welcome to Hell!');
+  }
+  
+  function activateFireCursor() {
+    // Create style for fire cursor
+    const style = document.createElement('style');
+    style.textContent = `
+      body {
+        cursor: none !important;
+      }
+      
+      .fire-cursor {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        background: url('https://i.gifer.com/origin/90/90c5da3b8f73e7aab4bcd9a6c989c1f1_w200.gif');
+        background-size: contain;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Create fire cursor element
+    const cursor = document.createElement('div');
+    cursor.className = 'fire-cursor';
+    document.body.appendChild(cursor);
+    
+    // Update cursor position
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    
+    // Show achievement
+    showAchievement('Fire Wielder', 'Your cursor is on fire!');
+  }
+  
+  function activateClickExplosions() {
+    // Add click event listener to create explosions
+    document.addEventListener('click', (e) => {
+      // Create explosion container
+      const explosion = document.createElement('div');
+      explosion.style.position = 'fixed';
+      explosion.style.left = e.clientX + 'px';
+      explosion.style.top = e.clientY + 'px';
+      explosion.style.width = '1px';
+      explosion.style.height = '1px';
+      explosion.style.zIndex = '9999';
+      document.body.appendChild(explosion);
+      
+      // Create particles
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = Math.random() * 8 + 4 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.background = `hsl(${Math.random() * 30 + 10}, 100%, 50%)`;
+        particle.style.borderRadius = '50%';
+        
+        // Random direction
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 10 + 5;
+        const x = Math.cos(angle) * speed;
+        const y = Math.sin(angle) * speed;
+        
+        // Animate
+        particle.animate([
+          { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+          { transform: `translate(calc(-50% + ${x * 10}px), calc(-50% + ${y * 10}px)) scale(0)`, opacity: 0 }
+        ], {
+          duration: 500,
+          easing: 'cubic-bezier(0,0,0.2,1)'
+        });
+        
+        explosion.appendChild(particle);
+      }
+      
+      // Remove after animation
+      setTimeout(() => explosion.remove(), 500);
+    });
+    
+    // Show achievement
+    showAchievement('Click Master', 'Every click creates an explosion!');
+  }
+  
+  function activateBackgroundMusic() {
+    // Create audio element
+    const audio = document.createElement('audio');
+    audio.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
+    audio.loop = true;
+    audio.volume = 0.2;
+    audio.id = 'background-music';
+    document.body.appendChild(audio);
+    
+    // Create controls
+    const controls = document.createElement('div');
+    controls.style.position = 'fixed';
+    controls.style.bottom = '20px';
+    controls.style.left = '20px';
+    controls.style.zIndex = '1000';
+    controls.style.display = 'flex';
+    controls.style.alignItems = 'center';
+    controls.style.gap = '10px';
+    controls.style.background = 'rgba(0,0,0,0.7)';
+    controls.style.padding = '10px';
+    controls.style.borderRadius = '5px';
+    controls.style.border = '1px solid #ff4d00';
+    
+    // Play button
+    const playButton = document.createElement('button');
+    playButton.innerHTML = '▶️';
+    playButton.style.background = 'none';
+    playButton.style.border = 'none';
+    playButton.style.fontSize = '24px';
+    playButton.style.cursor = 'pointer';
+    playButton.onclick = () => {
+      audio.play().catch(e => console.log('Audio failed to play:', e));
+      playButton.innerHTML = '⏸️';
+      playButton.onclick = () => {
+        audio.pause();
+        playButton.innerHTML = '▶️';
+        playButton.onclick = () => {
+          audio.play();
+          playButton.innerHTML = '⏸️';
+        };
+      };
+    };
+    
+    // Volume control
+    const volumeControl = document.createElement('input');
+    volumeControl.type = 'range';
+    volumeControl.min = '0';
+    volumeControl.max = '1';
+    volumeControl.step = '0.1';
+    volumeControl.value = '0.2';
+    volumeControl.style.width = '100px';
+    volumeControl.oninput = () => {
+      audio.volume = volumeControl.value;
+    };
+    
+    // Assemble controls
+    controls.appendChild(playButton);
+    controls.appendChild(volumeControl);
+    document.body.appendChild(controls);
+    
+    // Start playing
+    audio.play().catch(e => console.log('Audio failed to play:', e));
+    
+    // Show achievement
+    showAchievement('Music Lover', 'Epic background music activated!');
+  }
+  
+  function changeColorTheme() {
+    // Create theme options
+    const themes = [
+      { name: 'Hellfire', primary: '#ff4d00', secondary: '#990000', bg: 'linear-gradient(45deg, #330000, #660000)' },
+      { name: 'Toxic', primary: '#00ff00', secondary: '#006600', bg: 'linear-gradient(45deg, #001a00, #003300)' },
+      { name: 'Ice', primary: '#00ffff', secondary: '#0099ff', bg: 'linear-gradient(45deg, #000033, #000066)' },
+      { name: 'Neon', primary: '#ff00ff', secondary: '#cc00cc', bg: 'linear-gradient(45deg, #330033, #660066)' }
+    ];
+    
+    // Create theme selector
+    const themeSelector = document.createElement('div');
+    themeSelector.style.position = 'fixed';
+    themeSelector.style.top = '100px';
+    themeSelector.style.right = '20px';
+    themeSelector.style.zIndex = '1000';
+    themeSelector.style.display = 'flex';
+    themeSelector.style.flexDirection = 'column';
+    themeSelector.style.gap = '10px';
+    themeSelector.style.background = 'rgba(0,0,0,0.7)';
+    themeSelector.style.padding = '15px';
+    themeSelector.style.borderRadius = '10px';
+    themeSelector.style.border = '2px solid #ff4d00';
+    
+    // Add title
+    const title = document.createElement('div');
+    title.textContent = 'COLOR THEMES';
+    title.style.color = '#ff4d00';
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '10px';
+    title.style.textAlign = 'center';
+    themeSelector.appendChild(title);
+    
+    // Add theme buttons
+    themes.forEach(theme => {
+      const button = document.createElement('button');
+      button.textContent = theme.name;
+      button.style.padding = '8px';
+      button.style.background = theme.bg;
+      button.style.color = theme.primary;
+      button.style.border = `2px solid ${theme.primary}`;
+      button.style.borderRadius = '5px';
+      button.style.cursor = 'pointer';
+      button.style.fontFamily = 'Impact, sans-serif';
+      
+      button.onclick = () => {
+        document.body.style.background = theme.bg;
+        document.documentElement.style.setProperty('--primary-color', theme.primary);
+        document.documentElement.style.setProperty('--secondary-color', theme.secondary);
+        
+        // Update various elements
+        document.querySelectorAll('h1, h2, .game-title').forEach(el => {
+          el.style.color = theme.primary;
+          el.style.textShadow = `0 0 10px ${theme.primary}`;
+        });
+        
+        document.querySelectorAll('.feature-button, .achievement, .glowing-link').forEach(el => {
+          el.style.background = `linear-gradient(45deg, ${theme.secondary}, ${theme.primary})`;
+          el.style.boxShadow = `0 0 10px ${theme.primary}`;
+        });
+        
+        // Show achievement
+        showAchievement(`${theme.name} Theme`, 'You changed the color scheme!');
+      };
+      
+      themeSelector.appendChild(button);
+    });
+    
+    document.body.appendChild(themeSelector);
+  }
+  
+  function startGameInvaders() {
+    // Create game container
+    const gameContainer = document.createElement('div');
+    gameContainer.style.position = 'fixed';
+    gameContainer.style.top = '50%';
+    gameContainer.style.left = '50%';
+    gameContainer.style.transform = 'translate(-50%, -50%)';
+    gameContainer.style.width = '400px';
+    gameContainer.style.height = '300px';
+    gameContainer.style.backgroundColor = '#000';
+    gameContainer.style.border = '3px solid #ff4d00';
+    gameContainer.style.borderRadius = '10px';
+    gameContainer.style.overflow = 'hidden';
+    gameContainer.style.zIndex = '10000';
+    
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'X';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '5px';
+    closeButton.style.right = '5px';
+    closeButton.style.background = '#ff4d00';
+    closeButton.style.color = '#000';
+    closeButton.style.border = 'none';
+    closeButton.style.borderRadius = '50%';
+    closeButton.style.width = '25px';
+    closeButton.style.height = '25px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.style.zIndex = '1';
+    closeButton.onclick = () => {
+      gameContainer.remove();
+    };
+    
+    // Add player
+    const player = document.createElement('div');
+    player.style.position = 'absolute';
+    player.style.bottom = '10px';
+    player.style.left = '50%';
+    player.style.transform = 'translateX(-50%)';
+    player.style.width = '30px';
+    player.style.height = '20px';
+    player.style.backgroundColor = '#ff4d00';
+    player.style.borderRadius = '5px';
+    
+    // Add game elements
+    gameContainer.appendChild(closeButton);
+    gameContainer.appendChild(player);
+    document.body.appendChild(gameContainer);
+    
+    // Simple game logic
+    let playerX = 200;
+    
+    // Move player with keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        playerX = Math.max(15, playerX - 10);
+      } else if (e.key === 'ArrowRight') {
+        playerX = Math.min(385, playerX + 10);
+      } else if (e.key === ' ') {
+        // Fire bullet
+        const bullet = document.createElement('div');
+        bullet.style.position = 'absolute';
+        bullet.style.bottom = '30px';
+        bullet.style.left = playerX + 'px';
+        bullet.style.width = '5px';
+        bullet.style.height = '10px';
+        bullet.style.backgroundColor = '#fff';
+        bullet.style.borderRadius = '2px';
+        gameContainer.appendChild(bullet);
+        
+        // Animate bullet
+        let bulletY = 30;
+        const bulletInterval = setInterval(() => {
+          bulletY += 5;
+          bullet.style.bottom = bulletY + 'px';
+          
+          if (bulletY > 300) {
+            clearInterval(bulletInterval);
+            bullet.remove();
+          }
+        }, 20);
+      }
+      
+      player.style.left = playerX + 'px';
+    });
+    
+    // Show achievement
+    showAchievement('Game Master', 'Mini-game unlocked!');
+  }
+</script>
+
+<!-- Fix the event listeners for the buttons in the bottom right -->
+<script>
+  // Add event listeners for all feature buttons
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fix existing buttons
+    document.getElementById('confettiButton').addEventListener('click', function() {
+      for (let i = 0; i < 100; i++) {
+        createConfetti();
+      }
+    });
+    
+    document.getElementById('matrixButton').addEventListener('click', startMatrixEffect);
+    document.getElementById('screenShakeButton').addEventListener('click', shakeScreen);
+    
+    // Add event listeners for the new buttons
+    document.getElementById('discoButton').addEventListener('click', startDiscoMode);
+    document.getElementById('rainbowTextButton').addEventListener('click', startRainbowText);
+    document.getElementById('explosionButton').addEventListener('click', createExplosion);
+  });
+  
+  // Fix the fire cursor function
+  function activateFireCursor() {
+    // Remove any existing fire cursor
+    const existingCursor = document.querySelector('.fire-cursor');
+    if (existingCursor) {
+      existingCursor.remove();
+    }
+    
+    // Create fire cursor element
+    const cursor = document.createElement('div');
+    cursor.className = 'fire-cursor';
+    cursor.style.position = 'fixed';
+    cursor.style.width = '40px';
+    cursor.style.height = '40px';
+    cursor.style.backgroundImage = 'url("https://i.gifer.com/origin/90/90c5da3b8f73e7aab4bcd9a6c989c1f1_w200.gif")';
+    cursor.style.backgroundSize = 'contain';
+    cursor.style.backgroundRepeat = 'no-repeat';
+    cursor.style.pointerEvents = 'none';
+    cursor.style.zIndex = '10000';
+    cursor.style.transform = 'translate(-50%, -50%)';
+    document.body.appendChild(cursor);
+    
+    // Hide default cursor
+    document.body.style.cursor = 'none';
+    
+    // Update cursor position
+    document.addEventListener('mousemove', function(e) {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    
+    // Show achievement
+    showAchievement('Fire Wielder', 'Your cursor is on fire!');
+  }
+  
+  // Fix the Space Invaders game
+  function startGameInvaders() {
+    // Create game container
+    const gameContainer = document.createElement('div');
+    gameContainer.style.position = 'fixed';
+    gameContainer.style.top = '50%';
+    gameContainer.style.left = '50%';
+    gameContainer.style.transform = 'translate(-50%, -50%)';
+    gameContainer.style.width = '400px';
+    gameContainer.style.height = '300px';
+    gameContainer.style.backgroundColor = '#000';
+    gameContainer.style.border = '3px solid #ff4d00';
+    gameContainer.style.borderRadius = '10px';
+    gameContainer.style.overflow = 'hidden';
+    gameContainer.style.zIndex = '10000';
+    document.body.appendChild(gameContainer);
+    
+    // Add game title
+    const gameTitle = document.createElement('div');
+    gameTitle.textContent = 'SPACE INVADERS';
+    gameTitle.style.color = '#ff4d00';
+    gameTitle.style.textAlign = 'center';
+    gameTitle.style.padding = '10px';
+    gameTitle.style.fontFamily = 'Impact, sans-serif';
+    gameTitle.style.fontSize = '20px';
+    gameContainer.appendChild(gameTitle);
+    
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'X';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '5px';
+    closeButton.style.right = '5px';
+    closeButton.style.background = '#ff4d00';
+    closeButton.style.color = '#000';
+    closeButton.style.border = 'none';
+    closeButton.style.borderRadius = '50%';
+    closeButton.style.width = '25px';
+    closeButton.style.height = '25px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.style.zIndex = '1';
+    gameContainer.appendChild(closeButton);
+    
+    // Add player
+    const player = document.createElement('div');
+    player.style.position = 'absolute';
+    player.style.bottom = '10px';
+    player.style.left = '185px';
+    player.style.width = '30px';
+    player.style.height = '20px';
+    player.style.backgroundColor = '#ff4d00';
+    player.style.borderRadius = '5px';
+    gameContainer.appendChild(player);
+    
+    // Add enemies
+    const enemies = [];
+    for (let i = 0; i < 20; i++) {
+      const enemy = document.createElement('div');
+      enemy.style.position = 'absolute';
+      enemy.style.top = (50 + Math.floor(i / 5) * 40) + 'px';
+      enemy.style.left = (50 + (i % 5) * 70) + 'px';
+      enemy.style.width = '20px';
+      enemy.style.height = '20px';
+      enemy.style.backgroundColor = '#00ff00';
+      enemy.style.borderRadius = '50%';
+      gameContainer.appendChild(enemy);
+      enemies.push(enemy);
+    }
+    
+    // Game variables
+    let playerX = 185;
+    let bullets = [];
+    let gameOver = false;
+    let score = 0;
+    
+    // Add score display
+    const scoreDisplay = document.createElement('div');
+    scoreDisplay.textContent = 'SCORE: 0';
+    scoreDisplay.style.position = 'absolute';
+    scoreDisplay.style.top = '10px';
+    scoreDisplay.style.left = '10px';
+    scoreDisplay.style.color = '#fff';
+    scoreDisplay.style.fontFamily = 'Impact, sans-serif';
+    gameContainer.appendChild(scoreDisplay);
+    
+    // Close button event
+    closeButton.onclick = () => {
+      gameContainer.remove();
+      document.removeEventListener('keydown', keyHandler);
+      clearInterval(gameLoop);
+    };
+    
+    // Keyboard handler
+    const keyHandler = function(e) {
+      if (gameOver) return;
+      
+      if (e.key === 'ArrowLeft') {
+        playerX = Math.max(15, playerX - 10);
+        player.style.left = playerX + 'px';
+      } else if (e.key === 'ArrowRight') {
+        playerX = Math.min(355, playerX + 10);
+        player.style.left = playerX + 'px';
+      } else if (e.key === ' ' || e.key === 'ArrowUp') {
+        // Fire bullet
+        const bullet = document.createElement('div');
+        bullet.style.position = 'absolute';
+        bullet.style.bottom = '30px';
+        bullet.style.left = (playerX + 15 - 2) + 'px';
+        bullet.style.width = '4px';
+        bullet.style.height = '10px';
+        bullet.style.backgroundColor = '#fff';
+        bullet.style.borderRadius = '2px';
+        gameContainer.appendChild(bullet);
+        bullets.push({
+          element: bullet,
+          x: playerX + 15 - 2,
+          y: 260
+        });
+      }
+    };
+    
+    document.addEventListener('keydown', keyHandler);
+    
+    // Game loop
+    const gameLoop = setInterval(() => {
+      if (gameOver) return;
+      
+      // Move bullets
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        bullets[i].y -= 5;
+        bullets[i].element.style.bottom = (300 - bullets[i].y) + 'px';
+        
+        // Remove bullets that are off screen
+        if (bullets[i].y < 0) {
+          bullets[i].element.remove();
+          bullets.splice(i, 1);
+          continue;
+        }
+        
+        // Check for collisions
+        for (let j = enemies.length - 1; j >= 0; j--) {
+          const enemy = enemies[j];
+          const enemyRect = enemy.getBoundingClientRect();
+          const bulletRect = bullets[i]?.element.getBoundingClientRect();
+          
+          if (bulletRect && 
+              bulletRect.left < enemyRect.right &&
+              bulletRect.right > enemyRect.left &&
+              bulletRect.top < enemyRect.bottom &&
+              bulletRect.bottom > enemyRect.top) {
+            
+            // Hit!
+            enemy.remove();
+            enemies.splice(j, 1);
+            
+            if (bullets[i]) {
+              bullets[i].element.remove();
+              bullets.splice(i, 1);
+            }
+            
+            // Update score
+            score += 100;
+            scoreDisplay.textContent = 'SCORE: ' + score;
+            
+            // Create explosion
+            const explosion = document.createElement('div');
+            explosion.style.position = 'absolute';
+            explosion.style.top = enemyRect.top - gameContainer.getBoundingClientRect().top + 'px';
+            explosion.style.left = enemyRect.left - gameContainer.getBoundingClientRect().left + 'px';
+            explosion.style.width = '20px';
+            explosion.style.height = '20px';
+            explosion.style.backgroundColor = '#ff0000';
+            explosion.style.borderRadius = '50%';
+            explosion.style.animation = 'explode 0.3s forwards';
+            gameContainer.appendChild(explosion);
+            
+            setTimeout(() => {
+              explosion.remove();
+            }, 300);
+            
+            break;
+          }
+        }
+      }
+      
+      // Check for win
+      if (enemies.length === 0) {
+        const winMessage = document.createElement('div');
+        winMessage.textContent = 'YOU WIN!';
+        winMessage.style.position = 'absolute';
+        winMessage.style.top = '50%';
+        winMessage.style.left = '50%';
+        winMessage.style.transform = 'translate(-50%, -50%)';
+        winMessage.style.color = '#ff4d00';
+        winMessage.style.fontFamily = 'Impact, sans-serif';
+        winMessage.style.fontSize = '40px';
+        gameContainer.appendChild(winMessage);
+        
+        gameOver = true;
+        showAchievement('Space Champion', 'You defeated the alien invasion!');
+      }
+    }, 20);
+    
+    // Add explosion animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes explode {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(2); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Show achievement
+    showAchievement('Game Master', 'Space Invaders unlocked!');
   }
 </script>
 </body>
