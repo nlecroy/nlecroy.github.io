@@ -392,7 +392,7 @@
             }
         }
         
-        // Fix power-up collection tracking to prevent glitching
+        // Fix power-up collection tracking
         function collectPowerUp(powerUp) {
             // Original power-up collection logic
             if (powerUp.type === 'shield') {
@@ -400,17 +400,13 @@
                 shieldTime = Date.now() + 5000; // 5 seconds of shield
                 showMessage('Shield Activated!', '#00ffff');
                 
-                // Track shield usage - only once per game session
-                if (!powerUp.tracked) {
-                    const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
-                    stats.shieldsUsed = (stats.shieldsUsed || 0) + 1;
-                    localStorage.setItem('gameStats', JSON.stringify(stats));
-                    
-                    if (stats.shieldsUsed >= 3) {
-                        trackAchievement('shieldMaster');
-                    }
-                    
-                    powerUp.tracked = true;
+                // Track shield usage - only once per power-up
+                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                stats.shieldsUsed = (stats.shieldsUsed || 0) + 1;
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+                
+                if (stats.shieldsUsed >= 3) {
+                    trackAchievement('shieldMaster');
                 }
             } else if (powerUp.type === 'slowTime') {
                 slowTimeActive = true;
@@ -418,17 +414,13 @@
                 pipeSpeed = 1; // Slow down pipes
                 showMessage('Time Slowed!', '#ffff00');
                 
-                // Track slow time usage - only once per game session
-                if (!powerUp.tracked) {
-                    const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
-                    stats.slowTimesUsed = (stats.slowTimesUsed || 0) + 1;
-                    localStorage.setItem('gameStats', JSON.stringify(stats));
-                    
-                    if (stats.slowTimesUsed >= 3) {
-                        trackAchievement('timeLord');
-                    }
-                    
-                    powerUp.tracked = true;
+                // Track slow time usage - only once per power-up
+                const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+                stats.slowTimesUsed = (stats.slowTimesUsed || 0) + 1;
+                localStorage.setItem('gameStats', JSON.stringify(stats));
+                
+                if (stats.slowTimesUsed >= 3) {
+                    trackAchievement('timeLord');
                 }
             } else if (powerUp.type === 'extraLife') {
                 if (lives < 5) {
@@ -440,35 +432,13 @@
                 }
             }
             
-            // Track power-up collection - only once per game session
-            if (!powerUp.tracked) {
-                powerUpsCollectedThisSession++;
-                
-                // Only update the global counter once per session
-                if (powerUpsCollectedThisSession <= 5) {
-                    const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
-                    stats.powerUpsCollected = (stats.powerUpsCollected || 0) + 1;
-                    localStorage.setItem('gameStats', JSON.stringify(stats));
-                    
-                    if (stats.powerUpsCollected >= 5) {
-                        trackAchievement('powerUpCollector');
-                    }
-                }
-                
-                powerUp.tracked = true;
-            }
+            // Track power-up collection - only once per power-up
+            const stats = JSON.parse(localStorage.getItem('gameStats')) || {};
+            stats.powerUpsCollected = (stats.powerUpsCollected || 0) + 1;
+            localStorage.setItem('gameStats', JSON.stringify(stats));
             
-            // Create collection particles
-            for (let i = 0; i < 10; i++) {
-                particles.push({
-                    x: bird.x + bird.size / 2,
-                    y: bird.y + bird.size / 2,
-                    size: Math.random() * 5 + 5,
-                    color: powerUp.type === 'shield' ? '#00ffff' : powerUp.type === 'slowTime' ? '#ffff00' : '#ff0000',
-                    vx: Math.random() * 6 - 3,
-                    vy: Math.random() * 6 - 3,
-                    life: 30
-                });
+            if (stats.powerUpsCollected >= 5) {
+                trackAchievement('powerUpCollector');
             }
             
             // Remove the power-up
@@ -736,78 +706,50 @@
             }
         };
         
-        // Switch between modes
-        function switchMode() {
+        // Fix mode switching
+        switchModeBtn.addEventListener('click', function() {
             isDoomMode = !isDoomMode;
-            
-            // Update title
-            document.title = isDoomMode ? 'DOOM Bird' : 'Flappy Bird';
-            
-            // Update canvas style
-            if (isDoomMode) {
-                canvas.style.borderColor = '#ff0000';
-                canvas.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.7)';
-                document.body.style.background = '#000';
-                bird.color = '#ff4d00';
-            } else {
-                canvas.style.borderColor = '#fff';
-                canvas.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.5)';
-                document.body.style.background = '#333';
-                bird.color = '#ff0000';
-            }
-            
-            // Reset game
             resetGame();
             
-            // Start power-up timer updates if in doom mode
             if (isDoomMode) {
-                updatePowerUpTimers();
-            }
-            
-            // Update button text
-            switchModeBtn.textContent = isDoomMode ? 'CLASSIC MODE' : 'DOOM MODE';
-            switchModeBtn.style.background = isDoomMode ? 
-                'linear-gradient(45deg, #ff0000, #ff4d00)' : 
-                'linear-gradient(45deg, #990000, #660000)';
-        }
-        
-        // Event listeners
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
+                // Switch to doom mode
+                document.title = 'DOOM Bird';
+                document.body.style.background = '#000';
+                canvas.style.borderColor = '#ff0000';
+                canvas.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.7)';
+                bird.color = '#ff4d00';
+                lives = 3;
                 
-                if (gameOver) {
-                    resetGame();
-                } else {
-                    jump();
+                // Play doom music
+                if (music.doom) {
+                    playMusic(music.doom);
                 }
-            }
-            
-            if (e.key === 'm' || e.key === 'M') {
-                if (currentMusic) {
-                    currentMusic.muted = !currentMusic.muted;
-                }
-            }
-        });
-        
-        canvas.addEventListener('click', () => {
-            if (gameOver) {
-                resetGame();
+                
+                switchModeBtn.textContent = 'CLASSIC MODE';
             } else {
-                jump();
+                // Switch to classic mode
+                document.title = 'Flappy Bird';
+                document.body.style.background = '#333';
+                canvas.style.borderColor = '#fff';
+                canvas.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.5)';
+                bird.color = '#ff0000';
+                
+                // Play classic music
+                if (music.classic) {
+                    playMusic(music.classic);
+                }
+                
+                switchModeBtn.textContent = 'DOOM MODE';
             }
         });
-        
-        switchModeBtn.addEventListener('click', switchMode);
         
         // Check URL parameters for mode
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode');
         
         // If mode is specified as doom, switch to doom mode
-        if (mode === 'doom') {
-            isDoomMode = false; // Set to false so switchMode will toggle to true
-            switchMode();
+        if (mode === 'doom' && !isDoomMode) {
+            switchModeBtn.click();
         }
         
         // Initial draw
