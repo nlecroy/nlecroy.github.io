@@ -6305,7 +6305,7 @@
 
 <!-- Add a prominent Doom Bird button to index.html -->
 <div id="doomBirdButtonContainer" style="position: fixed; bottom: 100px; right: 20px; z-index: 2000;">
-  <a href="flappy.html?mode=doom" target="_blank" style="display: block; background: linear-gradient(45deg, #ff0000, #990000); color: white; padding: 15px 25px; font-size: 1.2em; font-weight: bold; text-transform: uppercase; text-decoration: none; border-radius: 10px; border: 2px solid #ff4d00; box-shadow: 0 0 20px rgba(255, 77, 0, 0.5); cursor: pointer; animation: pulse 2s infinite alternate;">
+  <a href="doombird.html" target="_blank" style="display: block; background: linear-gradient(45deg, #ff4d00, #990000); color: white; padding: 15px 25px; font-size: 1.2em; font-weight: bold; text-transform: uppercase; text-decoration: none; border-radius: 10px; border: 2px solid #ff4d00; box-shadow: 0 0 20px rgba(255, 77, 0, 0.5); cursor: pointer; animation: pulse 2s infinite alternate;">
     PLAY DOOM BIRD
   </a>
 </div>
@@ -6322,10 +6322,10 @@
       buttonContainer.style.zIndex = '2000';
       
       const button = document.createElement('a');
-      button.href = 'flappy.html?mode=doom';
+      button.href = 'doombird.html';
       button.target = '_blank';
       button.style.display = 'block';
-      button.style.background = 'linear-gradient(45deg, #ff0000, #990000)';
+      button.style.background = 'linear-gradient(45deg, #ff4d00, #990000)';
       button.style.color = 'white';
       button.style.padding = '15px 25px';
       button.style.fontSize = '1.2em';
@@ -6664,6 +6664,392 @@
       notification.remove();
     }, 5000);
   }
+</script>
+
+<div class="game-box">
+  <div class="game-title">
+    <span class="game-emoji">🔥</span>
+    <span>DOOM BIRD</span>
+    <span class="game-emoji">🔥</span>
+  </div>
+  <div class="game-description">
+    Survive the fiery hellscape as you navigate through deadly obstacles. Can you conquer the NIGHTMARE difficulty?
+  </div>
+  <a href="doombird.html" class="doom-bird-link" style="display: block; margin: 20px auto; width: 250px; text-decoration: none;">
+    <div style="background: linear-gradient(45deg, #660000, #990000, #ff4d00); 
+                border: 3px solid #ff0000; 
+                border-radius: 10px; 
+                padding: 15px 20px;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+                animation: flame 2s infinite alternate;">
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+                  background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><path d=\"M25,50 Q40,20 50,50 Q60,20 75,50 Q60,80 50,50 Q40,80 25,50 Z\" fill=\"rgba(255,100,0,0.3)\" /></svg>');
+                  background-size: 50px;
+                  opacity: 0.5;
+                  animation: fireMove 3s infinite linear;"></div>
+      <div style="display: flex; justify-content: center; align-items: center; position: relative;">
+        <span style="font-family: 'Impact', sans-serif; 
+                     font-size: 28px; 
+                     color: white; 
+                     text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+                     letter-spacing: 2px;
+                     text-transform: uppercase;
+                     animation: textPulse 2s infinite alternate;">
+          PLAY DOOM BIRD
+        </span>
+        <span style="position: absolute; right: -30px; font-size: 24px; transform: rotate(20deg);">🔥</span>
+        <span style="position: absolute; left: -30px; font-size: 24px; transform: rotate(-20deg);">🔥</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<!-- Add this right after the opening <body> tag -->
+<!-- Bob AI Assistant -->
+<div id="bob-ai-container">
+  <div id="bob-ai-icon">🤖</div>
+  <div id="bob-ai-content">
+    <div id="bob-ai-header">
+      <div id="bob-ai-title">Bob AI</div>
+      <button id="bob-ai-close">×</button>
+    </div>
+    <div id="bob-ai-messages">
+      <!-- Messages will appear here -->
+    </div>
+    <div id="bob-ai-input-container">
+      <input type="text" id="bob-ai-input" placeholder="Ask me anything...">
+      <button id="bob-ai-send">Send</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Bob AI Assistant Styles */
+  #bob-ai-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #4a00e0, #8e2de2);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(142, 45, 226, 0.6);
+    z-index: 9999;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  
+  #bob-ai-container.expanded {
+    width: 350px;
+    height: 450px;
+    border-radius: 15px;
+  }
+  
+  #bob-ai-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  #bob-ai-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+  }
+  
+  #bob-ai-container.expanded #bob-ai-content {
+    display: flex;
+  }
+  
+  #bob-ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  #bob-ai-title {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  #bob-ai-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  #bob-ai-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  .bob-message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+    color: white;
+  }
+  
+  .bob-ai-msg {
+    background: rgba(255, 255, 255, 0.2);
+    align-self: flex-start;
+  }
+  
+  .user-msg {
+    background: rgba(0, 0, 0, 0.3);
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  
+  #bob-ai-input-container {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  #bob-ai-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  
+  #bob-ai-send {
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  // Bob AI Assistant Functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const bobContainer = document.getElementById('bob-ai-container');
+    const bobIcon = document.getElementById('bob-ai-icon');
+    const bobClose = document.getElementById('bob-ai-close');
+    const bobMessages = document.getElementById('bob-ai-messages');
+    const bobInput = document.getElementById('bob-ai-input');
+    const bobSend = document.getElementById('bob-ai-send');
+    
+    // Add welcome message
+    setTimeout(() => {
+      addBobMessage("Hi there! I'm Bob AI. How can I help you today?");
+    }, 500);
+    
+    // Toggle expansion
+    bobIcon.addEventListener('click', function() {
+      bobContainer.classList.add('expanded');
+    });
+    
+    bobClose.addEventListener('click', function() {
+      bobContainer.classList.remove('expanded');
+    });
+    
+    // Send message function
+    function sendMessage() {
+      const message = bobInput.value.trim();
+      if (message) {
+        // Add user message
+        addUserMessage(message);
+        bobInput.value = '';
+        
+        // Process the message
+        setTimeout(() => {
+          // Add Bob's response
+          const response = getBobResponse(message);
+          addBobMessage(response);
+        }, 1000);
+      }
+    }
+    
+    // Send message on button click
+    bobSend.addEventListener('click', sendMessage);
+    
+    // Send message on Enter key
+    bobInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+    
+    // Add Bob message
+    function addBobMessage(text) {
+      const message = document.createElement('div');
+      message.className = 'bob-message bob-ai-msg';
+      message.textContent = text;
+      bobMessages.appendChild(message);
+      bobMessages.scrollTop = bobMessages.scrollHeight;
+    }
+    
+    // Add user message
+    function addUserMessage(text) {
+      const message = document.createElement('div');
+      message.className = 'bob-message user-msg';
+      message.textContent = text;
+      bobMessages.appendChild(message);
+      bobMessages.scrollTop = bobMessages.scrollHeight;
+    }
+    
+    // Get Bob's response
+    function getBobResponse(message) {
+      // Convert to lowercase for easier matching
+      const lowerMessage = message.toLowerCase();
+      
+      // Greetings
+      if (/\b(hi|hello|hey|howdy|greetings)\b/.test(lowerMessage)) {
+        return "Hello! I'm Bob AI, your intelligent assistant. How can I help you today?";
+      }
+      
+      // How are you
+      if (/\bhow are you\b/.test(lowerMessage)) {
+        return "I'm functioning perfectly! Thanks for asking. How are you doing today?";
+      }
+      
+      // About Bob
+      if (/\b(who are you|what are you|about you|your name)\b/.test(lowerMessage)) {
+        return "I'm Bob AI, an advanced assistant designed to help with questions about this website, games, coding, or just about anything else. I'm here to make your experience better!";
+      }
+      
+      // About Doom Bird
+      if (/\b(doom bird|doombird|bird game|flappy)\b/.test(lowerMessage)) {
+        return "Doom Bird is an intense game where you navigate a bird through fiery obstacles. It features multiple difficulty levels from Easy to Nightmare. The game tests your reflexes and timing - give it a try by clicking the flaming button!";
+      }
+      
+      // About Snake
+      if (/\b(snake|snake game|snake.io)\b/.test(lowerMessage)) {
+        return "Snake.io is a classic game where you control a snake that grows longer as it eats food. The challenge is to avoid hitting walls or your own tail as you grow. It's addictive and tests your spatial awareness!";
+      }
+      
+      // Website questions
+      if (/\b(website|site|page|nash|epic gaming)\b/.test(lowerMessage)) {
+        return "This is Nash's Epic Gaming Realm, a collection of fun browser games created by Nash. You can play Doom Bird, Snake, and more games that will be added in the future. The site is designed to provide quick entertainment with no downloads required!";
+      }
+      
+      // Game recommendations
+      if (/\b(recommend|suggestion|what game|which game|best game)\b/.test(lowerMessage)) {
+        return "If you're looking for an adrenaline rush, I'd recommend Doom Bird on Nightmare difficulty. For a more strategic experience, Snake.io is perfect. Both games are easy to learn but challenging to master!";
+      }
+      
+      // How to play
+      if (/\b(how to play|controls|how do i|instructions)\b/.test(lowerMessage)) {
+        if (lowerMessage.includes("doom") || lowerMessage.includes("bird") || lowerMessage.includes("flappy")) {
+          return "To play Doom Bird, click or press Space/Up Arrow to make the bird fly upward. Release to let it fall. Navigate through the gaps between obstacles. The game has different difficulty levels that affect speed and obstacle frequency.";
+        } else if (lowerMessage.includes("snake")) {
+          return "In Snake.io, use the arrow keys or WASD to control your snake's direction. Eat the food to grow longer, but be careful not to collide with walls or your own body. The longer you get, the higher your score!";
+        } else {
+          return "Each game has simple controls. For Doom Bird, use Space/Up Arrow or click to fly. For Snake, use arrow keys or WASD to change direction. The games have on-screen instructions when you start them.";
+        }
+      }
+      
+      // Coding questions
+      if (/\b(code|coding|program|javascript|html|css|develop|developer)\b/.test(lowerMessage)) {
+        return "This website is built using HTML, CSS, and JavaScript. The games use the Canvas API for rendering graphics. If you're interested in web development, these technologies are great to learn! Would you like to know more about a specific aspect of coding?";
+      }
+      
+      // Math questions
+      if (/\b(math|calculate|computation|formula|equation|solve)\b/.test(lowerMessage)) {
+        // Simple calculator
+        const mathExpression = message.replace(/[^0-9+\-*/().]/g, '');
+        try {
+          const result = eval(mathExpression);
+          if (!isNaN(result) && mathExpression.length > 0) {
+            return `The result of ${mathExpression} is ${result}.`;
+          }
+        } catch (e) {
+          // If eval fails, continue to general response
+        }
+        
+        return "I can help with math questions! You can ask me to calculate expressions or explain mathematical concepts. What specifically would you like to know?";
+      }
+      
+      // Time and date
+      if (/\b(time|date|day|month|year|today)\b/.test(lowerMessage)) {
+        const now = new Date();
+        return `The current date and time is ${now.toLocaleString()}.`;
+      }
+      
+      // Weather (simulated)
+      if (/\b(weather|temperature|forecast|rain|sunny)\b/.test(lowerMessage)) {
+        return "I don't have access to real-time weather data, but I can suggest checking a weather service like weather.com or accuweather.com for the most current information.";
+      }
+      
+      // Jokes
+      if (/\b(joke|funny|laugh|humor)\b/.test(lowerMessage)) {
+        const jokes = [
+          "Why don't scientists trust atoms? Because they make up everything!",
+          "Why did the scarecrow win an award? Because he was outstanding in his field!",
+          "Why don't skeletons fight each other? They don't have the guts!",
+          "What do you call a fake noodle? An impasta!",
+          "How does a computer get drunk? It takes screenshots!",
+          "Why did the game developer go broke? He used up all his cache!"
+        ];
+        return jokes[Math.floor(Math.random() * jokes.length)];
+      }
+      
+      // Thank you
+      if (/\b(thanks|thank you|appreciate|helpful)\b/.test(lowerMessage)) {
+        return "You're welcome! I'm happy to help. If you have any other questions, feel free to ask!";
+      }
+      
+      // Goodbye
+      if (/\b(bye|goodbye|see you|farewell)\b/.test(lowerMessage)) {
+        return "Goodbye! Feel free to chat again whenever you want. I'll be here!";
+      }
+      
+      // Help
+      if (/\b(help|assist|support)\b/.test(lowerMessage)) {
+        return "I can help with information about the games on this site, answer general knowledge questions, solve math problems, tell jokes, and more. What would you like assistance with?";
+      }
+      
+      // General knowledge - attempt to provide a relevant response
+      if (lowerMessage.includes("what is") || lowerMessage.includes("who is") || lowerMessage.includes("where is") || lowerMessage.includes("when is") || lowerMessage.includes("why is") || lowerMessage.includes("how is")) {
+        // Extract the question topic
+        let topic = message.replace(/what is|who is|where is|when is|why is|how is/i, '').trim();
+        if (topic) {
+          return `About "${topic}": I can provide general information, but for the most accurate and up-to-date details, I'd recommend checking a reliable source like Wikipedia or a specialized website on the topic.`;
+        }
+      }
+      
+      // Default responses for unrecognized queries
+      const defaultResponses = [
+        "That's an interesting question! I'm designed to help with website navigation, game information, and general knowledge. Could you provide more details about what you're looking for?",
+        "I'm processing your request. To give you the best answer, could you rephrase your question or provide more context?",
+        "I'm continuously learning to provide better assistance. Your question is important, and I'd like to understand more about what you're asking.",
+        "I'd be happy to help with that. To provide the most relevant information, could you elaborate on your question?",
+        "Great question! I'm here to assist with anything related to this website, the games, or general information. What specific aspect are you interested in?"
+      ];
+      
+      return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+    }
+  });
 </script>
 </body>
 </html>
