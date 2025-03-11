@@ -446,6 +446,25 @@
             document.body.appendChild(popup);
         }
 
+        function sendJoinEmail(clanName) {
+            // Get user's name or use "Gamer" as default
+            let userName = localStorage.getItem('visitorName') || "Gamer";
+            
+            // Create the email subject and body
+            let subject = `Join Request: ${clanName}`;
+            let body = `Hi Nash,\n\n${userName} would like to join the ${clanName} clan!\n\nRegards,\n${userName}`;
+            
+            // Encode the subject and body for the mailto link
+            let mailtoLink = `mailto:nashlecroy@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Open the email client
+            window.location.href = mailtoLink;
+            
+            // Show confirmation message
+            alert(`Your join request for ${clanName} has been prepared! Your email client will open now.`);
+        }
+
+        // Replace the existing click handlers with the email function
         document.querySelector('.clan-card:nth-child(1) .join-button')
             .onclick = () => sendJoinEmail('KAAKAA CLAN');
 
