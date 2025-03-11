@@ -5291,15 +5291,25 @@
     gameContainer.style.zIndex = '10000';
     document.body.appendChild(gameContainer);
     
+    // Create canvas for better performance
+    const canvas = document.createElement('canvas');
+    canvas.width = 500;
+    canvas.height = 600;
+    gameContainer.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
     // Add game title
     const gameTitle = document.createElement('div');
     gameTitle.textContent = 'DOOM BIRD';
+    gameTitle.style.position = 'absolute';
+    gameTitle.style.top = '10px';
+    gameTitle.style.left = '50%';
+    gameTitle.style.transform = 'translateX(-50%)';
     gameTitle.style.color = '#ff4d00';
-    gameTitle.style.textAlign = 'center';
-    gameTitle.style.padding = '10px';
     gameTitle.style.fontFamily = 'Impact, sans-serif';
     gameTitle.style.fontSize = '24px';
     gameTitle.style.textShadow = '0 0 10px #ff0000';
+    gameTitle.style.zIndex = '1';
     gameContainer.appendChild(gameTitle);
     
     // Add close button
@@ -5319,429 +5329,493 @@
     closeButton.style.fontWeight = 'bold';
     gameContainer.appendChild(closeButton);
     
-    // Add score display
-    const scoreDisplay = document.createElement('div');
-    scoreDisplay.textContent = 'SCORE: 0';
-    scoreDisplay.style.position = 'absolute';
-    scoreDisplay.style.top = '10px';
-    scoreDisplay.style.left = '10px';
-    scoreDisplay.style.color = '#fff';
-    scoreDisplay.style.fontFamily = 'Impact, sans-serif';
-    scoreDisplay.style.fontSize = '20px';
-    gameContainer.appendChild(scoreDisplay);
-    
-    // Add lives display
-    const livesDisplay = document.createElement('div');
-    livesDisplay.textContent = 'LIVES: ❤️❤️❤️';
-    livesDisplay.style.position = 'absolute';
-    livesDisplay.style.top = '40px';
-    livesDisplay.style.left = '10px';
-    livesDisplay.style.color = '#fff';
-    livesDisplay.style.fontFamily = 'Impact, sans-serif';
-    livesDisplay.style.fontSize = '20px';
-    gameContainer.appendChild(livesDisplay);
-    
-    // Add high score display
-    const highScoreDisplay = document.createElement('div');
-    const highScore = localStorage.getItem('doomBirdHighScore') || 0;
-    highScoreDisplay.textContent = 'HIGH SCORE: ' + highScore;
-    highScoreDisplay.style.position = 'absolute';
-    highScoreDisplay.style.top = '40px';
-    highScoreDisplay.style.right = '50px';
-    highScoreDisplay.style.color = '#ffcc00';
-    highScoreDisplay.style.fontFamily = 'Impact, sans-serif';
-    highScoreDisplay.style.fontSize = '20px';
-    gameContainer.appendChild(highScoreDisplay);
-    
-    // Create game area
-    const gameArea = document.createElement('div');
-    gameArea.style.position = 'absolute';
-    gameArea.style.top = '70px';
-    gameArea.style.left = '0';
-    gameArea.style.width = '100%';
-    gameArea.style.height = 'calc(100% - 70px)';
-    gameArea.style.backgroundColor = '#111';
-    gameArea.style.backgroundImage = 'linear-gradient(0deg, #330000, #000000)';
-    gameArea.style.overflow = 'hidden';
-    gameContainer.appendChild(gameArea);
-    
-    // Create bird
-    const bird = document.createElement('div');
-    bird.style.position = 'absolute';
-    bird.style.width = '40px';
-    bird.style.height = '30px';
-    bird.style.left = '100px';
-    bird.style.top = '250px';
-    bird.style.backgroundColor = '#ff4d00';
-    bird.style.borderRadius = '50% 50% 30% 30%';
-    bird.style.boxShadow = '0 0 10px #ff0000';
-    bird.style.zIndex = '2';
-    
-    // Add bird eye
-    const birdEye = document.createElement('div');
-    birdEye.style.position = 'absolute';
-    birdEye.style.width = '8px';
-    birdEye.style.height = '8px';
-    birdEye.style.right = '5px';
-    birdEye.style.top = '5px';
-    birdEye.style.backgroundColor = '#fff';
-    birdEye.style.borderRadius = '50%';
-    bird.appendChild(birdEye);
-    
-    // Add bird beak
-    const birdBeak = document.createElement('div');
-    birdBeak.style.position = 'absolute';
-    birdBeak.style.width = '15px';
-    birdBeak.style.height = '10px';
-    birdBeak.style.right = '-10px';
-    birdBeak.style.top = '10px';
-    birdBeak.style.backgroundColor = '#ffcc00';
-    birdBeak.style.clipPath = 'polygon(0 0, 100% 50%, 0 100%)';
-    bird.appendChild(birdBeak);
-    
-    // Add bird wing
-    const birdWing = document.createElement('div');
-    birdWing.style.position = 'absolute';
-    birdWing.style.width = '15px';
-    birdWing.style.height = '10px';
-    birdWing.style.left = '10px';
-    birdWing.style.bottom = '0';
-    birdWing.style.backgroundColor = '#cc3300';
-    birdWing.style.borderRadius = '50% 50% 0 0';
-    birdWing.style.transformOrigin = 'top center';
-    birdWing.style.animation = 'wingFlap 0.3s infinite alternate';
-    bird.appendChild(birdWing);
-    
-    // Add wing flap animation
-    const wingAnimation = document.createElement('style');
-    wingAnimation.textContent = `
-      @keyframes wingFlap {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(30deg); }
-      }
-      
-      @keyframes obstacleMove {
-        0% { left: 500px; }
-        100% { left: -100px; }
-      }
-      
-      @keyframes fireEffect {
-        0% { opacity: 0.7; transform: scale(1); }
-        100% { opacity: 0.3; transform: scale(1.2); }
-      }
-    `;
-    document.head.appendChild(wingAnimation);
-    
-    gameArea.appendChild(bird);
-    
     // Game variables
-    let score = 0;
-    let lives = 3;
-    let birdY = 250;
-    let birdVelocity = 0;
-    let gravity = 0.5;
-    let isJumping = false;
+    let bird = {
+      x: 100,
+      y: 300,
+      width: 40,
+      height: 30,
+      velocity: 0,
+      gravity: 0.5,
+      lift: -8,
+      color: '#ff4d00'
+    };
+    
     let obstacles = [];
     let powerUps = [];
+    let particles = [];
+    let score = 0;
+    let lives = 3;
     let gameOver = false;
     let isPaused = false;
     let lastObstacleTime = 0;
     let obstacleSpeed = 3;
-    let backgroundElements = [];
+    let shieldActive = false;
+    let shieldTime = 0;
+    let slowTimeActive = false;
+    let slowTimeEnd = 0;
     
-    // Add fire trail effect to bird
-    function addFireTrail() {
-      const fire = document.createElement('div');
-      fire.style.position = 'absolute';
-      fire.style.width = '20px';
-      fire.style.height = '20px';
-      fire.style.left = (parseInt(bird.style.left) - 10) + 'px';
-      fire.style.top = (parseInt(bird.style.top) + 10) + 'px';
-      fire.style.backgroundColor = '#ff4d00';
-      fire.style.borderRadius = '50%';
-      fire.style.opacity = '0.7';
-      fire.style.zIndex = '1';
-      fire.style.animation = 'fireEffect 0.5s forwards';
+    // Load high score
+    const highScore = localStorage.getItem('doomBirdHighScore') || 0;
+    
+    // Game loop
+    function gameLoop() {
+      if (gameOver || isPaused) return;
       
-      gameArea.appendChild(fire);
+      // Clear canvas
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      setTimeout(() => {
-        fire.remove();
-      }, 500);
+      // Draw background
+      drawBackground();
+      
+      // Update bird
+      updateBird();
+      
+      // Update obstacles
+      updateObstacles();
+      
+      // Update power-ups
+      updatePowerUps();
+      
+      // Update particles
+      updateParticles();
+      
+      // Draw UI
+      drawUI();
+      
+      // Check collisions
+      checkCollisions();
+      
+      // Request next frame
+      requestAnimationFrame(gameLoop);
     }
     
-    // Create background elements
-    function createBackgroundElements() {
-      // Create stars
+    // Draw background
+    function drawBackground() {
+      // Draw stars
       for (let i = 0; i < 50; i++) {
-        const star = document.createElement('div');
-        star.style.position = 'absolute';
-        star.style.width = Math.random() * 3 + 1 + 'px';
-        star.style.height = star.style.width;
-        star.style.backgroundColor = '#ffffff';
-        star.style.borderRadius = '50%';
-        star.style.left = Math.random() * 500 + 'px';
-        star.style.top = Math.random() * 530 + 70 + 'px';
-        star.style.opacity = Math.random() * 0.8 + 0.2;
-        gameArea.appendChild(star);
-        backgroundElements.push(star);
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
+        ctx.beginPath();
+        ctx.arc(
+          Math.random() * canvas.width,
+          Math.random() * canvas.height,
+          Math.random() * 2,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
       }
       
-      // Create distant mountains
+      // Draw distant mountains
+      ctx.fillStyle = '#330000';
       for (let i = 0; i < 3; i++) {
-        const mountain = document.createElement('div');
-        mountain.style.position = 'absolute';
-        mountain.style.width = '200px';
-        mountain.style.height = '100px';
-        mountain.style.bottom = '0';
-        mountain.style.left = (i * 200 - 50) + 'px';
-        mountain.style.backgroundColor = '#330000';
-        mountain.style.clipPath = 'polygon(0% 100%, 50% 0%, 100% 100%)';
-        mountain.style.opacity = '0.5';
-        mountain.style.zIndex = '0';
-        gameArea.appendChild(mountain);
-        backgroundElements.push(mountain);
+        ctx.beginPath();
+        ctx.moveTo(i * 200 - 50, canvas.height);
+        ctx.lineTo(i * 200 + 50, canvas.height - 100);
+        ctx.lineTo(i * 200 + 150, canvas.height);
+        ctx.fill();
       }
     }
     
-    // Create obstacle
-    function createObstacle() {
+    // Update bird
+    function updateBird() {
+      // Apply gravity
+      bird.velocity += bird.gravity;
+      bird.y += bird.velocity;
+      
+      // Keep bird in bounds
+      if (bird.y < 0) {
+        bird.y = 0;
+        bird.velocity = 0;
+      }
+      if (bird.y + bird.height > canvas.height) {
+        bird.y = canvas.height - bird.height;
+        bird.velocity = 0;
+        birdHit(); // Hit the ground
+      }
+      
+      // Draw bird
+      ctx.save();
+      
+      // Draw fire trail
+      if (Math.random() < 0.3) {
+        particles.push({
+          x: bird.x,
+          y: bird.y + bird.height / 2,
+          size: Math.random() * 10 + 5,
+          color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
+          vx: -Math.random() * 2 - 1,
+          vy: Math.random() * 2 - 1,
+          life: 30
+        });
+      }
+      
+      // Draw shield if active
+      if (shieldActive) {
+        ctx.beginPath();
+        ctx.arc(
+          bird.x + bird.width / 2,
+          bird.y + bird.height / 2,
+          bird.width * 0.8,
+          0,
+          Math.PI * 2
+        );
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Shield glow
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#00ffff';
+      }
+      
+      // Draw bird body
+      ctx.fillStyle = bird.color;
+      ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+      
+      // Draw bird eye
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(
+        bird.x + bird.width - 10,
+        bird.y + 10,
+        5,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      
+      // Draw bird beak
+      ctx.fillStyle = '#ffcc00';
+      ctx.beginPath();
+      ctx.moveTo(bird.x + bird.width, bird.y + bird.height / 2);
+      ctx.lineTo(bird.x + bird.width + 15, bird.y + bird.height / 2);
+      ctx.lineTo(bird.x + bird.width, bird.y + bird.height / 2 + 10);
+      ctx.fill();
+      
+      // Draw bird wing
+      ctx.fillStyle = '#cc3300';
+      ctx.beginPath();
+      ctx.ellipse(
+        bird.x + 15,
+        bird.y + bird.height - 5,
+        10,
+        5,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      
+      ctx.restore();
+    }
+    
+    // Update obstacles
+    function updateObstacles() {
       const now = Date.now();
-      if (now - lastObstacleTime < 1500) return;
-      lastObstacleTime = now;
       
-      const gapHeight = 150;
-      const gapPosition = Math.floor(Math.random() * 350) + 50;
-      
-      // Top obstacle
-      const topObstacle = document.createElement('div');
-      topObstacle.className = 'obstacle';
-      topObstacle.style.position = 'absolute';
-      topObstacle.style.width = '60px';
-      topObstacle.style.height = gapPosition + 'px';
-      topObstacle.style.left = '500px';
-      topObstacle.style.top = '0';
-      topObstacle.style.backgroundColor = '#660000';
-      topObstacle.style.borderBottom = '5px solid #ff0000';
-      
-      // Add spikes to top obstacle
-      for (let i = 0; i < 4; i++) {
-        const spike = document.createElement('div');
-        spike.style.position = 'absolute';
-        spike.style.width = '10px';
-        spike.style.height = '15px';
-        spike.style.bottom = '-15px';
-        spike.style.left = (5 + i * 15) + 'px';
-        spike.style.backgroundColor = '#ff0000';
-        spike.style.clipPath = 'polygon(50% 100%, 0 0, 100% 0)';
-        topObstacle.appendChild(spike);
-      }
-      
-      // Bottom obstacle
-      const bottomObstacle = document.createElement('div');
-      bottomObstacle.className = 'obstacle';
-      bottomObstacle.style.position = 'absolute';
-      bottomObstacle.style.width = '60px';
-      bottomObstacle.style.height = (530 - gapPosition - gapHeight) + 'px';
-      bottomObstacle.style.left = '500px';
-      bottomObstacle.style.bottom = '0';
-      bottomObstacle.style.backgroundColor = '#660000';
-      bottomObstacle.style.borderTop = '5px solid #ff0000';
-      
-      // Add spikes to bottom obstacle
-      for (let i = 0; i < 4; i++) {
-        const spike = document.createElement('div');
-        spike.style.position = 'absolute';
-        spike.style.width = '10px';
-        spike.style.height = '15px';
-        spike.style.top = '-15px';
-        spike.style.left = (5 + i * 15) + 'px';
-        spike.style.backgroundColor = '#ff0000';
-        spike.style.clipPath = 'polygon(50% 0%, 0 100%, 100% 100%)';
-        bottomObstacle.appendChild(spike);
-      }
-      
-      gameArea.appendChild(topObstacle);
-      gameArea.appendChild(bottomObstacle);
-      
-      obstacles.push({
-        top: topObstacle,
-        bottom: bottomObstacle,
-        passed: false
-      });
-      
-      // Randomly create power-up
-      if (Math.random() < 0.2) {
-        createPowerUp(gapPosition + gapHeight / 2);
-      }
-    }
-    
-    // Create power-up
-    function createPowerUp(y) {
-      const types = [
-        { type: 'shield', color: '#00ffff', effect: activateShield },
-        { type: 'slowTime', color: '#ffff00', effect: slowTime },
-        { type: 'extraLife', color: '#ff0000', effect: addExtraLife }
-      ];
-      
-      const powerUpType = types[Math.floor(Math.random() * types.length)];
-      
-      const powerUp = document.createElement('div');
-      powerUp.className = 'power-up';
-      powerUp.dataset.type = powerUpType.type;
-      powerUp.style.position = 'absolute';
-      powerUp.style.width = '25px';
-      powerUp.style.height = '25px';
-      powerUp.style.left = '500px';
-      powerUp.style.top = y + 'px';
-      powerUp.style.backgroundColor = powerUpType.color;
-      powerUp.style.borderRadius = '50%';
-      powerUp.style.boxShadow = `0 0 10px ${powerUpType.color}`;
-      powerUp.style.zIndex = '2';
-      
-      // Add pulsing animation
-      powerUp.style.animation = 'pulse 1s infinite alternate';
-      
-      gameArea.appendChild(powerUp);
-      
-      powerUps.push({
-        element: powerUp,
-        type: powerUpType.type,
-        effect: powerUpType.effect
-      });
-    }
-    
-    // Power-up effects
-    function activateShield() {
-      bird.style.boxShadow = '0 0 20px #00ffff';
-      bird.dataset.shielded = 'true';
-      
-      setTimeout(() => {
-        bird.style.boxShadow = '0 0 10px #ff0000';
-        bird.dataset.shielded = 'false';
-      }, 5000);
-      
-      showAchievement('Shield Activated', 'You are invincible for 5 seconds!');
-    }
-    
-    function slowTime() {
-      obstacleSpeed = 1.5;
-      
-      setTimeout(() => {
-        obstacleSpeed = 3;
-      }, 5000);
-      
-      showAchievement('Time Slowed', 'Obstacles move slower for 5 seconds!');
-    }
-    
-    function addExtraLife() {
-      if (lives < 5) {
-        lives++;
-        livesDisplay.textContent = 'LIVES: ' + '❤️'.repeat(lives);
-        showAchievement('Extra Life', 'You gained an extra life!');
-      } else {
-        score += 500;
-        scoreDisplay.textContent = 'SCORE: ' + score;
-        showAchievement('Max Lives', 'Converted to 500 points!');
-      }
-    }
-    
-    // Check collisions
-    function checkCollisions() {
-      const birdRect = {
-        x: parseInt(bird.style.left),
-        y: parseInt(bird.style.top),
-        width: 40,
-        height: 30
-      };
-      
-      // Check obstacle collisions
-      for (let i = 0; i < obstacles.length; i++) {
-        const topRect = {
-          x: parseInt(obstacles[i].top.style.left),
-          y: 0,
-          width: 60,
-          height: parseInt(obstacles[i].top.style.height)
-        };
+      // Create new obstacle
+      if (now - lastObstacleTime > 1500) {
+        lastObstacleTime = now;
         
-        const bottomRect = {
-          x: parseInt(obstacles[i].bottom.style.left),
-          y: parseInt(obstacles[i].bottom.style.top),
-          width: 60,
-          height: parseInt(obstacles[i].bottom.style.height)
-        };
+        const gapHeight = 150;
+        const gapPosition = Math.floor(Math.random() * 350) + 50;
         
-        if (
-          birdRect.x + birdRect.width > topRect.x &&
-          birdRect.x < topRect.x + topRect.width &&
-          birdRect.y < topRect.y + topRect.height
-        ) {
-          // Collision with top obstacle
-          birdHit();
+        obstacles.push({
+          x: canvas.width,
+          topHeight: gapPosition,
+          bottomY: gapPosition + gapHeight,
+          width: 60,
+          passed: false
+        });
+        
+        // Randomly create power-up
+        if (Math.random() < 0.2) {
+          createPowerUp(gapPosition + gapHeight / 2);
+        }
+      }
+      
+      // Update and draw obstacles
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obstacle = obstacles[i];
+        
+        // Move obstacle
+        obstacle.x -= slowTimeActive ? obstacleSpeed / 2 : obstacleSpeed;
+        
+        // Draw top obstacle
+        ctx.fillStyle = '#660000';
+        ctx.fillRect(obstacle.x, 0, obstacle.width, obstacle.topHeight);
+        
+        // Draw bottom obstacle
+        ctx.fillRect(
+          obstacle.x,
+          obstacle.bottomY,
+          obstacle.width,
+          canvas.height - obstacle.bottomY
+        );
+        
+        // Draw spikes
+        ctx.fillStyle = '#ff0000';
+        for (let j = 0; j < 4; j++) {
+          // Top spikes
+          ctx.beginPath();
+          ctx.moveTo(obstacle.x + 5 + j * 15, obstacle.topHeight);
+          ctx.lineTo(obstacle.x + 10 + j * 15, obstacle.topHeight + 15);
+          ctx.lineTo(obstacle.x + 15 + j * 15, obstacle.topHeight);
+          ctx.fill();
+          
+          // Bottom spikes
+          ctx.beginPath();
+          ctx.moveTo(obstacle.x + 5 + j * 15, obstacle.bottomY);
+          ctx.lineTo(obstacle.x + 10 + j * 15, obstacle.bottomY - 15);
+          ctx.lineTo(obstacle.x + 15 + j * 15, obstacle.bottomY);
+          ctx.fill();
         }
         
-        if (
-          birdRect.x + birdRect.width > bottomRect.x &&
-          birdRect.x < bottomRect.x + bottomRect.width &&
-          birdRect.y + birdRect.height > bottomRect.y
-        ) {
-          // Collision with bottom obstacle
-          birdHit();
-        }
-        
-        // Check if passed obstacle
-        if (!obstacles[i].passed && topRect.x + topRect.width < birdRect.x) {
-          obstacles[i].passed = true;
+        // Check if passed
+        if (!obstacle.passed && obstacle.x + obstacle.width < bird.x) {
+          obstacle.passed = true;
           score += 10;
-          scoreDisplay.textContent = 'SCORE: ' + score;
           
           // Increase difficulty
           if (score % 50 === 0 && obstacleSpeed < 6) {
             obstacleSpeed += 0.5;
           }
         }
-      }
-      
-      // Check power-up collisions
-      for (let i = 0; i < powerUps.length; i++) {
-        const powerUpRect = {
-          x: parseInt(powerUps[i].element.style.left),
-          y: parseInt(powerUps[i].element.style.top),
-          width: 25,
-          height: 25
-        };
         
-        if (
-          birdRect.x + birdRect.width > powerUpRect.x &&
-          birdRect.x < powerUpRect.x + powerUpRect.width &&
-          birdRect.y + birdRect.height > powerUpRect.y &&
-          birdRect.y < powerUpRect.y + powerUpRect.height
-        ) {
-          // Collected power-up
-          powerUps[i].effect();
-          powerUps[i].element.remove();
-          powerUps.splice(i, 1);
-          i--;
+        // Remove if off screen
+        if (obstacle.x + obstacle.width < 0) {
+          obstacles.splice(i, 1);
         }
-      }
-      
-      // Check if bird hit top or bottom of game area
-      if (birdRect.y <= 0 || birdRect.y + birdRect.height >= 530) {
-        birdHit();
       }
     }
     
-    // Bird hit function
+    // Create power-up
+    function createPowerUp(y) {
+      const types = [
+        { type: 'shield', color: '#00ffff' },
+        { type: 'slowTime', color: '#ffff00' },
+        { type: 'extraLife', color: '#ff0000' }
+      ];
+      
+      const powerUpType = types[Math.floor(Math.random() * types.length)];
+      
+      powerUps.push({
+        x: canvas.width,
+        y: y,
+        type: powerUpType.type,
+        color: powerUpType.color,
+        size: 25,
+        pulse: 0
+      });
+    }
+    
+    // Update power-ups
+    function updatePowerUps() {
+      for (let i = powerUps.length - 1; i >= 0; i--) {
+        const powerUp = powerUps[i];
+        
+        // Move power-up
+        powerUp.x -= slowTimeActive ? obstacleSpeed / 2 : obstacleSpeed;
+        
+        // Pulse animation
+        powerUp.pulse = (powerUp.pulse + 0.1) % (Math.PI * 2);
+        const pulseFactor = 1 + Math.sin(powerUp.pulse) * 0.2;
+        
+        // Draw power-up
+        ctx.fillStyle = powerUp.color;
+        ctx.beginPath();
+        ctx.arc(
+          powerUp.x,
+          powerUp.y,
+          powerUp.size * pulseFactor / 2,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        
+        // Glow effect
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = powerUp.color;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        
+        // Remove if off screen
+        if (powerUp.x + powerUp.size < 0) {
+          powerUps.splice(i, 1);
+        }
+      }
+    }
+    
+    // Update particles
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const particle = particles[i];
+        
+        // Move particle
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        
+        // Decrease life
+        particle.life--;
+        
+        // Draw particle
+        ctx.fillStyle = particle.color;
+        ctx.beginPath();
+        ctx.arc(
+          particle.x,
+          particle.y,
+          particle.size * (particle.life / 30),
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        
+        // Remove if dead
+        if (particle.life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+    
+    // Draw UI
+    function drawUI() {
+      // Draw score
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '20px Impact';
+      ctx.textAlign = 'left';
+      ctx.fillText(`SCORE: ${score}`, 10, 30);
+      
+      // Draw high score
+      ctx.fillStyle = '#ffcc00';
+      ctx.textAlign = 'right';
+      ctx.fillText(`HIGH SCORE: ${highScore}`, canvas.width - 10, 30);
+      
+      // Draw lives
+      ctx.fillStyle = '#ff0000';
+      ctx.textAlign = 'left';
+      ctx.fillText(`LIVES: ${'❤️'.repeat(lives)}`, 10, 60);
+      
+      // Draw power-up timers
+      if (shieldActive) {
+        const timeLeft = Math.ceil((shieldTime - Date.now()) / 1000);
+        ctx.fillStyle = '#00ffff';
+        ctx.textAlign = 'right';
+        ctx.fillText(`SHIELD: ${timeLeft}s`, canvas.width - 10, 60);
+      }
+      
+      if (slowTimeActive) {
+        const timeLeft = Math.ceil((slowTimeEnd - Date.now()) / 1000);
+        ctx.fillStyle = '#ffff00';
+        ctx.textAlign = 'right';
+        ctx.fillText(`SLOW TIME: ${timeLeft}s`, canvas.width - 10, 90);
+      }
+    }
+    
+    // Check collisions
+    function checkCollisions() {
+      // Check obstacle collisions
+      for (let i = 0; i < obstacles.length; i++) {
+        const obstacle = obstacles[i];
+        
+        if (
+          bird.x + bird.width > obstacle.x &&
+          bird.x < obstacle.x + obstacle.width
+        ) {
+          // Check top obstacle
+          if (bird.y < obstacle.topHeight) {
+            birdHit();
+            return;
+          }
+          
+          // Check bottom obstacle
+          if (bird.y + bird.height > obstacle.bottomY) {
+            birdHit();
+            return;
+          }
+        }
+      }
+      
+      // Check power-up collisions
+      for (let i = powerUps.length - 1; i >= 0; i--) {
+        const powerUp = powerUps[i];
+        
+        const dx = (bird.x + bird.width / 2) - powerUp.x;
+        const dy = (bird.y + bird.height / 2) - powerUp.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < bird.width / 2 + powerUp.size / 2) {
+          // Collect power-up
+          collectPowerUp(powerUp.type);
+          powerUps.splice(i, 1);
+        }
+      }
+    }
+    
+    // Collect power-up
+    function collectPowerUp(type) {
+      switch (type) {
+        case 'shield':
+          shieldActive = true;
+          shieldTime = Date.now() + 5000;
+          showAchievement('Shield Activated', 'You are invincible for 5 seconds!');
+          break;
+        case 'slowTime':
+          slowTimeActive = true;
+          slowTimeEnd = Date.now() + 5000;
+          showAchievement('Time Slowed', 'Obstacles move slower for 5 seconds!');
+          break;
+        case 'extraLife':
+          if (lives < 5) {
+            lives++;
+            showAchievement('Extra Life', 'You gained an extra life!');
+          } else {
+            score += 500;
+            showAchievement('Max Lives', 'Converted to 500 points!');
+          }
+          break;
+      }
+      
+      // Create collection particles
+      for (let i = 0; i < 10; i++) {
+        particles.push({
+          x: bird.x + bird.width / 2,
+          y: bird.y + bird.height / 2,
+          size: Math.random() * 5 + 5,
+          color: type === 'shield' ? '#00ffff' : type === 'slowTime' ? '#ffff00' : '#ff0000',
+          vx: Math.random() * 6 - 3,
+          vy: Math.random() * 6 - 3,
+          life: 30
+        });
+      }
+    }
+    
+    // Bird hit
     function birdHit() {
-      if (bird.dataset.shielded === 'true') return;
+      if (shieldActive) return;
       
       lives--;
-      livesDisplay.textContent = 'LIVES: ' + '❤️'.repeat(lives);
+      
+      // Create hit particles
+      for (let i = 0; i < 20; i++) {
+        particles.push({
+          x: bird.x + bird.width / 2,
+          y: bird.y + bird.height / 2,
+          size: Math.random() * 5 + 5,
+          color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
+          vx: Math.random() * 6 - 3,
+          vy: Math.random() * 6 - 3,
+          life: 30
+        });
+      }
       
       // Flash bird
-      bird.style.backgroundColor = '#ffffff';
+      bird.color = '#ffffff';
       setTimeout(() => {
-        bird.style.backgroundColor = '#ff4d00';
+        bird.color = '#ff4d00';
       }, 200);
       
       if (lives <= 0) {
@@ -5756,34 +5830,21 @@
       // Check for high score
       if (score > highScore) {
         localStorage.setItem('doomBirdHighScore', score);
-        highScoreDisplay.textContent = 'HIGH SCORE: ' + score;
         showAchievement('New High Score', 'You set a new record: ' + score);
       }
       
-      // Show game over message
-      const gameOverMessage = document.createElement('div');
-      gameOverMessage.textContent = 'GAME OVER';
-      gameOverMessage.style.position = 'absolute';
-      gameOverMessage.style.top = '40%';
-      gameOverMessage.style.left = '50%';
-      gameOverMessage.style.transform = 'translate(-50%, -50%)';
-      gameOverMessage.style.color = '#ff0000';
-      gameOverMessage.style.fontFamily = 'Impact, sans-serif';
-      gameOverMessage.style.fontSize = '48px';
-      gameOverMessage.style.textShadow = '0 0 20px #ff0000';
-      gameArea.appendChild(gameOverMessage);
+      // Draw game over screen
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Show final score
-      const finalScore = document.createElement('div');
-      finalScore.textContent = 'FINAL SCORE: ' + score;
-      finalScore.style.position = 'absolute';
-      finalScore.style.top = '50%';
-      finalScore.style.left = '50%';
-      finalScore.style.transform = 'translate(-50%, -50%)';
-      finalScore.style.color = '#ffffff';
-      finalScore.style.fontFamily = 'Impact, sans-serif';
-      finalScore.style.fontSize = '24px';
-      gameArea.appendChild(finalScore);
+      ctx.fillStyle = '#ff0000';
+      ctx.font = '48px Impact';
+      ctx.textAlign = 'center';
+      ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '24px Impact';
+      ctx.fillText(`FINAL SCORE: ${score}`, canvas.width / 2, canvas.height / 2);
       
       // Add restart button
       const restartButton = document.createElement('button');
@@ -5806,91 +5867,59 @@
         startDoomBird();
       };
       
-      gameArea.appendChild(restartButton);
+      gameContainer.appendChild(restartButton);
     }
     
-    // Update game state
-    function updateGame() {
-      if (gameOver || isPaused) return;
-      
-      // Apply gravity to bird
-      birdVelocity += gravity;
-      birdY += birdVelocity;
-      
-      // Update bird position
-      bird.style.top = birdY + 'px';
-      
-      // Add fire trail effect
-      if (Math.random() < 0.3) {
-        addFireTrail();
-      }
-      
-      // Move obstacles
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        const topObstacle = obstacles[i].top;
-        const bottomObstacle = obstacles[i].bottom;
-        
-        const currentLeft = parseInt(topObstacle.style.left);
-        const newLeft = currentLeft - obstacleSpeed;
-        
-        topObstacle.style.left = newLeft + 'px';
-        bottomObstacle.style.left = newLeft + 'px';
-        
-        // Remove obstacles that are off screen
-        if (newLeft < -100) {
-          topObstacle.remove();
-          bottomObstacle.remove();
-          obstacles.splice(i, 1);
-        }
-      }
-      
-      // Move power-ups
-      for (let i = powerUps.length - 1; i >= 0; i--) {
-        const powerUp = powerUps[i].element;
-        
-        const currentLeft = parseInt(powerUp.style.left);
-        const newLeft = currentLeft - obstacleSpeed;
-        
-        powerUp.style.left = newLeft + 'px';
-        
-        // Remove power-ups that are off screen
-        if (newLeft < -50) {
-          powerUp.remove();
-          powerUps.splice(i, 1);
-        }
-      }
-      
-      // Create new obstacles
-      createObstacle();
-      
-      // Check for collisions
-      checkCollisions();
-      
-      // Request next frame
-      requestAnimationFrame(updateGame);
-    }
-    
-    // Handle keyboard input
-    function handleKeyDown(e) {
+    // Jump function
+    function jump() {
       if (gameOver) return;
       
-      if (e.code === 'Space' || e.code === 'ArrowUp') {
-        // Jump
-        birdVelocity = -8;
-        isJumping = true;
-      } else if (e.code === 'Escape') {
-        // Toggle pause
-        isPaused = !isPaused;
-        if (!isPaused) {
-          requestAnimationFrame(updateGame);
-        }
+      if (!gameStarted) {
+        gameStarted = true;
+        requestAnimationFrame(gameLoop);
+      }
+      
+      bird.velocity = bird.lift;
+      
+      // Create jump particles
+      for (let i = 0; i < 5; i++) {
+        particles.push({
+          x: bird.x + bird.width / 2,
+          y: bird.y + bird.height,
+          size: Math.random() * 5 + 5,
+          color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
+          vx: Math.random() * 2 - 1,
+          vy: Math.random() * 2 + 2,
+          life: 20
+        });
       }
     }
     
-    // Handle keyboard release
-    function handleKeyUp(e) {
+    // Update power-up timers
+    function updatePowerUpTimers() {
+      const now = Date.now();
+      
+      if (shieldActive && now > shieldTime) {
+        shieldActive = false;
+      }
+      
+      if (slowTimeActive && now > slowTimeEnd) {
+        slowTimeActive = false;
+      }
+      
+      setTimeout(updatePowerUpTimers, 100);
+    }
+    
+    // Event listeners
+    function handleKeyDown(e) {
       if (e.code === 'Space' || e.code === 'ArrowUp') {
-        isJumping = false;
+        jump();
+        e.preventDefault();
+      } else if (e.code === 'Escape') {
+        isPaused = !isPaused;
+        if (!isPaused && !gameOver) {
+          requestAnimationFrame(gameLoop);
+        }
       }
     }
     
@@ -5898,18 +5927,292 @@
     closeButton.onclick = () => {
       gameContainer.remove();
       document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
     };
     
-    // Initialize game
-    createBackgroundElements();
+    // Start game
+    canvas.addEventListener('click', jump);
     document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-    requestAnimationFrame(updateGame);
+    updatePowerUpTimers();
+    
+    // Show start screen
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.fillStyle = '#ff4d00';
+    ctx.font = '36px Impact';
+    ctx.textAlign = 'center';
+    ctx.fillText('DOOM BIRD', canvas.width / 2, canvas.height / 2 - 50);
+    
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '20px Impact';
+    ctx.fillText('CLICK OR PRESS SPACE TO START', canvas.width / 2, canvas.height / 2);
+    ctx.fillText('PRESS ESC TO PAUSE', canvas.width / 2, canvas.height / 2 + 30);
     
     // Show achievement
     showAchievement('Doom Bird', 'Can you survive the fiery obstacles?');
   }
+</script>
+
+<!-- Add responsive design to make the site work better on smaller screens -->
+<style>
+  /* Responsive design for smaller screens */
+  @media (max-width: 768px) {
+    body {
+      font-size: 14px;
+    }
+    
+    .title {
+      font-size: 32px;
+    }
+    
+    .game-container {
+      width: 100%;
+      padding: 10px;
+    }
+    
+    .game-area {
+      flex-direction: column;
+    }
+    
+    .llama-section, .shop-section, .achievements-section {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    
+    .llama-container {
+      width: 200px;
+      height: 200px;
+    }
+    
+    .upgrade {
+      width: 90%;
+    }
+    
+    .achievement {
+      width: 90%;
+    }
+    
+    /* Adjust feature buttons for mobile */
+    .new-features {
+      bottom: 10px;
+      right: 10px;
+    }
+    
+    .feature-button {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    
+    /* Make game windows smaller on mobile */
+    #gameContainer, .game-container {
+      width: 90% !important;
+      height: auto !important;
+      max-height: 80vh !important;
+    }
+    
+    /* Adjust achievement notifications */
+    #achievementContainer {
+      width: 250px;
+      right: 10px;
+    }
+    
+    /* Make modal content fit on small screens */
+    .modal-content {
+      width: 90%;
+      max-width: 300px;
+    }
+  }
+  
+  /* Even smaller screens */
+  @media (max-width: 480px) {
+    body {
+      font-size: 12px;
+    }
+    
+    .title {
+      font-size: 24px;
+    }
+    
+    .counter {
+      font-size: 24px;
+    }
+    
+    .cps-counter {
+      font-size: 18px;
+    }
+    
+    .llama-container {
+      width: 150px;
+      height: 150px;
+    }
+    
+    /* Stack buttons vertically on very small screens */
+    .new-features {
+      bottom: 5px;
+      right: 5px;
+    }
+    
+    /* Make sure games are playable on small screens */
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+  }
+  
+  /* Make sure content doesn't overflow */
+  * {
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+  
+  /* Improve touch targets for mobile */
+  button, .upgrade, .feature-button {
+    min-height: 44px; /* Minimum touch target size */
+  }
+  
+  /* Fix viewport for mobile devices */
+  @viewport {
+    width: device-width;
+    zoom: 1.0;
+  }
+</style>
+
+<!-- Add viewport meta tag if not already present -->
+<script>
+  // Add viewport meta tag if not present
+  if (!document.querySelector('meta[name="viewport"]')) {
+    const viewportMeta = document.createElement('meta');
+    viewportMeta.name = 'viewport';
+    viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.head.appendChild(viewportMeta);
+  }
+  
+  // Add touch support for games
+  function addTouchSupport() {
+    // For Space Invaders
+    const originalStartGameInvaders = window.startGameInvaders;
+    if (originalStartGameInvaders) {
+      window.startGameInvaders = function() {
+        const result = originalStartGameInvaders.apply(this, arguments);
+        
+        // Add mobile controls if on small screen
+        if (window.innerWidth <= 768) {
+          const gameContainer = document.querySelector('.game-container');
+          if (gameContainer) {
+            // Add left button
+            const leftBtn = document.createElement('button');
+            leftBtn.textContent = '←';
+            leftBtn.style.position = 'absolute';
+            leftBtn.style.bottom = '10px';
+            leftBtn.style.left = '10px';
+            leftBtn.style.width = '50px';
+            leftBtn.style.height = '50px';
+            leftBtn.style.fontSize = '24px';
+            leftBtn.style.background = '#ff4d00';
+            leftBtn.style.border = 'none';
+            leftBtn.style.borderRadius = '5px';
+            leftBtn.style.color = '#fff';
+            leftBtn.style.zIndex = '100';
+            
+            // Add right button
+            const rightBtn = document.createElement('button');
+            rightBtn.textContent = '→';
+            rightBtn.style.position = 'absolute';
+            rightBtn.style.bottom = '10px';
+            rightBtn.style.left = '70px';
+            rightBtn.style.width = '50px';
+            rightBtn.style.height = '50px';
+            rightBtn.style.fontSize = '24px';
+            rightBtn.style.background = '#ff4d00';
+            rightBtn.style.border = 'none';
+            rightBtn.style.borderRadius = '5px';
+            rightBtn.style.color = '#fff';
+            rightBtn.style.zIndex = '100';
+            
+            // Add fire button
+            const fireBtn = document.createElement('button');
+            fireBtn.textContent = '🔥';
+            fireBtn.style.position = 'absolute';
+            fireBtn.style.bottom = '10px';
+            fireBtn.style.right = '10px';
+            fireBtn.style.width = '80px';
+            fireBtn.style.height = '50px';
+            fireBtn.style.fontSize = '24px';
+            fireBtn.style.background = '#ff4d00';
+            fireBtn.style.border = 'none';
+            fireBtn.style.borderRadius = '5px';
+            fireBtn.style.color = '#fff';
+            fireBtn.style.zIndex = '100';
+            
+            gameContainer.appendChild(leftBtn);
+            gameContainer.appendChild(rightBtn);
+            gameContainer.appendChild(fireBtn);
+            
+            // Add event listeners for mobile controls
+            leftBtn.addEventListener('touchstart', function() {
+              const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft', code: 'ArrowLeft' });
+              document.dispatchEvent(keyEvent);
+            });
+            
+            rightBtn.addEventListener('touchstart', function() {
+              const keyEvent = new KeyboardEvent('keydown', { key: 'ArrowRight', code: 'ArrowRight' });
+              document.dispatchEvent(keyEvent);
+            });
+            
+            fireBtn.addEventListener('touchstart', function() {
+              const keyEvent = new KeyboardEvent('keydown', { key: ' ', code: 'Space' });
+              document.dispatchEvent(keyEvent);
+            });
+          }
+        }
+        
+        return result;
+      };
+    }
+    
+    // For Doom Bird
+    const originalStartDoomBird = window.startDoomBird;
+    if (originalStartDoomBird) {
+      window.startDoomBird = function() {
+        const result = originalStartDoomBird.apply(this, arguments);
+        
+        // Make canvas responsive
+        const canvas = document.querySelector('canvas');
+        if (canvas && window.innerWidth <= 768) {
+          canvas.style.width = '100%';
+          canvas.style.height = 'auto';
+          
+          // Add jump button for mobile
+          const jumpBtn = document.createElement('button');
+          jumpBtn.textContent = 'JUMP';
+          jumpBtn.style.position = 'absolute';
+          jumpBtn.style.bottom = '10px';
+          jumpBtn.style.left = '50%';
+          jumpBtn.style.transform = 'translateX(-50%)';
+          jumpBtn.style.width = '120px';
+          jumpBtn.style.height = '50px';
+          jumpBtn.style.fontSize = '24px';
+          jumpBtn.style.background = '#ff4d00';
+          jumpBtn.style.border = 'none';
+          jumpBtn.style.borderRadius = '5px';
+          jumpBtn.style.color = '#fff';
+          jumpBtn.style.zIndex = '100';
+          
+          canvas.parentNode.appendChild(jumpBtn);
+          
+          jumpBtn.addEventListener('touchstart', function() {
+            const keyEvent = new KeyboardEvent('keydown', { key: ' ', code: 'Space' });
+            document.dispatchEvent(keyEvent);
+          });
+        }
+        
+        return result;
+      };
+    }
+  }
+  
+  // Run when DOM is loaded
+  document.addEventListener('DOMContentLoaded', addTouchSupport);
 </script>
 </body>
 </html>
