@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic Gaming Features</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1a0f1f, #2d1635);
+            color: #ff4d00;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            text-shadow: 0 0 10px #ff4d00;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff4d00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+        }
+        
+        .feature-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ff4d00;
+        }
+        
+        .feature-description {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .button {
+            background: linear-gradient(45deg, #ff0000, #ff4d00);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 10px;
+            text-decoration: none;
+        }
+        
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 77, 0, 0.7);
+        }
+        
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .achievement {
+            background: rgba(255, 77, 0, 0.2);
+            border: 1px solid #ff4d00;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        
+        .achievement.unlocked {
+            background: rgba(255, 77, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
+        }
+        
+        .code-input {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff4d00;
+            color: #ff4d00;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+            border-radius: 5px;
+            width: 200px;
+            text-align: center;
+        }
+        
+        .flame-cursor {
+            cursor: none;
+        }
+        
+        .cursor-flame {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff4d00"><path d="M12 2C10.5 4 9 6 9 8.5c0 1.1.5 2 1.5 2.5.8.4 1.5 0 1.5-.5v-.5c0-.8.7-1.5 1.5-1.5.7 0 1.5.7 1.5 1.5 0 1.2-.5 2-1.5 2.5 1.2.5 2 1.5 2 2.5 0 1.7-1.3 3-3 3s-3-1.3-3-3c0-.5.1-1 .4-1.5C8.5 11.5 7 9.5 7 7c0-3.5 2-6.5 5-8z"/></svg>');
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+        }
+        
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(5deg); }
+            50% { transform: scale(0.9) rotate(-5deg); }
+            75% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .cursor-flame {
+            animation: flicker 0.5s infinite;
+        }
+        
+        .hidden-content {
+            background: linear-gradient(45deg, #660000, #330000);
+            border: 2px solid #ff0000;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .hidden-content.revealed {
+            display: block;
+            animation: revealContent 1s ease;
+        }
+        
+        @keyframes revealContent {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hidden-letter {
+            display: inline-block;
+            color: #ff4d00;
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 5px;
+            border: 1px dashed #ff4d00;
+            border-radius: 5px;
+            animation: letterPulse 2s infinite alternate;
+        }
+        
+        @keyframes letterPulse {
+            0% { text-shadow: 0 0 5px #ff4d00; }
+            100% { text-shadow: 0 0 15px #ff4d00; }
+        }
+        
+        .clue-hint {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 77, 0, 0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Epic Gaming Features</h1>
+        
+        <div class="feature-card" style="display:none;">
+            <div class="feature-title">🎵 DOOM Music Player</div>
+            <div class="feature-description">Experience the epic DOOM soundtrack while you browse!</div>
+            <div class="music-controls">
+                <button id="playMusic" class="button">Play Music</button>
+                <button id="pauseMusic" class="button">Pause Music</button>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🌙 Dark Mode</div>
+            <div class="feature-description">Toggle between light and dark mode for your gaming experience.</div>
+            <button id="darkModeToggle" class="button">Enable Dark Mode</button>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🏆 Achievements</div>
+            <div class="feature-description">Unlock epic achievements as you explore the site!</div>
+            <div id="achievements-list">
+                <div class="achievement" id="achievement-1">Welcome to Hell - Visit the main page</div>
+                <div class="achievement" id="achievement-3">Dark Side - Enable dark mode</div>
+                <div class="achievement" id="achievement-5">Code Breaker - Enter the secret code</div>
+                <div class="achievement" id="achievement-6">Speed Demon - Click the button 10 times in 5 seconds</div>
+                <div class="achievement" id="achievement-7">Persistence - Visit the site 5 days in a row</div>
+                <div class="achievement" id="achievement-8">Night Owl - Use the site after midnight</div>
+                <div class="achievement" id="achievement-9">Flame Master - Enable the flame cursor</div>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🔎 Secret Scavenger Hunt</div>
+            <div class="feature-description">Find hidden letters across the site and combine them to unlock the secret!</div>
+            <input type="text" id="secretCodeInput" placeholder="Enter the secret word..." class="code-input">
+            <button id="submitCode" class="button">Submit</button>
+            <div id="secretResult"></div>
+            <div class="clue-hint">
+                <p>Hint: Look for hidden letters on different pages. They look like this: <span class="hidden-letter">X</span></p>
+                <p>There are 4 letters to find! Try clicking on unexpected elements!</p>
+                <p>The secret word is: <strong>D O O M</strong> (find all letters)</p>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">⚡ Speed Challenge</div>
+            <div class="feature-description">Click the button 10 times in 5 seconds to prove your skills!</div>
+            <button id="speedButton" class="button">Start Challenge</button>
+            <div id="speedResult">Clicks: 0/10 | Time: 5s</div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🔥 Flame Cursor</div>
+            <div class="feature-description">Turn your cursor into an epic flame!</div>
+            <button id="flameCursorToggle" class="button">Enable Flame Cursor</button>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🌈 Rainbow Text Mode</div>
+            <div class="feature-description">Make all text on the site cycle through rainbow colors!</div>
+            <button id="rainbowTextToggle" class="button">Enable Rainbow Text</button>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">🎮 Retro Game Mode</div>
+            <div class="feature-description">Transform the site into a retro arcade style!</div>
+            <button id="retroModeToggle" class="button">Enable Retro Mode</button>
+        </div>
+        
+        <a href="index.html" class="button">Return to Main Site</a>
+    </div>
+    
+    <div id="hiddenContent" class="hidden-content">
+        <h3>🎮 SECRET UNLOCKED! 🎮</h3>
+        <p>You've discovered the hidden content! Here's a special cheat code for DOOM: IDDQD</p>
+        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDdtbjJnY2JlNGRlNWRxZWJyMnQzaWJxcnQzMWNhcnNnZWJlcWJxdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/zPdwt79PXjMEo/giphy.gif" alt="DOOM GIF" style="max-width: 100%; margin-top: 10px; border: 2px solid #ff4d00; border-radius: 5px;">
+        <p style="margin-top: 15px; font-weight: bold;">More secret codes:</p>
+        <ul style="text-align: left; list-style-type: none; padding: 0;">
+            <li>🔫 IDKFA - All weapons and keys</li>
+            <li>👻 IDCLIP - No clip mode (walk through walls)</li>
+            <li>💪 IDBEHOLD - Special powers menu</li>
+        </ul>
+    </div>
+    
+    <script>
+        // Music Player
+        const playMusic = document.getElementById('playMusic');
+        const pauseMusic = document.getElementById('pauseMusic');
+        const audio = new Audio('https://www.101soundboards.com/storage/board_sounds_rendered/25950.mp3');
+        audio.loop = true;
+        audio.volume = 0.3;
+        
+        let musicPlayTime = 0;
+        let musicInterval;
+        
+        const originalPlayMusic = playMusic.onclick;
+        playMusic.onclick = function() {
+            originalPlayMusic.call(this);
+            
+            // Start tracking play time
+            if (!musicInterval) {
+                musicInterval = setInterval(() => {
+                    musicPlayTime++;
+                    if (musicPlayTime >= 60) {
+                        unlockAchievement('achievement-4');
+                        clearInterval(musicInterval);
+                    }
+                }, 1000);
+            }
+        };
+        
+        pauseMusic.addEventListener('click', function() {
+            audio.pause();
+            clearInterval(musicInterval);
+            musicInterval = null;
+        });
+        
+        // Dark Mode
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        let darkModeEnabled = false;
+        
+        darkModeToggle.addEventListener('click', function() {
+            darkModeEnabled = !darkModeEnabled;
+            
+            if (darkModeEnabled) {
+                document.body.style.background = '#000';
+                darkModeToggle.textContent = 'Disable Dark Mode';
+                unlockAchievement('achievement-3');
+            } else {
+                document.body.style.background = 'linear-gradient(45deg, #1a0f1f, #2d1635)';
+                darkModeToggle.textContent = 'Enable Dark Mode';
+            }
+        });
+        
+        // Achievements
+        function unlockAchievement(id) {
+            const achievement = document.getElementById(id);
+            if (achievement && !achievement.classList.contains('unlocked')) {
+                achievement.classList.add('unlocked');
+                achievement.textContent = '✅ ' + achievement.textContent;
+                
+                // Play achievement sound
+                const achievementSound = new Audio('https://www.soundjay.com/button/button-09.mp3');
+                achievementSound.play().catch(e => console.log('Achievement sound failed:', e));
+                
+                // Save to localStorage
+                localStorage.setItem(id, 'unlocked');
+            }
+        }
+        
+        // Check for saved achievements
+        document.querySelectorAll('.achievement').forEach(achievement => {
+            if (localStorage.getItem(achievement.id) === 'unlocked') {
+                achievement.classList.add('unlocked');
+                achievement.textContent = '✅ ' + achievement.textContent;
+            }
+        });
+        
+        // Unlock first achievement on page load
+        unlockAchievement('achievement-1');
+        
+        // Secret code feature - updated for scavenger hunt
+        const secretCodeInput = document.getElementById('secretCodeInput');
+        const submitCode = document.getElementById('submitCode');
+        const secretResult = document.getElementById('secretResult');
+        const hiddenContent = document.getElementById('hiddenContent');
+        
+        // The secret word is "DOOM" (case insensitive)
+        const secretWord = "DOOM";
+        
+        submitCode.addEventListener('click', checkCode);
+        secretCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkCode();
+            }
+        });
+        
+        function checkCode() {
+            const code = secretCodeInput.value.toUpperCase().trim();
+            
+            if (code === secretWord || code === "D O O M") {
+                secretResult.textContent = "You found all the letters! Secret unlocked!";
+                secretResult.style.color = "#00ff00";
+                hiddenContent.classList.add('revealed');
+                unlockAchievement('achievement-5');
+                
+                // Add visual feedback
+                secretCodeInput.style.borderColor = "#00ff00";
+                secretCodeInput.style.boxShadow = "0 0 10px #00ff00";
+                
+                // Play success sound
+                const successSound = new Audio('https://www.myinstants.com/media/sounds/level-up-sound-effect.mp3');
+                successSound.volume = 0.5;
+                successSound.play().catch(e => console.log('Sound failed:', e));
+                
+                // Add confetti effect
+                createConfetti();
+                
+                // Save progress
+                localStorage.setItem('secretCodeFound', 'true');
+            } else {
+                secretResult.textContent = "That's not the right combination. Keep searching!";
+                secretResult.style.color = "#ff0000";
+                
+                // Add visual feedback
+                secretCodeInput.style.borderColor = "#ff0000";
+                secretCodeInput.style.boxShadow = "0 0 10px #ff0000";
+                setTimeout(() => {
+                    secretCodeInput.style.borderColor = "#ff4d00";
+                    secretCodeInput.style.boxShadow = "none";
+                }, 1000);
+                
+                // Play error sound
+                const errorSound = new Audio('https://www.myinstants.com/media/sounds/error_2.mp3');
+                errorSound.volume = 0.5;
+                errorSound.play().catch(e => console.log('Sound failed:', e));
+            }
+        }
+        
+        // Confetti effect for successful code entry
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random properties
+                const size = Math.random() * 10 + 5;
+                const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                const left = Math.random() * 100;
+                const animationDuration = Math.random() * 3 + 2;
+                
+                // Apply styles
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${left}%`;
+                confetti.style.animationDuration = `${animationDuration}s`;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, animationDuration * 1000);
+            }
+        }
+        
+        // Add confetti styles
+        const confettiStyle = document.createElement('style');
+        confettiStyle.textContent = `
+            .confetti {
+                position: fixed;
+                top: -20px;
+                width: 10px;
+                height: 10px;
+                background-color: #ff4d00;
+                border-radius: 50%;
+                z-index: 9999;
+                pointer-events: none;
+                animation: fall linear forwards;
+            }
+            
+            @keyframes fall {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(confettiStyle);
+        
+        // Speed challenge
+        const speedButton = document.getElementById('speedButton');
+        const speedResult = document.getElementById('speedResult');
+        let clickCount = 0;
+        let timeLeft = 5;
+        let speedInterval;
+        let challengeActive = false;
+        
+        speedButton.addEventListener('click', function() {
+            if (!challengeActive) {
+                // Start challenge
+                challengeActive = true;
+                clickCount = 0;
+                timeLeft = 5;
+                speedButton.textContent = "Click Me Fast!";
+                
+                speedInterval = setInterval(() => {
+                    timeLeft -= 0.1;
+                    timeLeft = Math.round(timeLeft * 10) / 10; // Round to 1 decimal place
+                    
+                    if (timeLeft <= 0) {
+                        // Challenge failed
+                        clearInterval(speedInterval);
+                        speedResult.textContent = `Time's up! You clicked ${clickCount} times. Try again!`;
+                        speedButton.textContent = "Start Challenge";
+                        challengeActive = false;
+                    } else {
+                        speedResult.textContent = `Clicks: ${clickCount}/10 | Time: ${timeLeft.toFixed(1)}s`;
+                    }
+                }, 100);
+            } else {
+                // Count clicks
+                clickCount++;
+                speedResult.textContent = `Clicks: ${clickCount}/10 | Time: ${timeLeft.toFixed(1)}s`;
+                
+                if (clickCount >= 10) {
+                    // Challenge completed
+                    clearInterval(speedInterval);
+                    speedResult.textContent = `Success! You completed the challenge in ${(5 - timeLeft).toFixed(1)} seconds!`;
+                    speedButton.textContent = "Start Challenge";
+                    challengeActive = false;
+                    unlockAchievement('achievement-6');
+                }
+            }
+        });
+        
+        // Flame cursor
+        const flameCursorToggle = document.getElementById('flameCursorToggle');
+        let flameCursorActive = localStorage.getItem('flameCursorEnabled') === 'true';
+        let cursorFlame;
+        
+        // Initialize flame cursor based on saved preference
+        if (flameCursorActive) {
+            enableFlameCursor();
+            flameCursorToggle.textContent = "Disable Flame Cursor";
+        }
+        
+        flameCursorToggle.addEventListener('click', function() {
+            flameCursorActive = !flameCursorActive;
+            
+            if (flameCursorActive) {
+                enableFlameCursor();
+                flameCursorToggle.textContent = "Disable Flame Cursor";
+                localStorage.setItem('flameCursorEnabled', 'true');
+                unlockAchievement('achievement-9');
+            } else {
+                disableFlameCursor();
+                flameCursorToggle.textContent = "Enable Flame Cursor";
+                localStorage.setItem('flameCursorEnabled', 'false');
+            }
+        });
+        
+        function enableFlameCursor() {
+            // Enable flame cursor
+            document.body.classList.add('flame-cursor');
+            
+            // Create flame element if it doesn't exist
+            if (!cursorFlame) {
+                cursorFlame = document.createElement('div');
+                cursorFlame.className = 'cursor-flame';
+                document.body.appendChild(cursorFlame);
+                
+                // Update flame position on mouse move
+                document.addEventListener('mousemove', updateFlameCursor);
+            }
+        }
+        
+        function disableFlameCursor() {
+            // Disable flame cursor
+            document.body.classList.remove('flame-cursor');
+            
+            // Remove flame element
+            if (cursorFlame) {
+                cursorFlame.remove();
+                cursorFlame = null;
+            }
+            
+            // Remove event listener
+            document.removeEventListener('mousemove', updateFlameCursor);
+        }
+        
+        function updateFlameCursor(e) {
+            if (cursorFlame) {
+                cursorFlame.style.left = e.clientX + 'px';
+                cursorFlame.style.top = e.clientY + 'px';
+            }
+        }
+        
+        // Check for Night Owl achievement
+        const currentHour = new Date().getHours();
+        if (currentHour >= 0 && currentHour < 6) {
+            unlockAchievement('achievement-8');
+        }
+        
+        // Check for Persistence achievement
+        const today = new Date().toDateString();
+        let visitDates = JSON.parse(localStorage.getItem('visitDates') || '[]');
+        
+        if (!visitDates.includes(today)) {
+            visitDates.push(today);
+            localStorage.setItem('visitDates', JSON.stringify(visitDates));
+        }
+        
+        if (visitDates.length >= 5) {
+            unlockAchievement('achievement-7');
+        }
+        
+        // Rainbow Text Mode
+        const rainbowTextToggle = document.getElementById('rainbowTextToggle');
+        let rainbowTextActive = localStorage.getItem('rainbowTextEnabled') === 'true';
+        
+        // Initialize based on saved preference
+        if (rainbowTextActive) {
+            enableRainbowText();
+            rainbowTextToggle.textContent = "Disable Rainbow Text";
+        }
+        
+        rainbowTextToggle.addEventListener('click', function() {
+            rainbowTextActive = !rainbowTextActive;
+            
+            if (rainbowTextActive) {
+                enableRainbowText();
+                rainbowTextToggle.textContent = "Disable Rainbow Text";
+                localStorage.setItem('rainbowTextEnabled', 'true');
+            } else {
+                disableRainbowText();
+                rainbowTextToggle.textContent = "Enable Rainbow Text";
+                localStorage.setItem('rainbowTextEnabled', 'false');
+            }
+        });
+        
+        function enableRainbowText() {
+            const style = document.createElement('style');
+            style.id = 'rainbow-text-style';
+            style.textContent = `
+                body * {
+                    animation: rainbowText 5s linear infinite !important;
+                }
+                
+                @keyframes rainbowText {
+                    0% { color: #ff0000; }
+                    16.6% { color: #ff8000; }
+                    33.3% { color: #ffff00; }
+                    50% { color: #00ff00; }
+                    66.6% { color: #00ffff; }
+                    83.3% { color: #0000ff; }
+                    100% { color: #ff00ff; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        function disableRainbowText() {
+            const style = document.getElementById('rainbow-text-style');
+            if (style) {
+                style.remove();
+            }
+        }
+        
+        // Retro Game Mode
+        const retroModeToggle = document.getElementById('retroModeToggle');
+        let retroModeActive = localStorage.getItem('retroModeEnabled') === 'true';
+        
+        // Initialize based on saved preference
+        if (retroModeActive) {
+            enableRetroMode();
+            retroModeToggle.textContent = "Disable Retro Mode";
+        }
+        
+        retroModeToggle.addEventListener('click', function() {
+            retroModeActive = !retroModeActive;
+            
+            if (retroModeActive) {
+                enableRetroMode();
+                retroModeToggle.textContent = "Disable Retro Mode";
+                localStorage.setItem('retroModeEnabled', 'true');
+            } else {
+                disableRetroMode();
+                retroModeToggle.textContent = "Enable Retro Mode";
+                localStorage.setItem('retroModeEnabled', 'false');
+            }
+        });
+        
+        function enableRetroMode() {
+            const style = document.createElement('style');
+            style.id = 'retro-mode-style';
+            style.textContent = `
+                body {
+                    font-family: 'Courier New', monospace !important;
+                    background: #000 !important;
+                    color: #0f0 !important;
+                    text-shadow: 0 0 5px #0f0 !important;
+                }
+                
+                .feature-card, button, input {
+                    border-color: #0f0 !important;
+                    background: #000 !important;
+                    color: #0f0 !important;
+                    box-shadow: 0 0 10px #0f0 !important;
+                }
+                
+                button:hover {
+                    background: #0f0 !important;
+                    color: #000 !important;
+                }
+                
+                /* Scanlines effect */
+                body::after {
+                    content: '';
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(
+                        to bottom,
+                        rgba(0, 0, 0, 0) 50%,
+                        rgba(0, 0, 0, 0.3) 50%
+                    );
+                    background-size: 100% 4px;
+                    pointer-events: none;
+                    z-index: 9999;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        function disableRetroMode() {
+            const style = document.getElementById('retro-mode-style');
+            if (style) {
+                style.remove();
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Bird</title>
+    <title>DOOM Bird</title>
     <style>
         body {
             margin: 0;
@@ -11,156 +11,574 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: #333;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
+            min-height: 100vh;
+            background: #000;
+            font-family: "Impact", sans-serif;
         }
-        
+
         #gameContainer {
             position: relative;
             width: 400px;
             height: 600px;
         }
-        
+
         #gameCanvas {
-            border: 3px solid #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
         }
-        
+
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff0000;
+            font-size: 40px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
         #startMessage {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #fff;
+            color: #ff0000;
             font-size: 24px;
             text-align: center;
-            text-shadow: 2px 2px 4px #000;
         }
-        
-        #score {
-            position: absolute;
+
+        .difficulty-btn {
+            background: #ff0000;
+            border: none;
+            color: #000;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            font-family: "Impact", sans-serif;
+        }
+
+        .back-button {
+            position: fixed;
             top: 20px;
             left: 20px;
-            color: #fff;
-            font-size: 24px;
-            text-shadow: 2px 2px 4px #000;
+            padding: 10px 20px;
+            background: #ff0000;
+            color: #000;
+            text-decoration: none;
+            font-size: 20px;
         }
-        
-        .difficulty-btn {
-            background: linear-gradient(45deg, #ff0000, #ff4d00);
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            font-family: Impact, sans-serif;
-            cursor: pointer;
-            margin: 5px;
-        }
-        
-        .mode-switcher {
+
+        .particle {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
+            pointer-events: none;
+            border-radius: 50%;
         }
-        
-        .mode-btn {
-            background: linear-gradient(45deg, #ff4d00, #990000);
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            font-family: Impact, sans-serif;
-            cursor: pointer;
+
+        @keyframes shatter {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.7); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
         }
     </style>
 </head>
 <body>
+    <a href="index.html" class="back-button">← RETURN TO BASE</a>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="400" height="600"></canvas>
-        <div id="startMessage">Press SPACE to start<br>Press M to mute/unmute</div>
         <div id="score">0</div>
-        
-        <!-- Mode switcher -->
-        <div class="mode-switcher">
-            <button id="switchModeBtn" class="mode-btn">SWITCH MODE</button>
+        <div id="startMessage">
+            SELECT DIFFICULTY:<br><br>
+            <button onclick="startGame('easy')" class="difficulty-btn">EASY</button><br>
+            <button onclick="startGame('medium')" class="difficulty-btn">MEDIUM</button><br>
+            <button onclick="startGame('hard')" class="difficulty-btn">HARD</button>
         </div>
     </div>
-    
+
     <script>
-        // Game elements
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const startMessage = document.getElementById('startMessage');
+
+        // Load sounds
+        const jumpSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+        const deathSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1690/1690-preview.mp3');
+        const scoreSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3');
+
+        let bird = {
+            x: 50,
+            y: 300,
+            velocity: 0,
+            size: 20,
+            rotation: 0
+        };
+
+        let pipes = [];
+        let particles = [];
+        let score = 0;
+        let gameStarted = false;
+        let gameOver = false;
+        let currentDifficulty = 'medium';
+        let shake = 0;
+
+        const difficulties = {
+            easy: {
+                speed: 1,
+                gravity: 0.2,
+                jump: -4,
+                gap: 200
+            },
+            medium: {
+                speed: 2,
+                gravity: 0.3,
+                jump: -6,
+                gap: 170
+            },
+            hard: {
+                speed: 3,
+                gravity: 0.4,
+                jump: -7,
+                gap: 150
+            }
+        };
+
+        // Update music links to more reliable sources
+        const music = {
+            easy: new Audio('https://assets.mixkit.co/music/preview/mixkit-relaxing-in-nature-522.mp3'),    // Peaceful nature
+            medium: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'),             // Medium intensity
+            hard: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3')              // Intense
+        };
+
+        // Add visual effects based on difficulty
+        const difficultyEffects = {
+            easy: {
+                backgroundColor: '#87CEEB',    // Sky blue
+                particleColors: ['#FFFFFF', '#FFD700', '#87CEEB'],  // White, gold, sky blue
+                screenShake: 0,
+                showDistrations: false,
+                birdColor: '#FFD700'  // Golden bird
+            },
+            medium: {
+                backgroundColor: '#1a0000',
+                particleColors: ['#ff4d00', '#ff8c00', '#ff0000'],
+                screenShake: 5,
+                showDistrations: false,
+                birdColor: '#ff4d00'
+            },
+            hard: {
+                backgroundColor: '#000000',
+                particleColors: ['#ff0000', '#ff0000', '#660000'],
+                screenShake: 15,
+                showDistrations: true,
+                birdColor: '#ff0000'
+            }
+        };
+
+        let distractions = [];
+
+        function createDistraction() {
+            if (currentDifficulty === 'hard' && Math.random() < 0.02) {
+                distractions.push({
+                    x: canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 30 + 20,
+                    speed: Math.random() * 3 + 2,
+                    rotation: 0
+                });
+            }
+        }
+
+        function updateDistractions() {
+            for (let i = distractions.length - 1; i >= 0; i--) {
+                const d = distractions[i];
+                d.x -= d.speed;
+                d.rotation += 0.1;
+
+                // Draw distraction (skull or warning symbol)
+                ctx.save();
+                ctx.translate(d.x + d.size/2, d.y + d.size/2);
+                ctx.rotate(d.rotation);
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.arc(0, 0, d.size/2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                if (d.x + d.size < 0) {
+                    distractions.splice(i, 1);
+                }
+            }
+        }
+
+        function applyScreenShake() {
+            if (difficultyEffects[currentDifficulty].screenShake > 0) {
+                const intensity = difficultyEffects[currentDifficulty].screenShake;
+                ctx.translate(
+                    Math.random() * intensity - intensity/2,
+                    Math.random() * intensity - intensity/2
+                );
+            }
+        }
+
+        function createParticle(x, y) {
+            const colors = difficultyEffects[currentDifficulty].particleColors;
+            return {
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            };
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+            }
+        }
+
+        function checkCollision(pipe) {
+            const birdRight = bird.x + bird.size;
+            const birdLeft = bird.x;
+            const pipeLeft = pipe.x;
+            const pipeRight = pipe.x + 50;
+
+            if (birdRight > pipeLeft && birdLeft < pipeRight) {
+                if (bird.y < pipe.height || bird.y + bird.size > pipe.height + difficulties[currentDifficulty].gap) {
+                    if (currentMusic) {
+                        currentMusic.pause();
+                        currentMusic.currentTime = 0;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function jump() {
+            if (gameOver) {
+                resetGame();
+                return;
+            }
+            if (!gameStarted) return;
+
+            jumpSound.currentTime = 0;
+            jumpSound.play();
+            bird.velocity = difficulties[currentDifficulty].jump;
+            
+            // Add jump particles
+            for (let i = 0; i < 5; i++) {
+                particles.push(createParticle(bird.x + bird.size/2, bird.y + bird.size/2));
+            }
+        }
+
+        function createPipe() {
+            const gap = difficulties[currentDifficulty].gap;
+            const minHeight = 50;
+            const maxHeight = canvas.height - gap - minHeight;
+            const height = Math.floor(Math.random() * (maxHeight - minHeight)) + minHeight;
+
+            pipes.push({
+                x: canvas.width,
+                height: height,
+                passed: false
+            });
+        }
+
+        function gameLoop() {
+            if (!gameStarted || gameOver) return;
+
+            ctx.save();
+            
+            // Clear canvas with difficulty-specific background
+            ctx.fillStyle = difficultyEffects[currentDifficulty].backgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Apply screen shake for harder difficulties
+            applyScreenShake();
+
+            // Create and update distractions in hard mode
+            if (currentDifficulty === 'hard') {
+                createDistraction();
+                updateDistractions();
+            }
+
+            // Draw peaceful elements in easy mode
+            if (currentDifficulty === 'easy') {
+                // Draw clouds
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.arc(
+                        (Date.now()/50 + i * 200) % canvas.width,
+                        50 + i * 30,
+                        20,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+            }
+
+            // Update bird
+            bird.velocity += difficulties[currentDifficulty].gravity;
+            bird.y += bird.velocity;
+            bird.rotation = Math.atan2(bird.velocity, 15);
+
+            // Create pipes
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                createPipe();
+            }
+
+            // Update particles
+            updateParticles();
+
+            // Draw pipes with difficulty-specific effects
+            ctx.shadowBlur = currentDifficulty === 'easy' ? 0 : 10;
+            ctx.shadowColor = difficultyEffects[currentDifficulty].birdColor;
+            ctx.fillStyle = difficultyEffects[currentDifficulty].birdColor;
+            
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                const pipe = pipes[i];
+                pipe.x -= difficulties[currentDifficulty].speed;
+
+                // Draw pipes
+                ctx.fillRect(pipe.x, 0, 50, pipe.height);
+                ctx.fillRect(pipe.x, pipe.height + difficulties[currentDifficulty].gap, 
+                           50, canvas.height - pipe.height - difficulties[currentDifficulty].gap);
+
+                // Check collision
+                if (checkCollision(pipe)) {
+                    gameOver = true;
+                    deathSound.play();
+                    shake = 20;
+                    // Create explosion particles
+                    for (let j = 0; j < 20; j++) {
+                        particles.push(createParticle(bird.x + bird.size/2, bird.y + bird.size/2));
+                    }
+                    startMessage.innerHTML = 'GAME OVER<br><br>' +
+                        '<button onclick="startGame(\'easy\')" class="difficulty-btn">EASY</button><br>' +
+                        '<button onclick="startGame(\'medium\')" class="difficulty-btn">MEDIUM</button><br>' +
+                        '<button onclick="startGame(\'hard\')" class="difficulty-btn">HARD</button>';
+                    startMessage.style.display = 'block';
+                    return;
+                }
+
+                // Score points
+                if (!pipe.passed && pipe.x + 50 < bird.x) {
+                    pipe.passed = true;
+                    score++;
+                    scoreElement.textContent = score;
+                    scoreSound.play();
+                }
+
+                // Remove off-screen pipes
+                if (pipe.x + 50 < 0) {
+                    pipes.splice(i, 1);
+                }
+            }
+
+            // Draw bird with difficulty-specific color
+            ctx.save();
+            ctx.translate(bird.x + bird.size/2, bird.y + bird.size/2);
+            ctx.rotate(bird.rotation);
+            ctx.fillStyle = difficultyEffects[currentDifficulty].birdColor;
+            ctx.beginPath();
+            ctx.arc(0, 0, bird.size/2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Check boundaries
+            if (bird.y < 0 || bird.y + bird.size > canvas.height) {
+                gameOver = true;
+                deathSound.play();
+                if (currentMusic) {
+                    currentMusic.pause();
+                    currentMusic.currentTime = 0;
+                }
+                shake = 20;
+                // Create explosion particles
+                for (let i = 0; i < 20; i++) {
+                    particles.push(createParticle(bird.x + bird.size/2, bird.y + bird.size/2));
+                }
+                startMessage.innerHTML = 'GAME OVER<br><br>' +
+                    '<button onclick="startGame(\'easy\')" class="difficulty-btn">EASY</button><br>' +
+                    '<button onclick="startGame(\'medium\')" class="difficulty-btn">MEDIUM</button><br>' +
+                    '<button onclick="startGame(\'hard\')" class="difficulty-btn">HARD</button>';
+                startMessage.style.display = 'block';
+                return;
+            }
+
+            ctx.restore();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function resetGame() {
+            bird.y = 300;
+            bird.velocity = 0;
+            bird.rotation = 0;
+            pipes = [];
+            particles = [];
+            score = 0;
+            gameOver = false;
+            gameStarted = false;
+            shake = 0;
+            scoreElement.textContent = score;
+            startMessage.style.display = 'block';
+            
+            stopAllMusic();
+        }
+
+        function startGame(difficulty) {
+            currentDifficulty = difficulty;
+            gameStarted = true;
+            startMessage.style.display = 'none';
+
+            // Stop any currently playing music
+            stopAllMusic();
+
+            // Start new music
+            try {
+                currentMusic = music[difficulty];
+                let playPromise = currentMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Music play failed:", error);
+                    });
+                }
+            } catch (error) {
+                console.log("Music start error:", error);
+            }
+
+            gameLoop();
+        }
+
+        function stopAllMusic() {
+            Object.values(music).forEach(track => {
+                track.pause();
+                track.currentTime = 0;
+            });
+            currentMusic = null;
+        }
+
+        // Add a preload function
+        function preloadMusic() {
+            Object.values(music).forEach(track => {
+                track.load();
+            });
+        }
+
+        // Call preload when page loads
+        window.addEventListener('load', preloadMusic);
+
+        // Add mute/unmute functionality
+        let isMuted = false;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                isMuted = !isMuted;
+                Object.values(music).forEach(track => {
+                    track.muted = isMuted;
+                });
+            }
+        });
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jump();
+            }
+            if (e.key === 'ArrowUp' && currentMusic) {
+                currentMusic.volume = Math.min(1, currentMusic.volume + 0.1);
+            } else if (e.key === 'ArrowDown' && currentMusic) {
+                currentMusic.volume = Math.max(0, currentMusic.volume - 0.1);
+            }
+        });
+
+        canvas.addEventListener('click', jump);
+
+        // Initial draw
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff0000';
+        ctx.beginPath();
+        ctx.arc(bird.x + bird.size/2, bird.y + bird.size/2, bird.size/2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add mode selection to Flappy Bird game
+        const modeContainer = document.createElement('div');
+        modeContainer.style.position = 'absolute';
+        modeContainer.style.top = '10px';
+        modeContainer.style.left = '50%';
+        modeContainer.style.transform = 'translateX(-50%)';
+        modeContainer.style.display = 'flex';
+        modeContainer.style.gap = '10px';
+        modeContainer.style.zIndex = '100';
+        
+        // Create classic mode button
+        const classicButton = document.createElement('button');
+        classicButton.textContent = 'CLASSIC MODE';
+        classicButton.className = 'difficulty-btn';
+        classicButton.style.background = 'linear-gradient(45deg, #ff0000, #ff4d00)';
+        
+        // Create doom mode button
+        const doomButton = document.createElement('button');
+        doomButton.textContent = 'DOOM MODE';
+        doomButton.className = 'difficulty-btn';
+        doomButton.style.background = 'linear-gradient(45deg, #990000, #660000)';
+        
+        // Add buttons to container
+        modeContainer.appendChild(classicButton);
+        modeContainer.appendChild(doomButton);
+        
+        // Add container to page
+        document.body.appendChild(modeContainer);
+        
+        // Store original game elements
+        const gameContainer = document.getElementById('gameContainer');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const startMessage = document.getElementById('startMessage');
         const scoreDisplay = document.getElementById('score');
-        const switchModeBtn = document.getElementById('switchModeBtn');
         
-        // Game variables
-        let gameStarted = false;
-        let gameOver = false;
-        let score = 0;
-        let highScore = localStorage.getItem('flappyHighScore') || 0;
-        let pipes = [];
-        let particles = [];
-        let lives = 3;
-        let isDoomMode = false;
-        
-        // Bird object
-        let bird = {
-            x: 50,
-            y: canvas.height / 2,
-            size: 30,
-            velocity: 0,
-            gravity: 0.5,
-            lift: -8,
-            color: '#ff0000',
-            update: function() {
-                this.velocity += this.gravity;
-                this.y += this.velocity;
-                
-                if (this.y < 0) {
-                    this.y = 0;
-                    this.velocity = 0;
-                }
-                
-                if (this.y + this.size > canvas.height) {
-                    this.y = canvas.height - this.size;
-                    this.velocity = 0;
-                    if (gameStarted && !gameOver) {
-                        gameOver = checkCollision();
-                    }
-                }
-            },
-            draw: function() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x + this.size/2, this.y + this.size/2, this.size/2, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw eye
-                ctx.fillStyle = '#fff';
-                ctx.beginPath();
-                ctx.arc(this.x + this.size/2 + 5, this.y + this.size/2 - 5, 5, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw pupil
-                ctx.fillStyle = '#000';
-                ctx.beginPath();
-                ctx.arc(this.x + this.size/2 + 6, this.y + this.size/2 - 5, 2, 0, Math.PI * 2);
-                ctx.fill();
-            }
+        // Store original game state
+        let originalGameState = {
+            bird: bird,
+            pipes: pipes,
+            score: score,
+            gameStarted: gameStarted,
+            gameOver: gameOver
         };
         
-        // Game settings
-        let pipeGap = 150;
-        let pipeWidth = 60;
-        let pipeSpeed = 2;
-        let pipeSpawnRate = 120;
-        let frameCount = 0;
+        // Classic mode click handler
+        classicButton.addEventListener('click', function() {
+            // Reset to original game
+            location.reload();
+        });
         
+<<<<<<< HEAD
         // Power-up variables
         let powerUps = [];
         let shieldActive = false;
@@ -185,50 +603,76 @@
         // Functions
         function jump() {
             if (gameOver) return;
+=======
+        // Doom mode click handler
+        doomButton.addEventListener('click', function() {
+            // Hide mode selection
+            modeContainer.style.display = 'none';
+>>>>>>> parent of 11a3ef1 (dddddd)
             
-            if (!gameStarted) {
-                gameStarted = true;
-                startMessage.style.display = 'none';
-                gameLoop();
-                
-                // Start music based on mode
-                currentMusic = isDoomMode ? music.doom : music.classic;
-                currentMusic.play();
+            // Clear existing game elements
+            startMessage.style.display = 'none';
+            
+            // Change game title
+            document.title = 'DOOM Bird';
+            
+            // Apply doom theme
+            document.body.style.background = '#000';
+            canvas.style.borderColor = '#ff0000';
+            canvas.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.7)';
+            
+            // Reset game state
+            resetGame();
+            
+            // Apply doom mode changes
+            applyDoomMode();
+        });
+        
+        // Apply Doom Mode changes
+        function applyDoomMode() {
+            // Change background color
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Add stars to background
+            for (let i = 0; i < 50; i++) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
+                ctx.beginPath();
+                ctx.arc(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    Math.random() * 2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
             }
             
-            bird.velocity = bird.lift;
+            // Change bird color and add fire trail
+            bird.color = '#ff4d00';
             
-            // Add jump particles in doom mode
-            if (isDoomMode) {
-                for (let i = 0; i < 5; i++) {
+            // Add fire trail effect
+            const originalUpdate = bird.update;
+            bird.update = function() {
+                originalUpdate.call(this);
+                
+                // Add fire particles
+                if (gameStarted && !gameOver && Math.random() < 0.3) {
                     particles.push({
-                        x: bird.x + bird.size / 2,
-                        y: bird.y + bird.size,
-                        size: Math.random() * 5 + 5,
+                        x: this.x,
+                        y: this.y + this.size / 2,
+                        size: Math.random() * 5 + 3,
                         color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
-                        vx: Math.random() * 2 - 1,
-                        vy: Math.random() * 2 + 2,
-                        life: 20
+                        vx: -Math.random() * 2 - 1,
+                        vy: Math.random() * 2 - 1,
+                        life: 30
                     });
                 }
-            }
-        }
-        
-        function createPipe() {
-            const gapPosition = Math.floor(Math.random() * (canvas.height - pipeGap - 200)) + 100;
+            };
             
-            pipes.push({
-                x: canvas.width,
-                topHeight: gapPosition,
-                bottomY: gapPosition + pipeGap,
-                width: pipeWidth,
-                passed: false
-            });
-        }
-        
-        function drawPipe(pipe) {
-            if (isDoomMode) {
-                // Doom mode pipes
+            // Change pipe appearance to look more dangerous
+            const originalDrawPipe = drawPipe;
+            drawPipe = function(pipe) {
                 ctx.fillStyle = '#660000';
                 ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
                 ctx.fillRect(pipe.x, pipe.bottomY, pipe.width, canvas.height - pipe.bottomY);
@@ -250,79 +694,232 @@
                     ctx.lineTo(pipe.x + 15 + i * 15, pipe.bottomY);
                     ctx.fill();
                 }
-            } else {
-                // Classic mode pipes
-                ctx.fillStyle = '#00cc00';
-                ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
-                ctx.fillRect(pipe.x, pipe.bottomY, pipe.width, canvas.height - pipe.bottomY);
-            }
-        }
-        
-        function checkCollision() {
-            // Skip collision if shield is active in doom mode
-            if (isDoomMode && shieldActive) return false;
+            };
             
-            // Check pipe collisions
-            for (let pipe of pipes) {
-                if (
-                    bird.x + bird.size > pipe.x &&
-                    bird.x < pipe.x + pipe.width &&
-                    (bird.y < pipe.topHeight || bird.y + bird.size > pipe.bottomY)
-                ) {
-                    if (isDoomMode && lives > 1) {
-                        // In doom mode, lose a life but continue
-                        lives--;
+            // Add power-ups
+            let powerUps = [];
+            let shieldActive = false;
+            let shieldTime = 0;
+            let slowTimeActive = false;
+            let slowTimeEnd = 0;
+            
+            // Create power-up
+            function createPowerUp() {
+                if (Math.random() < 0.1 && pipes.length > 0) {
+                    const randomPipe = pipes[Math.floor(Math.random() * pipes.length)];
+                    const gapCenter = randomPipe.topHeight + (randomPipe.bottomY - randomPipe.topHeight) / 2;
+                    
+                    const types = [
+                        { type: 'shield', color: '#00ffff' },
+                        { type: 'slowTime', color: '#ffff00' },
+                        { type: 'extraLife', color: '#ff0000' }
+                    ];
+                    
+                    const powerUpType = types[Math.floor(Math.random() * types.length)];
+                    
+                    powerUps.push({
+                        x: randomPipe.x,
+                        y: gapCenter,
+                        type: powerUpType.type,
+                        color: powerUpType.color,
+                        size: 15,
+                        pulse: 0
+                    });
+                }
+            }
+            
+            // Update power-ups
+            function updatePowerUps() {
+                for (let i = powerUps.length - 1; i >= 0; i--) {
+                    const powerUp = powerUps[i];
+                    
+                    // Move power-up
+                    powerUp.x -= pipeSpeed * (slowTimeActive ? 0.5 : 1);
+                    
+                    // Pulse animation
+                    powerUp.pulse = (powerUp.pulse + 0.1) % (Math.PI * 2);
+                    
+                    // Draw power-up
+                    ctx.fillStyle = powerUp.color;
+                    ctx.beginPath();
+                    ctx.arc(
+                        powerUp.x,
+                        powerUp.y,
+                        powerUp.size * (1 + Math.sin(powerUp.pulse) * 0.2),
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    // Glow effect
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = powerUp.color;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                    
+                    // Check collision with bird
+                    const dx = powerUp.x - (bird.x + bird.size / 2);
+                    const dy = powerUp.y - (bird.y + bird.size / 2);
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < bird.size / 2 + powerUp.size) {
+                        // Collect power-up
+                        collectPowerUp(powerUp.type);
                         
-                        // Create hit particles
-                        for (let i = 0; i < 20; i++) {
+                        // Create collection particles
+                        for (let j = 0; j < 10; j++) {
                             particles.push({
-                                x: bird.x + bird.size / 2,
-                                y: bird.y + bird.size / 2,
+                                x: powerUp.x,
+                                y: powerUp.y,
                                 size: Math.random() * 5 + 3,
-                                color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
-                                vx: Math.random() * 6 - 3,
-                                vy: Math.random() * 6 - 3,
+                                color: powerUp.color,
+                                vx: Math.random() * 4 - 2,
+                                vy: Math.random() * 4 - 2,
                                 life: 30
                             });
                         }
                         
+                        powerUps.splice(i, 1);
+                    }
+                    
+                    // Remove if off screen
+                    if (powerUp.x + powerUp.size < 0) {
+                        powerUps.splice(i, 1);
+                    }
+                }
+            }
+            
+            // Collect power-up
+            function collectPowerUp(type) {
+                switch (type) {
+                    case 'shield':
+                        shieldActive = true;
+                        shieldTime = Date.now() + 5000;
+                        showMessage('SHIELD ACTIVATED', '#00ffff');
+                        break;
+                    case 'slowTime':
+                        slowTimeActive = true;
+                        slowTimeEnd = Date.now() + 5000;
+                        showMessage('TIME SLOWED', '#ffff00');
+                        break;
+                    case 'extraLife':
+                        lives++;
+                        showMessage('EXTRA LIFE', '#ff0000');
+                        break;
+                }
+            }
+            
+            // Add lives system
+            let lives = 3;
+            
+            // Show message
+            function showMessage(text, color) {
+                const message = document.createElement('div');
+                message.textContent = text;
+                message.style.position = 'absolute';
+                message.style.top = '100px';
+                message.style.left = '50%';
+                message.style.transform = 'translateX(-50%)';
+                message.style.color = color;
+                message.style.fontFamily = 'Impact, sans-serif';
+                message.style.fontSize = '24px';
+                message.style.textShadow = `0 0 10px ${color}`;
+                message.style.zIndex = '100';
+                message.style.pointerEvents = 'none';
+                
+                gameContainer.appendChild(message);
+                
+                // Animate message
+                let opacity = 1;
+                const fadeInterval = setInterval(() => {
+                    opacity -= 0.05;
+                    message.style.opacity = opacity;
+                    
+                    if (opacity <= 0) {
+                        clearInterval(fadeInterval);
+                        message.remove();
+                    }
+                }, 50);
+            }
+            
+            // Add particles system
+            let particles = [];
+            
+            // Update particles
+            function updateParticles() {
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const particle = particles[i];
+                    
+                    // Move particle
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    // Decrease life
+                    particle.life--;
+                    
+                    // Draw particle
+                    ctx.fillStyle = particle.color;
+                    ctx.beginPath();
+                    ctx.arc(
+                        particle.x,
+                        particle.y,
+                        particle.size * (particle.life / 30),
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    // Remove if dead
+                    if (particle.life <= 0) {
+                        particles.splice(i, 1);
+                    }
+                }
+            }
+            
+            // Modify collision detection
+            const originalCheckCollision = checkCollision;
+            checkCollision = function() {
+                if (shieldActive) return false;
+                
+                const collision = originalCheckCollision();
+                
+                if (collision) {
+                    lives--;
+                    
+                    // Create hit particles
+                    for (let i = 0; i < 20; i++) {
+                        particles.push({
+                            x: bird.x + bird.size / 2,
+                            y: bird.y + bird.size / 2,
+                            size: Math.random() * 5 + 3,
+                            color: `rgba(255, ${Math.floor(Math.random() * 100)}, 0, ${Math.random() * 0.5 + 0.5})`,
+                            vx: Math.random() * 6 - 3,
+                            vy: Math.random() * 6 - 3,
+                            life: 30
+                        });
+                    }
+                    
+                    if (lives > 0) {
                         // Reset bird position but continue game
                         bird.y = canvas.height / 2;
                         bird.velocity = 0;
                         showMessage(`${lives} LIVES LEFT`, '#ff0000');
-                        
-                        // Remove the pipe that caused the collision
-                        pipes = pipes.filter(p => p !== pipe);
-                        
                         return false;
                     }
                     
                     return true;
                 }
-            }
-            
-            // Check if bird hit the ground or ceiling
-            if (bird.y <= 0 || bird.y + bird.size >= canvas.height) {
-                if (isDoomMode && lives > 1) {
-                    lives--;
-                    bird.y = canvas.height / 2;
-                    bird.velocity = 0;
-                    showMessage(`${lives} LIVES LEFT`, '#ff0000');
-                    return false;
-                }
-                return true;
-            }
-            
-            return false;
-        }
-        
-        function createPowerUp() {
-            if (!isDoomMode) return;
-            
-            if (pipes.length > 0) {
-                const randomPipe = pipes[Math.floor(Math.random() * pipes.length)];
-                const gapCenter = randomPipe.topHeight + (randomPipe.bottomY - randomPipe.topHeight) / 2;
                 
+                return false;
+            };
+            
+            // Update power-up timers
+            function updatePowerUpTimers() {
+                const now = Date.now();
+                
+<<<<<<< HEAD
                 const types = [
                     { type: 'shield', color: '#00ffff' },
                     { type: 'slowTime', color: '#ffff00' },
@@ -665,11 +1262,39 @@
                 }
                 
                 // Update and draw particles
+=======
+                if (shieldActive && now > shieldTime) {
+                    shieldActive = false;
+                }
+                
+                if (slowTimeActive && now > slowTimeEnd) {
+                    slowTimeActive = false;
+                }
+                
+                setTimeout(updatePowerUpTimers, 100);
+            }
+            
+            // Modify game loop
+            const originalGameLoop = gameLoop;
+            gameLoop = function() {
+                originalGameLoop();
+                
+                // Create power-ups
+                if (gameStarted && !gameOver && Math.random() < 0.005) {
+                    createPowerUp();
+                }
+                
+                // Update power-ups
+                updatePowerUps();
+                
+                // Update particles
+>>>>>>> parent of 11a3ef1 (dddddd)
                 updateParticles();
                 
                 // Update score display
                 scoreDisplay.textContent = score;
                 
+<<<<<<< HEAD
                 // Request next frame
                 requestAnimationFrame(gameLoop);
             }
@@ -742,11 +1367,114 @@
                 switchModeBtn.textContent = 'DOOM MODE';
             }
         });
+=======
+                // Draw lives
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '20px Impact';
+                ctx.textAlign = 'left';
+                ctx.fillText(`LIVES: ${'❤️'.repeat(lives)}`, 10, 60);
+            };
+            
+            // Start power-up timer updates
+            updatePowerUpTimers();
+            
+            // Change game over screen
+            const originalGameOverScreen = showGameOverScreen;
+            showGameOverScreen = function() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '48px Impact';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Impact';
+                ctx.fillText(`FINAL SCORE: ${score}`, canvas.width / 2, canvas.height / 2);
+                
+                // Add restart button
+                const restartButton = document.createElement('button');
+                restartButton.textContent = 'PLAY AGAIN';
+                restartButton.className = 'difficulty-btn';
+                restartButton.style.position = 'absolute';
+                restartButton.style.top = '60%';
+                restartButton.style.left = '50%';
+                restartButton.style.transform = 'translate(-50%, -50%)';
+                
+                restartButton.onclick = () => {
+                    location.reload();
+                };
+                
+                gameContainer.appendChild(restartButton);
+            };
+            
+            // Start the game
+            resetGame();
+        }
+
+        // Create mode switcher immediately (not inside DOMContentLoaded)
+        const modeSwitcher = document.createElement('div');
+        modeSwitcher.style.position = 'absolute';
+        modeSwitcher.style.top = '10px';
+        modeSwitcher.style.right = '10px';
+        modeSwitcher.style.zIndex = '1000';
+        
+        const switchButton = document.createElement('button');
+        switchButton.textContent = 'SWITCH MODE';
+        switchButton.style.background = 'linear-gradient(45deg, #ff4d00, #990000)';
+        switchButton.style.color = 'white';
+        switchButton.style.padding = '10px 15px';
+        switchButton.style.border = 'none';
+        switchButton.style.borderRadius = '5px';
+        switchButton.style.fontFamily = 'Impact, sans-serif';
+        switchButton.style.cursor = 'pointer';
+        
+        switchButton.addEventListener('click', function() {
+            // Toggle between modes
+            if (document.title === 'DOOM Bird') {
+                // Switch to classic
+                window.location.href = 'flappy.html';
+            } else {
+                // Switch to doom
+                window.location.href = 'flappy.html?mode=doom';
+            }
+        });
+        
+        modeSwitcher.appendChild(switchButton);
+        document.body.appendChild(modeSwitcher);
+        
+        // Function to directly apply Doom mode
+        function activateDoomMode() {
+            // Hide mode selection
+            const modeContainer = document.querySelector('div[style*="transform: translateX(-50%)"]');
+            if (modeContainer) {
+                modeContainer.style.display = 'none';
+            }
+            
+            // Change game title
+            document.title = 'DOOM Bird';
+            
+            // Apply doom theme
+            document.body.style.background = '#000';
+            const canvas = document.getElementById('gameCanvas');
+            if (canvas) {
+                canvas.style.borderColor = '#ff0000';
+                canvas.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.7)';
+            }
+            
+            // Call the applyDoomMode function if it exists
+            if (typeof applyDoomMode === 'function') {
+                applyDoomMode();
+            }
+        }
+>>>>>>> parent of 11a3ef1 (dddddd)
         
         // Check URL parameters for mode
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode');
         
+<<<<<<< HEAD
         // If mode is specified as doom, switch to doom mode
         if (mode === 'doom' && !isDoomMode) {
             switchModeBtn.click();
@@ -901,6 +1629,18 @@
                 condition: stats => stats.slowTimesUsed >= 3
             }
         ];
+=======
+        // If mode is specified as doom, activate doom mode
+        if (mode === 'doom') {
+            // Try immediately
+            if (typeof applyDoomMode === 'function') {
+                activateDoomMode();
+            } else {
+                // Try again after a delay
+                setTimeout(activateDoomMode, 1000);
+            }
+        }
+>>>>>>> parent of 11a3ef1 (dddddd)
     </script>
 </body>
 </html> 
