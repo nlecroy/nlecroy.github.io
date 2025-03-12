@@ -13,6 +13,7 @@ function createBobAI() {
   container.style.boxShadow = '0 0 20px rgba(142, 45, 226, 0.6)';
   container.style.zIndex = '9999';
   container.style.overflow = 'hidden';
+  container.style.cursor = 'pointer';
   
   // Create icon
   const icon = document.createElement('div');
@@ -28,7 +29,6 @@ function createBobAI() {
   icon.style.alignItems = 'center';
   icon.style.fontSize = '30px';
   icon.style.color = 'white';
-  icon.style.cursor = 'pointer';
   
   // Create content
   const content = document.createElement('div');
@@ -125,18 +125,23 @@ function createBobAI() {
   document.body.appendChild(container);
   
   // Add event listeners
-  icon.addEventListener('click', function() {
-    container.style.width = '350px';
-    container.style.height = '450px';
-    container.style.borderRadius = '15px';
-    content.style.display = 'flex';
+  container.addEventListener('click', function(e) {
+    if (e.target === container || e.target === icon) {
+      container.style.width = '350px';
+      container.style.height = '450px';
+      container.style.borderRadius = '15px';
+      content.style.display = 'flex';
+      container.style.cursor = 'default';
+    }
   });
   
-  closeBtn.addEventListener('click', function() {
+  closeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
     container.style.width = '60px';
     container.style.height = '60px';
     container.style.borderRadius = '50%';
     content.style.display = 'none';
+    container.style.cursor = 'pointer';
   });
   
   function sendMessage() {
