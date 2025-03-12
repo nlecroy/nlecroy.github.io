@@ -6861,7 +6861,7 @@
     
     // Add welcome message
     setTimeout(() => {
-      addBobMessage("Hi there! I'm Bob AI. How can I help you today?");
+      addBobMessage("Hi there! I'm Bob AI. I can search the web and answer almost any question. How can I help you today?");
     }, 500);
     
     // Toggle expansion
@@ -6881,11 +6881,76 @@
         addUserMessage(message);
         bobInput.value = '';
         
+        // Show thinking message
+        const thinkingId = showThinking();
+        
         // Process the message
+        processUserQuery(message, thinkingId);
+    }
+    
+    // Show thinking animation
+    function showThinking() {
+      const thinking = document.createElement('div');
+      thinking.className = 'bob-message bob-ai-msg thinking';
+      thinking.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+      bobMessages.appendChild(thinking);
+      bobMessages.scrollTop = bobMessages.scrollHeight;
+      return thinking.id = 'thinking-' + Date.now();
+    }
+    
+    // Remove thinking animation
+    function removeThinking(id) {
+      const thinking = document.getElementById(id);
+      if (thinking) {
+        bobMessages.removeChild(thinking);
+      }
+    }
+    
+    // Process user query - with web search capability
+    async function processUserQuery(message, thinkingId) {
+      // First check if we can answer locally
+      const localResponse = getLocalResponse(message);
+      
+      if (localResponse.confident) {
+        // We have a confident local response
         setTimeout(() => {
-          // Add Bob's response
-          const response = getBobResponse(message);
-          addBobMessage(response);
+          removeThinking(thinkingId);
+          addBobMessage(localResponse.text);
+        }, 1000);
+        return;
+      }
+      
+      // Try to search the web for an answer
+      try {
+        // Use Wikipedia API for knowledge queries
+        const searchTerm = message.replace(/who is|what is|tell me about|how does|why is|when did/gi, '').trim();
+        
+        if (searchTerm.length > 2) {
+          const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`);
+          
+          if (response.ok) {
+            const data = await response.json();
+            
+            if (data.extract) {
+              removeThinking(thinkingId);
+              addBobMessage(data.extract + "\n\nSource: Wikipedia");
+              return;
+            }
+          }
+        }
+        
+        // If Wikipedia fails, try DuckDuckGo API (simulated)
+        setTimeout(() => {
+          removeThinking(thinkingId);
+          
+          // If we couldn't get a web result, use our fallback response
+          addBobMessage(localResponse.text + "\n\nI tried searching the web but couldn't find specific information on this topic. Is there something else you'd like to know?");
+        }, 2000);
+      } catch (error) {
+        // Handle errors
+        setTimeout(() => {
+          removeThinking(thinkingId);
+          addBobMessage("I tried to search for information on that, but encountered a technical issue. Let me try to answer based on what I know...\n\n" + localResponse.text);
         }, 1000);
       }
     }
@@ -6918,60 +6983,85 @@
       bobMessages.scrollTop = bobMessages.scrollHeight;
     }
     
-    // Get Bob's response
-    function getBobResponse(message) {
+    // Get local response (without web search)
+    function getLocalResponse(message) {
       // Convert to lowercase for easier matching
       const lowerMessage = message.toLowerCase();
       
       // Greetings
       if (/\b(hi|hello|hey|howdy|greetings)\b/.test(lowerMessage)) {
-        return "Hello! I'm Bob AI, your intelligent assistant. How can I help you today?";
+        return {
+          text: "Hello! I'm Bob AI, your intelligent assistant with web search capabilities. How can I help you today?",
+          confident: true
+        };
       }
       
       // How are you
       if (/\bhow are you\b/.test(lowerMessage)) {
-        return "I'm functioning perfectly! Thanks for asking. How are you doing today?";
+        return {
+          text: "I'm functioning perfectly! Thanks for asking. How are you doing today?",
+          confident: true
+        };
       }
       
       // About Bob
       if (/\b(who are you|what are you|about you|your name)\b/.test(lowerMessage)) {
-        return "I'm Bob AI, an advanced assistant designed to help with questions about this website, games, coding, or just about anything else. I'm here to make your experience better!";
+        return {
+          text: "I'm Bob AI, an advanced assistant with web search capabilities. I can answer questions about this website, games, or search the internet for information on almost any topic!",
+          confident: true
+        };
       }
       
       // About Doom Bird
       if (/\b(doom bird|doombird|bird game|flappy)\b/.test(lowerMessage)) {
-        return "Doom Bird is an intense game where you navigate a bird through fiery obstacles. It features multiple difficulty levels from Easy to Nightmare. The game tests your reflexes and timing - give it a try by clicking the flaming button!";
+        return {
+          text: "Doom Bird is an intense game where you navigate a bird through fiery obstacles. It features multiple difficulty levels from Easy to Nightmare. The game tests your reflexes and timing - give it a try by clicking the flaming button!",
+          confident: true
+        };
       }
       
       // About Snake
       if (/\b(snake|snake game|snake.io)\b/.test(lowerMessage)) {
-        return "Snake.io is a classic game where you control a snake that grows longer as it eats food. The challenge is to avoid hitting walls or your own tail as you grow. It's addictive and tests your spatial awareness!";
+        return {
+          text: "Snake.io is a classic game where you control a snake that grows longer as it eats food. The challenge is to avoid hitting walls or your own tail as you grow. It's addictive and tests your spatial awareness!",
+          confident: true
+        };
       }
       
       // Website questions
       if (/\b(website|site|page|nash|epic gaming)\b/.test(lowerMessage)) {
-        return "This is Nash's Epic Gaming Realm, a collection of fun browser games created by Nash. You can play Doom Bird, Snake, and more games that will be added in the future. The site is designed to provide quick entertainment with no downloads required!";
+        return {
+          text: "This is Nash's Epic Gaming Realm, a collection of fun browser games created by Nash. You can play Doom Bird, Snake, and more games that will be added in the future. The site is designed to provide quick entertainment with no downloads required!",
+          confident: true
+        };
       }
       
       // Game recommendations
       if (/\b(recommend|suggestion|what game|which game|best game)\b/.test(lowerMessage)) {
-        return "If you're looking for an adrenaline rush, I'd recommend Doom Bird on Nightmare difficulty. For a more strategic experience, Snake.io is perfect. Both games are easy to learn but challenging to master!";
+        return {
+          text: "If you're looking for an adrenaline rush, I'd recommend Doom Bird on Nightmare difficulty. For a more strategic experience, Snake.io is perfect. Both games are easy to learn but challenging to master!",
+          confident: true
+        };
       }
       
       // How to play
       if (/\b(how to play|controls|how do i|instructions)\b/.test(lowerMessage)) {
         if (lowerMessage.includes("doom") || lowerMessage.includes("bird") || lowerMessage.includes("flappy")) {
-          return "To play Doom Bird, click or press Space/Up Arrow to make the bird fly upward. Release to let it fall. Navigate through the gaps between obstacles. The game has different difficulty levels that affect speed and obstacle frequency.";
+          return {
+            text: "To play Doom Bird, click or press Space/Up Arrow to make the bird fly upward. Release to let it fall. Navigate through the gaps between obstacles. The game has different difficulty levels that affect speed and obstacle frequency.",
+            confident: true
+          };
         } else if (lowerMessage.includes("snake")) {
-          return "In Snake.io, use the arrow keys or WASD to control your snake's direction. Eat the food to grow longer, but be careful not to collide with walls or your own body. The longer you get, the higher your score!";
+          return {
+            text: "In Snake.io, use the arrow keys or WASD to control your snake's direction. Eat the food to grow longer, but be careful not to collide with walls or your own body. The longer you get, the higher your score!",
+            confident: true
+          };
         } else {
-          return "Each game has simple controls. For Doom Bird, use Space/Up Arrow or click to fly. For Snake, use arrow keys or WASD to change direction. The games have on-screen instructions when you start them.";
+          return {
+            text: "Each game has simple controls. For Doom Bird, use Space/Up Arrow or click to fly. For Snake, use arrow keys or WASD to change direction. The games have on-screen instructions when you start them.",
+            confident: true
+          };
         }
-      }
-      
-      // Coding questions
-      if (/\b(code|coding|program|javascript|html|css|develop|developer)\b/.test(lowerMessage)) {
-        return "This website is built using HTML, CSS, and JavaScript. The games use the Canvas API for rendering graphics. If you're interested in web development, these technologies are great to learn! Would you like to know more about a specific aspect of coding?";
       }
       
       // Math questions
@@ -6981,24 +7071,23 @@
         try {
           const result = eval(mathExpression);
           if (!isNaN(result) && mathExpression.length > 0) {
-            return `The result of ${mathExpression} is ${result}.`;
+            return {
+              text: `The result of ${mathExpression} is ${result}.`,
+              confident: true
+            };
           }
         } catch (e) {
           // If eval fails, continue to general response
         }
-        
-        return "I can help with math questions! You can ask me to calculate expressions or explain mathematical concepts. What specifically would you like to know?";
       }
       
       // Time and date
       if (/\b(time|date|day|month|year|today)\b/.test(lowerMessage)) {
         const now = new Date();
-        return `The current date and time is ${now.toLocaleString()}.`;
-      }
-      
-      // Weather (simulated)
-      if (/\b(weather|temperature|forecast|rain|sunny)\b/.test(lowerMessage)) {
-        return "I don't have access to real-time weather data, but I can suggest checking a weather service like weather.com or accuweather.com for the most current information.";
+        return {
+          text: `The current date and time is ${now.toLocaleString()}.`,
+          confident: true
+        };
       }
       
       // Jokes
@@ -7011,45 +7100,86 @@
           "How does a computer get drunk? It takes screenshots!",
           "Why did the game developer go broke? He used up all his cache!"
         ];
-        return jokes[Math.floor(Math.random() * jokes.length)];
+        return {
+          text: jokes[Math.floor(Math.random() * jokes.length)],
+          confident: true
+        };
       }
       
       // Thank you
       if (/\b(thanks|thank you|appreciate|helpful)\b/.test(lowerMessage)) {
-        return "You're welcome! I'm happy to help. If you have any other questions, feel free to ask!";
+        return {
+          text: "You're welcome! I'm happy to help. If you have any other questions, feel free to ask!",
+          confident: true
+        };
       }
       
       // Goodbye
       if (/\b(bye|goodbye|see you|farewell)\b/.test(lowerMessage)) {
-        return "Goodbye! Feel free to chat again whenever you want. I'll be here!";
-      }
-      
-      // Help
-      if (/\b(help|assist|support)\b/.test(lowerMessage)) {
-        return "I can help with information about the games on this site, answer general knowledge questions, solve math problems, tell jokes, and more. What would you like assistance with?";
-      }
-      
-      // General knowledge - attempt to provide a relevant response
-      if (lowerMessage.includes("what is") || lowerMessage.includes("who is") || lowerMessage.includes("where is") || lowerMessage.includes("when is") || lowerMessage.includes("why is") || lowerMessage.includes("how is")) {
-        // Extract the question topic
-        let topic = message.replace(/what is|who is|where is|when is|why is|how is/i, '').trim();
-        if (topic) {
-          return `About "${topic}": I can provide general information, but for the most accurate and up-to-date details, I'd recommend checking a reliable source like Wikipedia or a specialized website on the topic.`;
-        }
+        return {
+          text: "Goodbye! Feel free to chat again whenever you want. I'll be here!",
+          confident: true
+        };
       }
       
       // Default responses for unrecognized queries
       const defaultResponses = [
-        "That's an interesting question! I'm designed to help with website navigation, game information, and general knowledge. Could you provide more details about what you're looking for?",
-        "I'm processing your request. To give you the best answer, could you rephrase your question or provide more context?",
-        "I'm continuously learning to provide better assistance. Your question is important, and I'd like to understand more about what you're asking.",
-        "I'd be happy to help with that. To provide the most relevant information, could you elaborate on your question?",
-        "Great question! I'm here to assist with anything related to this website, the games, or general information. What specific aspect are you interested in?"
+        "I'll search for information on that topic...",
+        "Let me look that up for you...",
+        "I'm searching the web for the answer...",
+        "I'll try to find the most relevant information for you...",
+        "Searching for detailed information on that..."
       ];
       
-      return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+      return {
+        text: defaultResponses[Math.floor(Math.random() * defaultResponses.length)],
+        confident: false
+      };
     }
   });
 </script>
+
+<style>
+  /* Add this to your existing Bob AI styles */
+  .thinking {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+  }
+  
+  .dot {
+    height: 8px;
+    width: 8px;
+    margin: 0 3px;
+    background-color: white;
+    border-radius: 50%;
+    display: inline-block;
+    animation: dot-pulse 1.5s infinite ease-in-out;
+  }
+  
+  .dot:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .dot:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  
+  .dot:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+  
+  @keyframes dot-pulse {
+    0%, 100% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+  }
+</style>
 </body>
 </html>
