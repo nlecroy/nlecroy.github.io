@@ -96,6 +96,29 @@
             margin: 1rem 0 2rem 0;
             font-size: 1.1rem;
         }
+
+        .random-button {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .random-button:hover {
+            transform: scale(1.05) rotate(-2deg);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.5);
+        }
+
+        .random-button:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -124,6 +147,7 @@
 
         <div class="search-container">
             <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search games..." onkeyup="searchGames()">
+            <button class="random-button" onclick="playRandomGame()">🎲 Random Game</button>
         </div>
 
         <p class="game-count">Showing <span id="gameCount">12</span> games</p>
@@ -140,7 +164,7 @@
                     <div class="card-icon">🐦</div>
                     <h3>Flappy Bird</h3>
                     <p>Navigate through pipes in this classic game</p>
-                    <button class="play-button" onclick="window.open('https://nintendoboi2222.github.io/games/flappy-bird/', '_blank')">Play Now 🎮</button>
+                    <button class="play-button" onclick="window.open('https://nintendoboi2222.github.io/games/flappy-birb/', '_blank')">Play Now 🎮</button>
                 </div>
                 <div class="card card-other3" data-name="cookie clicker">
                     <div class="card-icon">🍪</div>
@@ -229,6 +253,24 @@
             });
 
             document.getElementById('gameCount').textContent = visibleCount;
+        }
+
+        function playRandomGame() {
+            const cards = document.querySelectorAll('.card-grid .card');
+            const visibleCards = Array.from(cards).filter(card => card.style.display !== 'none');
+
+            if (visibleCards.length === 0) {
+                alert('No games available! Try clearing your search.');
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * visibleCards.length);
+            const randomCard = visibleCards[randomIndex];
+            const playButton = randomCard.querySelector('.play-button');
+
+            if (playButton) {
+                playButton.click();
+            }
         }
     </script>
 </body>
