@@ -344,6 +344,9 @@
         let cameraShake = { x: 0, y: 0, intensity: 0, decay: 0.9 };
         let waveNumber = 1;
         let waspsPerWave = 1;
+        let waveStartTime = 0;
+        let waveDuration = 30000; // 30 seconds per wave
+        let enemiesKilledThisWave = 0;
 
         const weapons_list = [
             { name: 'Pistol', damage: 25, fireRate: 200, icon: '🔫', range: 80 },
@@ -614,24 +617,29 @@
             const frontLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
             frontLeftLeg.position.set(-0.6, -1, 1);
             frontLeftLeg.castShadow = true;
+            frontLeftLeg.name = 'frontLeftLeg';
             pugGroup.add(frontLeftLeg);
 
             const frontRightLeg = new THREE.Mesh(legGeometry, legMaterial);
             frontRightLeg.position.set(0.6, -1, 1);
             frontRightLeg.castShadow = true;
+            frontRightLeg.name = 'frontRightLeg';
             pugGroup.add(frontRightLeg);
 
             const backLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
             backLeftLeg.position.set(-0.6, -1, -1);
             backLeftLeg.castShadow = true;
+            backLeftLeg.name = 'backLeftLeg';
             pugGroup.add(backLeftLeg);
 
             const backRightLeg = new THREE.Mesh(legGeometry, legMaterial);
             backRightLeg.position.set(0.6, -1, -1);
             backRightLeg.castShadow = true;
+            backRightLeg.name = 'backRightLeg';
             pugGroup.add(backRightLeg);
 
             pugGroup.position.set(0, 1.5, 0);
+            pugGroup.userData.walkCycle = 0;
             scene.add(pugGroup);
             pug = pugGroup;
         }
@@ -937,10 +945,12 @@
                 emissiveIntensity: 0.3
             });
             const weaponMesh = new THREE.Mesh(geometry, material);
-            weaponMesh.position.set(x, 1, z);
+            const groundHeight = getGroundHeight(x, z);
+            weaponMesh.position.set(x, groundHeight + 1, z);
             weaponMesh.castShadow = true;
             weaponMesh.userData.weapon = weaponData;
             weaponMesh.userData.rotation = 0;
+            weaponMesh.userData.baseHeight = groundHeight;
             scene.add(weaponMesh);
             weapons.push(weaponMesh);
         }
@@ -1019,6 +1029,29 @@
             if (moveX !== 0 || moveZ !== 0) {
                 const angle = Math.atan2(moveX, moveZ);
                 pug.rotation.y = angle;
+
+                // Walking animation
+                pug.userData.walkCycle += 0.15;
+                const frontLeftLeg = pug.children.find(child => child.name === 'frontLeftLeg');
+                const frontRightLeg = pug.children.find(child => child.name === 'frontRightLeg');
+                const backLeftLeg = pug.children.find(child => child.name === 'backLeftLeg');
+                const backRightLeg = pug.children.find(child => child.name === 'backRightLeg');
+
+                if (frontLeftLeg) frontLeftLeg.rotation.x = Math.sin(pug.userData.walkCycle) * 0.5;
+                if (frontRightLeg) frontRightLeg.rotation.x = Math.sin(pug.userData.walkCycle + Math.PI) * 0.5;
+                if (backLeftLeg) backLeftLeg.rotation.x = Math.sin(pug.userData.walkCycle + Math.PI) * 0.5;
+                if (backRightLeg) backRightLeg.rotation.x = Math.sin(pug.userData.walkCycle) * 0.5;
+            } else {
+                // Reset legs when not moving
+                const frontLeftLeg = pug.children.find(child => child.name === 'frontLeftLeg');
+                const frontRightLeg = pug.children.find(child => child.name === 'frontRightLeg');
+                const backLeftLeg = pug.children.find(child => child.name === 'backLeftLeg');
+                const backRightLeg = pug.children.find(child => child.name === 'backRightLeg');
+
+                if (frontLeftLeg) frontLeftLeg.rotation.x = 0;
+                if (frontRightLeg) frontRightLeg.rotation.x = 0;
+                if (backLeftLeg) backLeftLeg.rotation.x = 0;
+                if (backRightLeg) backRightLeg.rotation.x = 0;
             }
 
             // Camera shake
@@ -1039,12 +1072,21 @@
 
             const now = Date.now();
 
+            // Time-based wave system - wave advances every 30 seconds
+            const currentWaveTime = now - waveStartTime;
+            if (currentWaveTime >= waveDuration) {
+                waveNumber++;
+                waveStartTime = now;
+                enemiesKilledThisWave = 0;
+                document.getElementById('wave').textContent = waveNumber;
+            }
+
+            // Spawn enemies periodically throughout the wave
             spawnTimer++;
-            // More aggressive spawning: faster rate, more wasps per wave
-            const spawnRate = Math.max(30, 120 - level * 5); // Gets faster much quicker
+            const spawnRate = Math.max(60, 180 - level * 8); // Slower, more meaningful spawns
             if (spawnTimer > spawnRate) {
                 // Spawn multiple wasps at once at higher levels
-                waspsPerWave = Math.min(Math.floor(1 + level / 3), 8); // Up to 8 wasps per wave
+                waspsPerWave = Math.min(Math.floor(1 + level / 2), 5); // Up to 5 wasps per spawn
 
                 for (let i = 0; i < waspsPerWave; i++) {
                     const angle = Math.random() * Math.PI * 2;
@@ -1055,7 +1097,6 @@
                     createWasp(x, z, waspType);
                 }
 
-                waveNumber++;
                 spawnTimer = 0;
 
                 // Boss wave every 5 levels
@@ -1068,7 +1109,8 @@
                 }
             }
 
-            if (Math.random() < 0.001) {
+            // Reduced weapon spawn rate - about every 55 seconds at 60fps
+            if (Math.random() < 0.0003) {
                 spawnWeapon();
             }
 
@@ -1192,7 +1234,8 @@
                 weapon.userData.rotation += 0.03;
                 weapon.rotation.y = weapon.userData.rotation;
                 weapon.rotation.x = Math.sin(weapon.userData.rotation * 2) * 0.2;
-                weapon.position.y = 1.5 + Math.sin(weapon.userData.rotation * 3) * 0.5;
+                // Bounce relative to ground height
+                weapon.position.y = weapon.userData.baseHeight + 1.5 + Math.sin(weapon.userData.rotation * 3) * 0.5;
 
                 const dist = pug.position.distanceTo(weapon.position);
                 if (dist < 3) {
@@ -1248,7 +1291,11 @@
             xpNeeded = 100;
             waveNumber = 1;
             waspsPerWave = 1;
+            waveStartTime = Date.now();
+            waveDuration = 30000;
+            enemiesKilledThisWave = 0;
             cameraShake = { x: 0, y: 0, intensity: 0, decay: 0.9 };
+            pug.userData.walkCycle = 0;
             document.getElementById('level').textContent = '1';
             document.getElementById('xp').textContent = '0';
             document.getElementById('xpNeeded').textContent = '100';
