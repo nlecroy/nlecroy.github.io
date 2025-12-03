@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Help Wash Pibble's Belly!</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .donate-header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.95) 0%, rgba(255, 218, 185, 0.95) 100%);
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 3rem;
+        }
+
+        .donate-header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #ff6b35, #f093fb, #764ba2);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: colorFlow 3s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        .pibble-section {
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            text-align: center;
+        }
+
+        .pibble-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            margin-bottom: 2rem;
+        }
+
+        .pibble-emoji {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .donate-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4ecdc4, #44a6c6);
+            color: white;
+            padding: 1.5rem 3rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.4);
+        }
+
+        .donate-button:hover {
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 15px 40px rgba(78, 205, 196, 0.6);
+        }
+
+        .why-donate {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .why-donate h3 {
+            color: #764ba2;
+            margin-bottom: 1rem;
+        }
+
+        .why-list {
+            text-align: left;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+
+        .why-list li {
+            margin: 0.75rem 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .belly-meter {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .belly-meter p {
+            margin: 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        @keyframes colorFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>🐶 PUG PARADISE</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#games">Pug Games</a></li>
+                <li><a href="other-games.html">Other Games</a></li>
+                <li><a href="index.html#hacks">Hacks</a></li>
+                <li><a href="memes.html">Memes</a></li>
+                <li><a href="donate.html" class="active">Donate</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+                <li><a href="index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="donate-header">
+            <h1>🫧 Help Wash Pibble's Belly! 🛁</h1>
+            <p style="font-size: 1.3rem; color: #666; margin-bottom: 0.5rem;">Support the site and keep Pibble clean!</p>
+            <p style="font-size: 1rem; color: #888; font-style: italic;">Every donation helps maintain this site and wash one very good dog</p>
+        </div>
+
+        <section class="pibble-section">
+            <div class="pibble-card">
+                <div class="pibble-emoji">🐕</div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Meet Pibble!</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 1.5rem; line-height: 1.6;">
+                    Pibble is a very good dog who loves belly rubs, treats, and getting VERY dirty.
+                    Your donations help keep Pibble's belly squeaky clean! 🧼✨
+                </p>
+
+                <a href="https://gl.me/u/T22BFg2859vK" target="_blank" class="donate-button">
+                    💸 Donate Now via Greenlight 💸
+                </a>
+
+                <div class="belly-meter">
+                    <p><strong>🎯 Belly Washing Fund Goal:</strong></p>
+                    <p style="font-size: 2rem; margin: 1rem 0;">🛁🫧🧼</p>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem;">
+                        All proceeds go directly to Pibble belly washing supplies!
+                    </p>
+                </div>
+            </div>
+
+            <div class="why-donate">
+                <h3>🌟 Why Donate?</h3>
+                <ul class="why-list">
+                    <li>🐕 <strong>Wash Pibble's Belly</strong> - The primary mission! Keep that belly clean!</li>
+                    <li>🎮 <strong>Support This Site</strong> - Help keep the games running and add more content</li>
+                    <li>✨ <strong>Free Games Forever</strong> - All games remain completely free for everyone</li>
+                    <li>💖 <strong>Support a Good Cause</strong> - Make Pibble (and the creator) very happy!</li>
+                    <li>🚀 <strong>New Features</strong> - More games, better performance, cooler features</li>
+                </ul>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #ffd89b, #19547b); padding: 2rem; border-radius: 20px; margin-top: 2rem;">
+                <h3 style="color: white; font-size: 2rem; margin-bottom: 1rem;">🙏 Thank You!</h3>
+                <p style="color: white; font-size: 1.1rem; line-height: 1.6;">
+                    Every donation, no matter how small, makes a huge difference!
+                    Pibble sends belly rubs and tail wags your way! 🐾❤️
+                </p>
+                <p style="color: rgba(255,255,255,0.9); margin-top: 1rem; font-style: italic;">
+                    - Nash & Pibble 🐶
+                </p>
+            </div>
+        </section>
+
+        <button class="back-button" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pug Paradise. Made with pug love and HTML. Pibble approved! 🐕</p>
+    </footer>
+</body>
+</html>
