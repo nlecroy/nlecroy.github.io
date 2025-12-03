@@ -284,6 +284,9 @@
             Level: <span id="level">1</span> | XP: <span id="xp">0</span>/<span id="xpNeeded">100</span>
         </div>
         <div class="hud-item">
+            Wave: <span id="wave">1</span> | Enemies: <span id="enemyCount">0</span>
+        </div>
+        <div class="hud-item">
             <div>Health</div>
             <div class="health-bar">
                 <div class="health-fill" id="healthFill" style="width: 100%;"></div>
@@ -338,6 +341,9 @@
 
         let playerSpeed = 0.4;
         let healthRegenRate = 0;
+        let cameraShake = { x: 0, y: 0, intensity: 0, decay: 0.9 };
+        let waveNumber = 1;
+        let waspsPerWave = 1;
 
         const weapons_list = [
             { name: 'Pistol', damage: 25, fireRate: 200, icon: '🔫', range: 80 },
@@ -631,16 +637,29 @@
         }
 
         const waspTypes = {
-            normal: { color: 0xffeb3b, health: 50, speed: 0.1, damage: 5, xp: 10, scale: 1 },
-            fast: { color: 0xff6b6b, health: 30, speed: 0.18, damage: 3, xp: 15, scale: 0.8 },
-            tank: { color: 0x8b00ff, health: 120, speed: 0.06, damage: 10, xp: 30, scale: 1.4 },
-            bomber: { color: 0xff4500, health: 40, speed: 0.12, damage: 0, xp: 25, scale: 1.1 },
-            boss: { color: 0xff0000, health: 300, speed: 0.08, damage: 15, xp: 100, scale: 2 }
+            normal: { color: 0xffeb3b, baseHealth: 50, baseSpeed: 0.1, baseDamage: 5, xp: 10, scale: 1 },
+            fast: { color: 0xff6b6b, baseHealth: 30, baseSpeed: 0.18, baseDamage: 3, xp: 15, scale: 0.8 },
+            tank: { color: 0x8b00ff, baseHealth: 120, baseSpeed: 0.06, baseDamage: 10, xp: 30, scale: 1.4 },
+            bomber: { color: 0xff4500, baseHealth: 40, baseSpeed: 0.12, baseDamage: 0, xp: 25, scale: 1.1 },
+            boss: { color: 0xff0000, baseHealth: 300, baseSpeed: 0.08, baseDamage: 15, xp: 100, scale: 2 }
         };
+
+        function getScaledWaspStats(type) {
+            const base = waspTypes[type];
+            const difficultyMultiplier = 1 + (level - 1) * 0.15; // 15% increase per level
+            return {
+                health: Math.floor(base.baseHealth * difficultyMultiplier),
+                speed: base.baseSpeed * (1 + (level - 1) * 0.05), // 5% speed increase per level
+                damage: Math.floor(base.baseDamage * difficultyMultiplier),
+                xp: base.xp,
+                scale: base.scale
+            };
+        }
 
         function createWasp(x, z, type = 'normal') {
             const waspGroup = new THREE.Group();
             const waspData = waspTypes[type];
+            const scaledStats = getScaledWaspStats(type);
 
             const yellowMaterial = new THREE.MeshStandardMaterial({
                 color: type === 'boss' ? 0xff0000 : (type === 'fast' ? 0xff6b6b : (type === 'tank' ? 0x8b00ff : (type === 'bomber' ? 0xff4500 : 0xffeb3b))),
@@ -791,11 +810,11 @@
             waspGroup.add(rightWingBack);
 
             waspGroup.position.set(x, 3, z);
-            waspGroup.userData.health = waspData.health;
-            waspGroup.userData.maxHealth = waspData.health;
-            waspGroup.userData.speed = waspData.speed;
-            waspGroup.userData.damage = waspData.damage;
-            waspGroup.userData.xpValue = waspData.xp;
+            waspGroup.userData.health = scaledStats.health;
+            waspGroup.userData.maxHealth = scaledStats.health;
+            waspGroup.userData.speed = scaledStats.speed;
+            waspGroup.userData.damage = scaledStats.damage;
+            waspGroup.userData.xpValue = scaledStats.xp;
             waspGroup.userData.type = type;
             waspGroup.userData.lastDamage = 0;
             waspGroup.userData.wingIndices = [waspGroup.children.length - 4, waspGroup.children.length - 3, waspGroup.children.length - 2, waspGroup.children.length - 1];
@@ -810,6 +829,30 @@
             if (rand < 0.25 && level >= 3) return 'tank';
             if (rand < 0.45) return 'fast';
             return 'normal';
+        }
+
+        function createHitParticles(position) {
+            for (let i = 0; i < 8; i++) {
+                const geometry = new THREE.SphereGeometry(0.15);
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0xffaa00,
+                    emissive: 0xff6600,
+                    emissiveIntensity: 0.8
+                });
+                const particle = new THREE.Mesh(geometry, material);
+                particle.position.copy(position);
+
+                const direction = new THREE.Vector3(
+                    (Math.random() - 0.5) * 2,
+                    Math.random() * 2,
+                    (Math.random() - 0.5) * 2
+                );
+                particle.userData.velocity = direction.normalize().multiplyScalar(0.3);
+                particle.userData.life = 30;
+
+                scene.add(particle);
+                projectiles.push(particle);
+            }
         }
 
         function addXP(amount) {
@@ -953,6 +996,8 @@
             const minutes = Math.floor(survivalTime / 60);
             const seconds = survivalTime % 60;
             document.getElementById('time').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('wave').textContent = waveNumber;
+            document.getElementById('enemyCount').textContent = wasps.length;
 
             if (healthRegenRate > 0) {
                 health = Math.min(health + healthRegenRate / 60, maxHealth);
@@ -976,22 +1021,51 @@
                 pug.rotation.y = angle;
             }
 
-            camera.position.x = pug.position.x;
-            camera.position.z = pug.position.z + 25;
-            camera.position.y = pug.position.y + 15;
-            camera.lookAt(pug.position);
+            // Camera shake
+            if (cameraShake.intensity > 0.01) {
+                cameraShake.x = (Math.random() - 0.5) * cameraShake.intensity;
+                cameraShake.y = (Math.random() - 0.5) * cameraShake.intensity;
+                cameraShake.intensity *= cameraShake.decay;
+            } else {
+                cameraShake.x = 0;
+                cameraShake.y = 0;
+                cameraShake.intensity = 0;
+            }
+
+            camera.position.x = pug.position.x + cameraShake.x;
+            camera.position.z = pug.position.z + 25 + cameraShake.y;
+            camera.position.y = pug.position.y + 15 + cameraShake.y;
+            camera.lookAt(new THREE.Vector3(pug.position.x + cameraShake.x, pug.position.y, pug.position.z + cameraShake.y));
 
             const now = Date.now();
 
             spawnTimer++;
-            if (spawnTimer > Math.max(60, 120 - level * 3)) {
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 50 + Math.random() * 30;
-                const x = pug.position.x + Math.cos(angle) * distance;
-                const z = pug.position.z + Math.sin(angle) * distance;
-                const waspType = getRandomWaspType();
-                createWasp(x, z, waspType);
+            // More aggressive spawning: faster rate, more wasps per wave
+            const spawnRate = Math.max(30, 120 - level * 5); // Gets faster much quicker
+            if (spawnTimer > spawnRate) {
+                // Spawn multiple wasps at once at higher levels
+                waspsPerWave = Math.min(Math.floor(1 + level / 3), 8); // Up to 8 wasps per wave
+
+                for (let i = 0; i < waspsPerWave; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 50 + Math.random() * 30;
+                    const x = pug.position.x + Math.cos(angle) * distance;
+                    const z = pug.position.z + Math.sin(angle) * distance;
+                    const waspType = getRandomWaspType();
+                    createWasp(x, z, waspType);
+                }
+
+                waveNumber++;
                 spawnTimer = 0;
+
+                // Boss wave every 5 levels
+                if (level % 5 === 0 && Math.random() < 0.3) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 60;
+                    const x = pug.position.x + Math.cos(angle) * distance;
+                    const z = pug.position.z + Math.sin(angle) * distance;
+                    createWasp(x, z, 'boss');
+                }
             }
 
             if (Math.random() < 0.001) {
@@ -1042,6 +1116,7 @@
                 if (dist < 3 && now - wasp.userData.lastDamage > 500) {
                     health -= wasp.userData.damage;
                     wasp.userData.lastDamage = now;
+                    cameraShake.intensity = 2; // Screen shake on damage
                     document.getElementById('healthFill').style.width = Math.max(0, health / maxHealth * 100) + '%';
                     if (health <= 0) {
                         gameOver();
@@ -1050,6 +1125,20 @@
             });
 
             projectiles.forEach((projectile, index) => {
+                // Handle hit particles
+                if (projectile.userData.life !== undefined) {
+                    projectile.userData.life--;
+                    projectile.userData.velocity.y -= 0.02; // Gravity
+                    projectile.position.add(projectile.userData.velocity);
+                    projectile.scale.multiplyScalar(0.95);
+
+                    if (projectile.userData.life <= 0) {
+                        scene.remove(projectile);
+                        projectiles.splice(index, 1);
+                    }
+                    return;
+                }
+
                 projectile.position.add(projectile.userData.velocity);
                 projectile.userData.distance += projectile.userData.velocity.length();
 
@@ -1063,10 +1152,16 @@
                     const dist = projectile.position.distanceTo(wasp.position);
                     if (dist < 1.5) {
                         wasp.userData.health -= projectile.userData.damage;
+
+                        // Hit particle effect
+                        createHitParticles(wasp.position);
+                        cameraShake.intensity = Math.min(cameraShake.intensity + 0.3, 3);
+
                         scene.remove(projectile);
                         projectiles.splice(index, 1);
 
                         if (wasp.userData.health <= 0) {
+                            cameraShake.intensity = Math.min(cameraShake.intensity + 0.8, 4);
                             if (wasp.userData.type === 'bomber') {
                                 const bombRange = 10;
                                 wasps.forEach(otherWasp => {
@@ -1151,9 +1246,14 @@
             level = 1;
             xp = 0;
             xpNeeded = 100;
+            waveNumber = 1;
+            waspsPerWave = 1;
+            cameraShake = { x: 0, y: 0, intensity: 0, decay: 0.9 };
             document.getElementById('level').textContent = '1';
             document.getElementById('xp').textContent = '0';
             document.getElementById('xpNeeded').textContent = '100';
+            document.getElementById('wave').textContent = '1';
+            document.getElementById('enemyCount').textContent = '0';
         }
 
         function restartGame() {
