@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pugverse Menu - Pug Paradise</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .menu-hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.95) 0%, rgba(0, 242, 254, 0.95) 100%);
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 3rem;
+        }
+
+        .menu-hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .menu-hero p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .menu-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .menu-card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .menu-card h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .menu-card p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .menu-card.pug-games {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .menu-card.other-games {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .menu-card.hacks {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+        }
+
+        .menu-card.memes {
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+        }
+
+        .menu-card.donate {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .menu-card.contact {
+            background: linear-gradient(135deg, #4facfe, #764ba2);
+        }
+
+        .menu-card.about {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>🐶 PUG PARADISE</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#games">Pug Games</a></li>
+                <li><a href="other-games.html">Other Games</a></li>
+                <li><a href="index.html#hacks">Hacks</a></li>
+                <li><a href="memes.html">Memes</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="menu-hero">
+            <h1>🌟 Welcome to the Pugverse! 🌟</h1>
+            <p>Choose your adventure - where do you want to go?</p>
+        </div>
+
+        <div class="menu-grid">
+            <a href="index.html#games" class="menu-card pug-games">
+                <span class="menu-card-icon">🎮</span>
+                <h2>Pug Games</h2>
+                <p>Play custom pug-themed games like Pug Runner, Pug Clicker, Pug Memory, and Pug Survivor 3D!</p>
+            </a>
+
+            <a href="other-games.html" class="menu-card other-games">
+                <span class="menu-card-icon">🕹️</span>
+                <h2>Other Games</h2>
+                <p>Explore 50+ awesome games including 2048, Slope, Cookie Clicker, Retro Bowl, and many more!</p>
+            </a>
+
+            <a href="index.html#hacks" class="menu-card hacks">
+                <span class="menu-card-icon">💻</span>
+                <h2>Hacking Guides</h2>
+                <p>Learn cybersecurity with Kali Linux setup guides, Nmap commands, and ethical hacking tutorials!</p>
+            </a>
+
+            <a href="memes.html" class="menu-card memes">
+                <span class="menu-card-icon">😂</span>
+                <h2>Memes</h2>
+                <p>Laugh at hilarious pug memes, programming jokes, and internet humor. Fresh memes daily!</p>
+            </a>
+
+            <a href="donate.html" class="menu-card donate">
+                <span class="menu-card-icon">💖</span>
+                <h2>Donate</h2>
+                <p>Support the site and help wash Pibble's belly! Every donation keeps the site running and Pibble clean!</p>
+            </a>
+
+            <a href="contact.html" class="menu-card contact">
+                <span class="menu-card-icon">📧</span>
+                <h2>Contact</h2>
+                <p>Have questions? Want to request a game? Found a bug? Get in touch and let us know!</p>
+            </a>
+
+            <a href="index.html#about" class="menu-card about">
+                <span class="menu-card-icon">ℹ️</span>
+                <h2>About</h2>
+                <p>Learn more about Pug Paradise, its creator Nash, and the story behind this pug-tastic website!</p>
+            </a>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
+    </footer>
+</body>
+</html>

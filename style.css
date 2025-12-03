@@ -4,6 +4,25 @@
     box-sizing: border-box;
 }
 
+/* Performance Optimizations */
+.card, .menu-card, .cta-button, .float-emoji, .pug-image {
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+}
+
+img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #ffd89b 0%, #19547b 50%, #f093fb 100%);
