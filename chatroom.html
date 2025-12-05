@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pug Chatroom - Pug Paradise</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .chatroom-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .online-count {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ffd89b10, #19547b10);
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .message-username {
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .message-text {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+        }
+
+        .system-message {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .chat-input-container {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .username-setup {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .username-input, .message-input {
+            flex: 1;
+            padding: 1rem;
+            border: 3px solid #4facfe;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .username-input:focus, .message-input:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.3);
+        }
+
+        .chat-button {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.5);
+        }
+
+        .chat-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message-form {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .emoji-picker {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .emoji-btn {
+            background: white;
+            border: 2px solid #4facfe;
+            border-radius: 10px;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.2);
+            background: #4facfe;
+        }
+
+        .no-messages {
+            text-align: center;
+            color: #999;
+            padding: 3rem;
+            font-size: 1.2rem;
+        }
+
+        .typing-indicator {
+            color: #999;
+            font-style: italic;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .chatroom-container {
+                height: calc(100vh - 100px);
+                margin: 1rem;
+            }
+
+            .username-setup, .message-form {
+                flex-direction: column;
+            }
+
+            .chat-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>🐶 PUG PARADISE</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#games">Pug Games</a></li>
+                <li><a href="other-games.html">Other Games</a></li>
+                <li><a href="index.html#hacks">Hacks</a></li>
+                <li><a href="memes.html">Memes</a></li>
+                <li><a href="chatroom.html">Chat</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="chatroom-container">
+            <div class="chat-header">
+                <h1>💬 Pug Paradise Chatroom</h1>
+                <div class="online-count" id="onlineCount">🌐 Real-time chat - Say hi to fellow pug lovers!</div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="no-messages">
+                    <h2>👋 Welcome to the Pug Paradise Chatroom!</h2>
+                    <p>Enter your username below and start chatting!</p>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div id="usernameSetup" class="username-setup">
+                    <input type="text" class="username-input" id="usernameInput" placeholder="Enter your username..." maxlength="20">
+                    <button class="chat-button" onclick="setUsername()">Join Chat 🚀</button>
+                </div>
+
+                <div id="chatInterface" style="display: none;">
+                    <div class="emoji-picker">
+                        <button class="emoji-btn" onclick="addEmoji('🐶')">🐶</button>
+                        <button class="emoji-btn" onclick="addEmoji('❤️')">❤️</button>
+                        <button class="emoji-btn" onclick="addEmoji('😂')">😂</button>
+                        <button class="emoji-btn" onclick="addEmoji('👍')">👍</button>
+                        <button class="emoji-btn" onclick="addEmoji('🎉')">🎉</button>
+                        <button class="emoji-btn" onclick="addEmoji('🔥')">🔥</button>
+                        <button class="emoji-btn" onclick="addEmoji('✨')">✨</button>
+                        <button class="emoji-btn" onclick="addEmoji('🎮')">🎮</button>
+                    </div>
+                    <form class="message-form" onsubmit="sendMessage(event)">
+                        <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500" autocomplete="off">
+                        <button type="submit" class="chat-button">Send 📨</button>
+                    </form>
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <span style="color: #4facfe; font-weight: bold;">Chatting as: <span id="currentUsername"></span></span>
+                        <button onclick="changeUsername()" style="margin-left: 1rem; background: none; border: none; color: #4facfe; cursor: pointer; text-decoration: underline;">Change Username</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; margin: 2rem auto; display: block;">
+            🏠 Back to Home
+        </button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onChildAdded, limitToLast, query, serverTimestamp, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
+            authDomain: "pug-31646.firebaseapp.com",
+            databaseURL: "https://pug-31646-default-rtdb.firebaseio.com",
+            projectId: "pug-31646",
+            storageBucket: "pug-31646.firebasestorage.app",
+            messagingSenderId: "278556306232",
+            appId: "1:278556306232:web:7a82def7c10a1c22f2afcd",
+            measurementId: "G-2TBFS939SL"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const messagesRef = ref(database, 'chatroom/messages');
+
+        let currentUser = localStorage.getItem('chatUsername') || '';
+        let isFirstLoad = true;
+
+        // Check if user already has a username
+        if (currentUser) {
+            document.getElementById('usernameInput').value = currentUser;
+            setUsername();
+        }
+
+        // Load messages from Firebase (last 100 messages)
+        const messagesQuery = query(messagesRef, limitToLast(100));
+        onChildAdded(messagesQuery, (snapshot) => {
+            const message = snapshot.data();
+            displayMessage(message, snapshot.key);
+
+            // Auto-scroll to bottom on new messages (but not on initial load)
+            if (!isFirstLoad) {
+                scrollToBottom();
+            }
+        });
+
+        // Set flag after initial load
+        setTimeout(() => {
+            isFirstLoad = false;
+            scrollToBottom();
+        }, 1000);
+
+        function setUsername() {
+            const username = document.getElementById('usernameInput').value.trim();
+
+            if (!username) {
+                alert('Please enter a username!');
+                return;
+            }
+
+            // Sanitize username (remove special characters)
+            const sanitized = username.replace(/[^a-zA-Z0-9_\s]/g, '');
+            if (sanitized !== username) {
+                alert('Username can only contain letters, numbers, spaces, and underscores!');
+                return;
+            }
+
+            currentUser = username;
+            localStorage.setItem('chatUsername', username);
+
+            document.getElementById('usernameSetup').style.display = 'none';
+            document.getElementById('chatInterface').style.display = 'block';
+            document.getElementById('currentUsername').textContent = username;
+            document.getElementById('messageInput').focus();
+
+            // Send system message
+            sendSystemMessage(`${username} joined the chat! 👋`);
+        }
+
+        function changeUsername() {
+            sendSystemMessage(`${currentUser} left the chat 👋`);
+            currentUser = '';
+            localStorage.removeItem('chatUsername');
+            document.getElementById('usernameSetup').style.display = 'flex';
+            document.getElementById('chatInterface').style.display = 'none';
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('usernameInput').focus();
+        }
+
+        function sendMessage(event) {
+            event.preventDefault();
+
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+
+            if (!messageText) {
+                return;
+            }
+
+            if (!currentUser) {
+                alert('Please set your username first!');
+                return;
+            }
+
+            const message = {
+                username: currentUser,
+                text: messageText,
+                timestamp: Date.now(),
+                type: 'user'
+            };
+
+            push(messagesRef, message);
+            messageInput.value = '';
+            messageInput.focus();
+        }
+
+        function sendSystemMessage(text) {
+            const message = {
+                text: text,
+                timestamp: Date.now(),
+                type: 'system'
+            };
+            push(messagesRef, message);
+        }
+
+        function displayMessage(message, key) {
+            const container = document.getElementById('messagesContainer');
+
+            // Remove "no messages" placeholder
+            const noMessages = container.querySelector('.no-messages');
+            if (noMessages) {
+                noMessages.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+
+            if (message.type === 'system') {
+                messageDiv.className = 'system-message';
+                messageDiv.textContent = message.text;
+            } else {
+                messageDiv.className = 'message';
+
+                const time = new Date(message.timestamp).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-username">${escapeHtml(message.username)}</span>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <div class="message-text">${escapeHtml(message.text)}</div>
+                `;
+            }
+
+            messageDiv.dataset.key = key;
+            container.appendChild(messageDiv);
+
+            // Limit to 100 messages in DOM
+            const allMessages = container.querySelectorAll('.message, .system-message');
+            if (allMessages.length > 100) {
+                allMessages[0].remove();
+            }
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('messagesContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addEmoji(emoji) {
+            const messageInput = document.getElementById('messageInput');
+            messageInput.value += emoji;
+            messageInput.focus();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Make functions global
+        window.setUsername = setUsername;
+        window.changeUsername = changeUsername;
+        window.sendMessage = sendMessage;
+        window.addEmoji = addEmoji;
+
+        // Handle Enter key for username
+        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                setUsername();
+            }
+        });
+
+        // Auto-cleanup old messages (older than 24 hours) - runs every hour
+        function cleanupOldMessages() {
+            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+            onValue(messagesRef, (snapshot) => {
+                snapshot.forEach((child) => {
+                    const message = child.val();
+                    if (message.timestamp < oneDayAgo) {
+                        remove(ref(database, `chatroom/messages/${child.key}`));
+                    }
+                });
+            }, { onlyOnce: true });
+        }
+
+        // Run cleanup every hour
+        setInterval(cleanupOldMessages, 60 * 60 * 1000);
+    </script>
+</body>
+</html>
