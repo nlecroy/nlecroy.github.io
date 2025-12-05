@@ -6,34 +6,140 @@
     <title>Pug Chatroom - Pug Paradise</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        body {
+            overflow-x: hidden;
+        }
+
+        /* Password Screen */
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        }
+
+        .password-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .password-box h1 {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 1rem;
+            border: 3px solid #667eea;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .password-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-submit:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
         .chatroom-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             overflow: hidden;
-            height: 80vh;
+            height: 85vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .chat-header {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             padding: 1.5rem;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .chat-header h1 {
             margin: 0;
             font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .online-count {
+        .header-info {
+            text-align: right;
             font-size: 0.9rem;
-            opacity: 0.9;
+        }
+
+        .online-users {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             margin-top: 0.5rem;
+        }
+
+        .admin-toggle {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .admin-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
         }
 
         .messages-container {
@@ -41,11 +147,22 @@
             overflow-y: auto;
             padding: 1.5rem;
             background: linear-gradient(135deg, #ffd89b10, #19547b10);
+            position: relative;
         }
 
         .message {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             animation: slideIn 0.3s ease;
+            position: relative;
+            padding: 1rem;
+            background: rgba(255,255,255,0.5);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .message:hover {
+            background: rgba(255,255,255,0.8);
+            transform: translateX(5px);
         }
 
         @keyframes slideIn {
@@ -63,12 +180,13 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
         }
 
         .message-username {
             font-weight: bold;
-            color: #4facfe;
+            color: #667eea;
+            font-size: 1.1rem;
         }
 
         .message-time {
@@ -82,6 +200,38 @@
             border-radius: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             word-wrap: break-word;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .reaction-btn, .delete-msg-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .reaction-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .delete-msg-btn {
+            background: #ff4444;
+            color: white;
+        }
+
+        .delete-msg-btn:hover {
+            background: #cc0000;
         }
 
         .message-gif {
@@ -102,6 +252,9 @@
             font-style: italic;
             margin: 1rem 0;
             font-size: 0.9rem;
+            padding: 0.5rem;
+            background: rgba(200,200,200,0.2);
+            border-radius: 10px;
         }
 
         .ban-message {
@@ -113,12 +266,26 @@
             padding: 1rem;
             background: #ffebee;
             border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(255,68,68,0.3);
+        }
+
+        .typing-indicator {
+            padding: 0.5rem 1rem;
+            color: #667eea;
+            font-style: italic;
+            font-size: 0.9rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
 
         .chat-input-container {
             padding: 1.5rem;
-            background: #f8f9fa;
-            border-top: 2px solid #e0e0e0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-top: 3px solid #667eea;
         }
 
         .username-setup {
@@ -130,19 +297,21 @@
         .username-input, .message-input {
             flex: 1;
             padding: 1rem;
-            border: 3px solid #4facfe;
+            border: 3px solid #667eea;
             border-radius: 25px;
             font-size: 1rem;
             outline: none;
+            transition: all 0.3s ease;
         }
 
         .username-input:focus, .message-input:focus {
-            border-color: #00f2fe;
-            box-shadow: 0 0 10px rgba(79, 172, 254, 0.3);
+            border-color: #764ba2;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            transform: scale(1.02);
         }
 
         .chat-button {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -151,22 +320,18 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
         .chat-button:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.5);
-        }
-
-        .chat-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
         .message-form {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
 
         .emoji-picker {
@@ -178,7 +343,7 @@
 
         .emoji-btn, .gif-btn {
             background: white;
-            border: 2px solid #4facfe;
+            border: 2px solid #667eea;
             border-radius: 10px;
             padding: 0.5rem;
             font-size: 1.5rem;
@@ -188,26 +353,122 @@
 
         .emoji-btn:hover, .gif-btn:hover {
             transform: scale(1.2);
-            background: #4facfe;
+            background: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
         .gif-btn {
             font-size: 1rem;
             font-weight: bold;
-            color: #4facfe;
+            color: #667eea;
         }
 
         .gif-btn:hover {
             color: white;
         }
 
-        .no-messages {
-            text-align: center;
-            color: #999;
-            padding: 3rem;
-            font-size: 1.2rem;
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.98), rgba(118, 75, 162, 0.98));
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 10000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            color: white;
         }
 
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .admin-close {
+            background: #ff4444;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-close:hover {
+            background: #cc0000;
+            transform: rotate(90deg);
+        }
+
+        .admin-section {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-section h3 {
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .admin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.5);
+        }
+
+        .ban-input {
+            padding: 0.75rem;
+            border: 2px solid white;
+            border-radius: 15px;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .user-list, .banned-list {
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .user-item, .banned-item {
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* GIF Modal */
         .gif-modal {
             display: none;
             position: fixed;
@@ -216,7 +477,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.8);
-            z-index: 10000;
+            z-index: 9999;
             justify-content: center;
             align-items: center;
             padding: 2rem;
@@ -229,36 +490,6 @@
             max-width: 800px;
             max-height: 80vh;
             overflow-y: auto;
-            position: relative;
-        }
-
-        .gif-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .gif-modal-header h2 {
-            margin: 0;
-            color: #4facfe;
-        }
-
-        .close-gif-modal {
-            background: #ff4444;
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-gif-modal:hover {
-            background: #cc0000;
-            transform: rotate(90deg);
         }
 
         .gif-grid {
@@ -278,28 +509,14 @@
 
         .gif-option:hover {
             transform: scale(1.05);
-            border-color: #4facfe;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.5);
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
         }
 
         .gif-option img {
             width: 100%;
             height: 150px;
             object-fit: cover;
-        }
-
-        .custom-gif-input {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .custom-gif-input input {
-            flex: 1;
-            padding: 1rem;
-            border: 3px solid #4facfe;
-            border-radius: 25px;
-            font-size: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -315,15 +532,23 @@
             .chat-button {
                 width: 100%;
             }
-
-            .gif-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
         }
     </style>
 </head>
 <body>
-    <header>
+    <!-- Password Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <h1>🔒 Pug Paradise Chatroom</h1>
+            <p style="color: #666; font-size: 1.1rem;">Enter the secret password to access the chat</p>
+            <input type="password" class="password-input" id="chatPassword" placeholder="Enter password..." onkeypress="if(event.key==='Enter') checkChatPassword()">
+            <br>
+            <button class="password-submit" onclick="checkChatPassword()">Enter Chat 🚀</button>
+            <p style="color: #999; margin-top: 1rem; font-size: 0.9rem;">Hint: A beloved character from Rapture</p>
+        </div>
+    </div>
+
+    <header style="display: none;" id="mainHeader">
         <nav class="navbar">
             <div class="logo">
                 <h1>🐶 PUG PARADISE</h1>
@@ -342,20 +567,29 @@
         </nav>
     </header>
 
-    <main>
+    <main style="display: none;" id="mainContent">
         <div class="chatroom-container">
             <div class="chat-header">
-                <h1>💬 Pug Paradise Chatroom</h1>
-                <div class="online-count" id="onlineCount">🌐 Real-time chat - Keep it clean or get banned! 🚫</div>
+                <div>
+                    <h1>💬 Pug Paradise Chatroom</h1>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Keep it clean or get banned! 🚫</div>
+                </div>
+                <div class="header-info">
+                    <button class="admin-toggle" onclick="showAdminLogin()">🔧 Admin Panel</button>
+                    <div class="online-users">
+                        👥 Online: <span id="onlineCount">0</span>
+                    </div>
+                </div>
             </div>
 
             <div class="messages-container" id="messagesContainer">
-                <div class="no-messages">
+                <div class="no-messages" style="text-align: center; padding: 3rem; color: #999;">
                     <h2>👋 Welcome to the Pug Paradise Chatroom!</h2>
                     <p>Enter your username below and start chatting!</p>
-                    <p style="color: #ff4444; font-weight: bold;">⚠️ No profanity allowed - You will be permanently banned!</p>
                 </div>
             </div>
+
+            <div id="typingIndicator" class="typing-indicator" style="display: none;"></div>
 
             <div class="chat-input-container">
                 <div id="usernameSetup" class="username-setup">
@@ -376,12 +610,12 @@
                         <button class="gif-btn" onclick="openGifPicker()">🖼️ GIF</button>
                     </div>
                     <form class="message-form" onsubmit="sendMessage(event)">
-                        <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500" autocomplete="off">
+                        <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500" autocomplete="off" onkeyup="handleTyping()">
                         <button type="submit" class="chat-button">Send 📨</button>
                     </form>
                     <div style="text-align: center; margin-top: 1rem;">
-                        <span style="color: #4facfe; font-weight: bold;">Chatting as: <span id="currentUsername"></span></span>
-                        <button onclick="changeUsername()" style="margin-left: 1rem; background: none; border: none; color: #4facfe; cursor: pointer; text-decoration: underline;">Change Username</button>
+                        <span style="color: #667eea; font-weight: bold;">Chatting as: <span id="currentUsername"></span></span>
+                        <button onclick="changeUsername()" style="margin-left: 1rem; background: none; border: none; color: #667eea; cursor: pointer; text-decoration: underline;">Change Username</button>
                     </div>
                 </div>
             </div>
@@ -392,22 +626,71 @@
         </button>
     </main>
 
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h2>🔧 PUG ADMIN CONTROL CENTER</h2>
+            <button class="admin-close" onclick="closeAdminPanel()">×</button>
+        </div>
+
+        <div class="admin-section">
+            <h3>👥 Ban User</h3>
+            <input type="text" class="ban-input" id="banUsername" placeholder="Username to ban...">
+            <button class="admin-btn" onclick="adminBanUser()">🚫 Ban User</button>
+        </div>
+
+        <div class="admin-section">
+            <h3>🗑️ Chat Management</h3>
+            <button class="admin-btn" onclick="clearAllMessages()">💥 Clear All Messages</button>
+            <button class="admin-btn" onclick="loadBannedUsers()">📋 View Banned Users</button>
+        </div>
+
+        <div class="admin-section">
+            <h3>📋 Banned Users</h3>
+            <div class="banned-list" id="bannedList">
+                <div style="color: rgba(255,255,255,0.7);">Click "View Banned Users" to load...</div>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h3>👥 Current Users</h3>
+            <div class="user-list" id="userList">
+                <div style="color: rgba(255,255,255,0.7);">Users will appear here...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10001; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 3rem; border-radius: 20px; max-width: 500px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
+            <h2 style="color: white; margin-bottom: 1rem; font-size: 2rem;">🔐 ADMIN ACCESS</h2>
+            <p style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem;">Enter admin password</p>
+            <input type="password" id="adminPasswordInput" placeholder="Admin password..." style="width: 100%; padding: 1rem; border: 3px solid white; border-radius: 25px; font-size: 1rem; margin-bottom: 1rem; text-align: center; font-weight: bold; letter-spacing: 2px;" onkeypress="if(event.key==='Enter') checkAdminPassword()">
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="checkAdminPassword()" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer;">
+                    Submit 🚀
+                </button>
+                <button onclick="closeAdminLogin()" style="background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- GIF Picker Modal -->
     <div class="gif-modal" id="gifModal" onclick="closeGifPicker()">
         <div class="gif-modal-content" onclick="event.stopPropagation()">
-            <div class="gif-modal-header">
-                <h2>🐶 Choose a Pug GIF</h2>
-                <button class="close-gif-modal" onclick="closeGifPicker()">×</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="color: #667eea; margin: 0;">🐶 Choose a Pug GIF</h2>
+                <button onclick="closeGifPicker()" style="background: #ff4444; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer;">×</button>
             </div>
 
             <h3 style="color: #666; margin-bottom: 1rem;">Popular Pug GIFs</h3>
-            <div class="gif-grid" id="gifGrid">
-                <!-- GIFs will be populated by JavaScript -->
-            </div>
+            <div class="gif-grid" id="gifGrid"></div>
 
             <h3 style="color: #666; margin-bottom: 1rem;">Or paste your own GIF URL:</h3>
-            <div class="custom-gif-input">
-                <input type="text" id="customGifUrl" placeholder="https://media.giphy.com/media/...">
+            <div style="display: flex; gap: 1rem;">
+                <input type="text" id="customGifUrl" placeholder="https://media.giphy.com/media/..." style="flex: 1; padding: 1rem; border: 3px solid #667eea; border-radius: 25px; font-size: 1rem;">
                 <button class="chat-button" onclick="sendCustomGif()">Send Custom GIF</button>
             </div>
         </div>
@@ -417,12 +700,10 @@
         <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
     </footer>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, push, onChildAdded, limitToLast, query, serverTimestamp, onValue, remove, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, push, onChildAdded, onChildRemoved, limitToLast, query, onValue, remove, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
             authDomain: "pug-31646.firebaseapp.com",
@@ -434,17 +715,23 @@
             measurementId: "G-2TBFS939SL"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const messagesRef = ref(database, 'chatroom/messages');
         const bannedUsersRef = ref(database, 'chatroom/banned');
+        const typingRef = ref(database, 'chatroom/typing');
+        const onlineUsersRef = ref(database, 'chatroom/online');
 
-        let currentUser = localStorage.getItem('chatUsername') || '';
+        let currentUser = '';
         let isFirstLoad = true;
         let bannedUsers = new Set();
+        let onlineUsers = new Set();
+        let isAdmin = false;
+        let typingTimeout;
 
-        // Profanity filter - comprehensive list
+        const CHAT_PASSWORD = 'MRBUBBLES';
+        const ADMIN_PASSWORD = 'PUGH4XBR0';
+
         const profanityList = [
             'fuck', 'shit', 'bitch', 'ass', 'damn', 'hell', 'crap', 'bastard',
             'dick', 'cock', 'pussy', 'cunt', 'whore', 'slut', 'fag', 'nigger',
@@ -452,7 +739,6 @@
             'sex', 'porn', 'xxx', 'nude', 'naked', 'kill yourself', 'kys'
         ];
 
-        // Default pug GIFs
         const defaultGifs = [
             'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cHRhb3c0Mmdld3owMzllY2U4ejNpOHhyMXEyOHVvd2duYmxxOWxuMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/WNimlZt5dpzYXMtNth/giphy.gif',
             'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cHRhb3c0Mmdld3owMzllY2U4ejNpOHhyMXEyOHVvd2duYmxxOWxuMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/9c4jnV04D29iw/giphy.gif',
@@ -461,7 +747,6 @@
             'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmVncXpydHlxeHZnMWk1cTRkbXoxcjVjc3V2N3B5N2J2eG1xeXJzbCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fpXxIjftmkk9y/giphy.gif'
         ];
 
-        // Populate GIF grid
         function populateGifGrid() {
             const gifGrid = document.getElementById('gifGrid');
             gifGrid.innerHTML = defaultGifs.map(url => `
@@ -473,53 +758,130 @@
 
         populateGifGrid();
 
-        // Load banned users from Firebase
-        onValue(bannedUsersRef, (snapshot) => {
-            bannedUsers = new Set();
-            snapshot.forEach((child) => {
-                bannedUsers.add(child.val());
-            });
-        });
-
-        // Check if user already has a username
-        if (currentUser) {
-            checkBanAndSetUsername(currentUser);
+        // Check chat password
+        function checkChatPassword() {
+            const password = document.getElementById('chatPassword').value;
+            if (password === CHAT_PASSWORD) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainHeader').style.display = 'block';
+                document.getElementById('mainContent').style.display = 'block';
+                localStorage.setItem('chatAccess', 'granted');
+                initChat();
+            } else {
+                alert('❌ Incorrect password! Try again.');
+                document.getElementById('chatPassword').value = '';
+            }
         }
 
-        function checkBanAndSetUsername(username) {
-            if (bannedUsers.has(username.toLowerCase())) {
-                alert('🚫 You have been permanently banned from the chatroom for using profanity!');
-                localStorage.removeItem('chatUsername');
-                currentUser = '';
-                document.getElementById('usernameInput').value = '';
+        // Check if already has access
+        if (localStorage.getItem('chatAccess') === 'granted') {
+            document.getElementById('passwordScreen').style.display = 'none';
+            document.getElementById('mainHeader').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'block';
+            initChat();
+        }
+
+        function initChat() {
+            // Load banned users
+            onValue(bannedUsersRef, (snapshot) => {
+                bannedUsers = new Set();
+                snapshot.forEach((child) => {
+                    bannedUsers.add(child.val());
+                });
+            });
+
+            // Load online users
+            onValue(onlineUsersRef, (snapshot) => {
+                onlineUsers = new Set();
+                snapshot.forEach((child) => {
+                    onlineUsers.add(child.val());
+                });
+                document.getElementById('onlineCount').textContent = onlineUsers.size;
+                updateUserList();
+            });
+
+            // Load messages
+            const messagesQuery = query(messagesRef, limitToLast(100));
+            onChildAdded(messagesQuery, (snapshot) => {
+                const message = snapshot.val();
+                displayMessage(message, snapshot.key);
+                if (!isFirstLoad) {
+                    scrollToBottom();
+                }
+            });
+
+            onChildRemoved(messagesQuery, (snapshot) => {
+                const msgElement = document.querySelector(`[data-key="${snapshot.key}"]`);
+                if (msgElement) msgElement.remove();
+            });
+
+            setTimeout(() => {
+                isFirstLoad = false;
+                scrollToBottom();
+            }, 1000);
+
+            // Typing indicator
+            onValue(typingRef, (snapshot) => {
+                const typing = [];
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    if (data.username !== currentUser && Date.now() - data.timestamp < 3000) {
+                        typing.push(data.username);
+                    }
+                });
+
+                const indicator = document.getElementById('typingIndicator');
+                if (typing.length > 0) {
+                    indicator.textContent = `${typing.join(', ')} ${typing.length === 1 ? 'is' : 'are'} typing...`;
+                    indicator.style.display = 'block';
+                } else {
+                    indicator.style.display = 'none';
+                }
+            });
+        }
+
+        function setUsername() {
+            const username = document.getElementById('usernameInput').value.trim();
+            if (!username) {
+                alert('Please enter a username!');
                 return;
             }
-            document.getElementById('usernameInput').value = username;
-            setUsername();
+
+            if (bannedUsers.has(username.toLowerCase())) {
+                alert('🚫 This username has been banned!');
+                return;
+            }
+
+            const sanitized = username.replace(/[^a-zA-Z0-9_\s]/g, '');
+            if (sanitized !== username) {
+                alert('Username can only contain letters, numbers, spaces, and underscores!');
+                return;
+            }
+
+            currentUser = username;
+            document.getElementById('usernameSetup').style.display = 'none';
+            document.getElementById('chatInterface').style.display = 'block';
+            document.getElementById('currentUsername').textContent = username;
+            document.getElementById('messageInput').focus();
+
+            // Add to online users
+            const userRef = ref(database, `chatroom/online/${Date.now()}`);
+            set(userRef, username);
+
+            sendSystemMessage(`${username} joined the chat! 👋`);
         }
 
-        // Load messages from Firebase (last 100 messages)
-        const messagesQuery = query(messagesRef, limitToLast(100));
-        onChildAdded(messagesQuery, (snapshot) => {
-            const message = snapshot.val();
-            displayMessage(message, snapshot.key);
-
-            // Auto-scroll to bottom on new messages (but not on initial load)
-            if (!isFirstLoad) {
-                scrollToBottom();
-            }
-        });
-
-        // Set flag after initial load
-        setTimeout(() => {
-            isFirstLoad = false;
-            scrollToBottom();
-        }, 1000);
+        function changeUsername() {
+            sendSystemMessage(`${currentUser} left the chat 👋`);
+            currentUser = '';
+            document.getElementById('usernameSetup').style.display = 'flex';
+            document.getElementById('chatInterface').style.display = 'none';
+            document.getElementById('usernameInput').value = '';
+        }
 
         function containsProfanity(text) {
             const lowerText = text.toLowerCase();
             return profanityList.some(word => {
-                // Check for exact word match with word boundaries
                 const regex = new RegExp(`\\b${word}\\b`, 'i');
                 return regex.test(lowerText) || lowerText.includes(word);
             });
@@ -528,10 +890,7 @@
         function banUser(username) {
             const bannedRef = ref(database, `chatroom/banned/${Date.now()}`);
             set(bannedRef, username.toLowerCase());
-            bannedUsers.add(username.toLowerCase());
-            localStorage.removeItem('chatUsername');
 
-            // Send ban message
             const banMessage = {
                 text: `🚫 ${username} has been permanently banned for using profanity!`,
                 timestamp: Date.now(),
@@ -539,74 +898,21 @@
             };
             push(messagesRef, banMessage);
 
-            // Clear interface
-            document.getElementById('chatInterface').style.display = 'none';
-            document.getElementById('usernameSetup').style.display = 'flex';
-            currentUser = '';
-
-            alert('🚫 YOU HAVE BEEN PERMANENTLY BANNED for using profanity! You cannot rejoin with the same username.');
-        }
-
-        function setUsername() {
-            const username = document.getElementById('usernameInput').value.trim();
-
-            if (!username) {
-                alert('Please enter a username!');
-                return;
+            if (username === currentUser) {
+                document.getElementById('chatInterface').style.display = 'none';
+                document.getElementById('usernameSetup').style.display = 'flex';
+                currentUser = '';
+                alert('🚫 YOU HAVE BEEN PERMANENTLY BANNED for using profanity!');
             }
-
-            // Check if banned
-            if (bannedUsers.has(username.toLowerCase())) {
-                alert('🚫 This username has been banned for using profanity!');
-                document.getElementById('usernameInput').value = '';
-                return;
-            }
-
-            // Sanitize username (remove special characters)
-            const sanitized = username.replace(/[^a-zA-Z0-9_\s]/g, '');
-            if (sanitized !== username) {
-                alert('Username can only contain letters, numbers, spaces, and underscores!');
-                return;
-            }
-
-            currentUser = username;
-            localStorage.setItem('chatUsername', username);
-
-            document.getElementById('usernameSetup').style.display = 'none';
-            document.getElementById('chatInterface').style.display = 'block';
-            document.getElementById('currentUsername').textContent = username;
-            document.getElementById('messageInput').focus();
-
-            // Send system message
-            sendSystemMessage(`${username} joined the chat! 👋`);
-        }
-
-        function changeUsername() {
-            sendSystemMessage(`${currentUser} left the chat 👋`);
-            currentUser = '';
-            localStorage.removeItem('chatUsername');
-            document.getElementById('usernameSetup').style.display = 'flex';
-            document.getElementById('chatInterface').style.display = 'none';
-            document.getElementById('usernameInput').value = '';
-            document.getElementById('usernameInput').focus();
         }
 
         function sendMessage(event) {
             event.preventDefault();
-
             const messageInput = document.getElementById('messageInput');
             const messageText = messageInput.value.trim();
 
-            if (!messageText) {
-                return;
-            }
+            if (!messageText || !currentUser) return;
 
-            if (!currentUser) {
-                alert('Please set your username first!');
-                return;
-            }
-
-            // Check for profanity
             if (containsProfanity(messageText)) {
                 banUser(currentUser);
                 return;
@@ -625,10 +931,7 @@
         }
 
         function sendGif(gifUrl) {
-            if (!currentUser) {
-                alert('Please set your username first!');
-                return;
-            }
+            if (!currentUser) return;
 
             const message = {
                 username: currentUser,
@@ -643,13 +946,11 @@
 
         function sendCustomGif() {
             const customUrl = document.getElementById('customGifUrl').value.trim();
-
             if (!customUrl) {
                 alert('Please enter a GIF URL!');
                 return;
             }
 
-            // Validate URL
             if (!customUrl.match(/\.(gif|jpg|jpeg|png)$/i) && !customUrl.includes('giphy.com') && !customUrl.includes('tenor.com')) {
                 alert('Please enter a valid image or GIF URL!');
                 return;
@@ -668,16 +969,29 @@
             push(messagesRef, message);
         }
 
+        function handleTyping() {
+            if (!currentUser) return;
+
+            clearTimeout(typingTimeout);
+
+            const typingUserRef = ref(database, `chatroom/typing/${currentUser.replace(/\s/g, '_')}`);
+            set(typingUserRef, {
+                username: currentUser,
+                timestamp: Date.now()
+            });
+
+            typingTimeout = setTimeout(() => {
+                remove(typingUserRef);
+            }, 2000);
+        }
+
         function displayMessage(message, key) {
             const container = document.getElementById('messagesContainer');
-
-            // Remove "no messages" placeholder
             const noMessages = container.querySelector('.no-messages');
-            if (noMessages) {
-                noMessages.remove();
-            }
+            if (noMessages) noMessages.remove();
 
             const messageDiv = document.createElement('div');
+            messageDiv.dataset.key = key;
 
             if (message.type === 'system') {
                 messageDiv.className = 'system-message';
@@ -687,7 +1001,6 @@
                 messageDiv.textContent = message.text;
             } else if (message.type === 'gif') {
                 messageDiv.className = 'message';
-
                 const time = new Date(message.timestamp).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit'
@@ -698,11 +1011,11 @@
                         <span class="message-username">${escapeHtml(message.username)}</span>
                         <span class="message-time">${time}</span>
                     </div>
-                    <img src="${escapeHtml(message.gifUrl)}" alt="GIF" class="message-gif" onerror="this.src='https://via.placeholder.com/300x200?text=GIF+Not+Found'">
+                    <img src="${escapeHtml(message.gifUrl)}" alt="GIF" class="message-gif">
+                    ${isAdmin ? `<div class="message-actions"><button class="delete-msg-btn" onclick="deleteMessage('${key}')">🗑️ Delete</button></div>` : ''}
                 `;
             } else {
                 messageDiv.className = 'message';
-
                 const time = new Date(message.timestamp).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit'
@@ -714,17 +1027,32 @@
                         <span class="message-time">${time}</span>
                     </div>
                     <div class="message-text">${escapeHtml(message.text)}</div>
+                    <div class="message-actions">
+                        <button class="reaction-btn" onclick="addReaction('${key}', '❤️')">❤️</button>
+                        <button class="reaction-btn" onclick="addReaction('${key}', '😂')">😂</button>
+                        <button class="reaction-btn" onclick="addReaction('${key}', '👍')">👍</button>
+                        ${isAdmin ? `<button class="delete-msg-btn" onclick="deleteMessage('${key}')">🗑️ Delete</button>` : ''}
+                    </div>
                 `;
             }
 
-            messageDiv.dataset.key = key;
             container.appendChild(messageDiv);
 
-            // Limit to 100 messages in DOM
             const allMessages = container.querySelectorAll('.message, .system-message, .ban-message');
             if (allMessages.length > 100) {
                 allMessages[0].remove();
             }
+        }
+
+        function deleteMessage(key) {
+            if (!isAdmin) return;
+            if (confirm('Delete this message?')) {
+                remove(ref(database, `chatroom/messages/${key}`));
+            }
+        }
+
+        function addReaction(key, emoji) {
+            console.log(`Reaction ${emoji} to message ${key}`);
         }
 
         function scrollToBottom() {
@@ -752,7 +1080,107 @@
             return div.innerHTML;
         }
 
+        // Admin functions
+        function showAdminLogin() {
+            document.getElementById('adminLoginModal').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('adminPasswordInput').focus();
+            }, 100);
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('adminLoginModal').style.display = 'none';
+            document.getElementById('adminPasswordInput').value = '';
+        }
+
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPasswordInput').value;
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                closeAdminLogin();
+                document.getElementById('adminPanel').style.display = 'block';
+                alert('✅ Admin access granted!');
+            } else {
+                alert('❌ Incorrect admin password!');
+                document.getElementById('adminPasswordInput').value = '';
+            }
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        function adminBanUser() {
+            const username = document.getElementById('banUsername').value.trim();
+            if (!username) {
+                alert('Enter a username to ban!');
+                return;
+            }
+
+            banUser(username);
+            document.getElementById('banUsername').value = '';
+            alert(`✅ ${username} has been banned!`);
+        }
+
+        function clearAllMessages() {
+            if (!isAdmin) return;
+            if (confirm('⚠️ Clear ALL messages? This cannot be undone!')) {
+                remove(messagesRef);
+                alert('✅ All messages cleared!');
+            }
+        }
+
+        function loadBannedUsers() {
+            const list = document.getElementById('bannedList');
+            list.innerHTML = '';
+
+            onValue(bannedUsersRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    list.innerHTML = '<div style="color: rgba(255,255,255,0.7);">No banned users</div>';
+                    return;
+                }
+
+                list.innerHTML = '';
+                snapshot.forEach((child) => {
+                    const username = child.val();
+                    const item = document.createElement('div');
+                    item.className = 'banned-item';
+                    item.innerHTML = `
+                        <span>${username}</span>
+                        <button class="admin-btn" style="padding: 0.5rem 1rem; margin: 0;" onclick="unbanUser('${child.key}', '${username}')">Unban</button>
+                    `;
+                    list.appendChild(item);
+                });
+            }, { onlyOnce: true });
+        }
+
+        function unbanUser(key, username) {
+            if (confirm(`Unban ${username}?`)) {
+                remove(ref(database, `chatroom/banned/${key}`));
+                alert(`✅ ${username} has been unbanned!`);
+                loadBannedUsers();
+            }
+        }
+
+        function updateUserList() {
+            const list = document.getElementById('userList');
+            list.innerHTML = '';
+
+            if (onlineUsers.size === 0) {
+                list.innerHTML = '<div style="color: rgba(255,255,255,0.7);">No users online</div>';
+                return;
+            }
+
+            onlineUsers.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'user-item';
+                item.innerHTML = `<span>👤 ${user}</span>`;
+                list.appendChild(item);
+            });
+        }
+
         // Make functions global
+        window.checkChatPassword = checkChatPassword;
         window.setUsername = setUsername;
         window.changeUsername = changeUsername;
         window.sendMessage = sendMessage;
@@ -761,36 +1189,29 @@
         window.closeGifPicker = closeGifPicker;
         window.sendGif = sendGif;
         window.sendCustomGif = sendCustomGif;
+        window.handleTyping = handleTyping;
+        window.showAdminLogin = showAdminLogin;
+        window.closeAdminLogin = closeAdminLogin;
+        window.checkAdminPassword = checkAdminPassword;
+        window.closeAdminPanel = closeAdminPanel;
+        window.adminBanUser = adminBanUser;
+        window.clearAllMessages = clearAllMessages;
+        window.loadBannedUsers = loadBannedUsers;
+        window.unbanUser = unbanUser;
+        window.deleteMessage = deleteMessage;
+        window.addReaction = addReaction;
 
-        // Handle Enter key for username
-        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                setUsername();
-            }
+        // Handle Enter key
+        document.getElementById('usernameInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') setUsername();
         });
 
-        // Handle Escape key to close modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeGifPicker();
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (currentUser) {
+                sendSystemMessage(`${currentUser} left the chat 👋`);
             }
         });
-
-        // Auto-cleanup old messages (older than 24 hours) - runs every hour
-        function cleanupOldMessages() {
-            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-            onValue(messagesRef, (snapshot) => {
-                snapshot.forEach((child) => {
-                    const message = child.val();
-                    if (message.timestamp < oneDayAgo) {
-                        remove(ref(database, `chatroom/messages/${child.key}`));
-                    }
-                });
-            }, { onlyOnce: true });
-        }
-
-        // Run cleanup every hour
-        setInterval(cleanupOldMessages, 60 * 60 * 1000);
     </script>
 </body>
 </html>
