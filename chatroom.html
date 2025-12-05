@@ -84,12 +84,35 @@
             word-wrap: break-word;
         }
 
+        .message-gif {
+            max-width: 300px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .message-gif:hover {
+            transform: scale(1.05);
+        }
+
         .system-message {
             text-align: center;
             color: #999;
             font-style: italic;
             margin: 1rem 0;
             font-size: 0.9rem;
+        }
+
+        .ban-message {
+            text-align: center;
+            color: #ff4444;
+            font-weight: bold;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            padding: 1rem;
+            background: #ffebee;
+            border-radius: 10px;
         }
 
         .chat-input-container {
@@ -153,7 +176,7 @@
             flex-wrap: wrap;
         }
 
-        .emoji-btn {
+        .emoji-btn, .gif-btn {
             background: white;
             border: 2px solid #4facfe;
             border-radius: 10px;
@@ -163,9 +186,19 @@
             transition: all 0.3s ease;
         }
 
-        .emoji-btn:hover {
+        .emoji-btn:hover, .gif-btn:hover {
             transform: scale(1.2);
             background: #4facfe;
+        }
+
+        .gif-btn {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .gif-btn:hover {
+            color: white;
         }
 
         .no-messages {
@@ -175,11 +208,98 @@
             font-size: 1.2rem;
         }
 
-        .typing-indicator {
-            color: #999;
-            font-style: italic;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
+        .gif-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .gif-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .gif-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .gif-modal-header h2 {
+            margin: 0;
+            color: #4facfe;
+        }
+
+        .close-gif-modal {
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-gif-modal:hover {
+            background: #cc0000;
+            transform: rotate(90deg);
+        }
+
+        .gif-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .gif-option {
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .gif-option:hover {
+            transform: scale(1.05);
+            border-color: #4facfe;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.5);
+        }
+
+        .gif-option img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .custom-gif-input {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .custom-gif-input input {
+            flex: 1;
+            padding: 1rem;
+            border: 3px solid #4facfe;
+            border-radius: 25px;
+            font-size: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -194,6 +314,10 @@
 
             .chat-button {
                 width: 100%;
+            }
+
+            .gif-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
     </style>
@@ -222,13 +346,14 @@
         <div class="chatroom-container">
             <div class="chat-header">
                 <h1>💬 Pug Paradise Chatroom</h1>
-                <div class="online-count" id="onlineCount">🌐 Real-time chat - Say hi to fellow pug lovers!</div>
+                <div class="online-count" id="onlineCount">🌐 Real-time chat - Keep it clean or get banned! 🚫</div>
             </div>
 
             <div class="messages-container" id="messagesContainer">
                 <div class="no-messages">
                     <h2>👋 Welcome to the Pug Paradise Chatroom!</h2>
                     <p>Enter your username below and start chatting!</p>
+                    <p style="color: #ff4444; font-weight: bold;">⚠️ No profanity allowed - You will be permanently banned!</p>
                 </div>
             </div>
 
@@ -248,6 +373,7 @@
                         <button class="emoji-btn" onclick="addEmoji('🔥')">🔥</button>
                         <button class="emoji-btn" onclick="addEmoji('✨')">✨</button>
                         <button class="emoji-btn" onclick="addEmoji('🎮')">🎮</button>
+                        <button class="gif-btn" onclick="openGifPicker()">🖼️ GIF</button>
                     </div>
                     <form class="message-form" onsubmit="sendMessage(event)">
                         <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500" autocomplete="off">
@@ -266,6 +392,27 @@
         </button>
     </main>
 
+    <!-- GIF Picker Modal -->
+    <div class="gif-modal" id="gifModal" onclick="closeGifPicker()">
+        <div class="gif-modal-content" onclick="event.stopPropagation()">
+            <div class="gif-modal-header">
+                <h2>🐶 Choose a Pug GIF</h2>
+                <button class="close-gif-modal" onclick="closeGifPicker()">×</button>
+            </div>
+
+            <h3 style="color: #666; margin-bottom: 1rem;">Popular Pug GIFs</h3>
+            <div class="gif-grid" id="gifGrid">
+                <!-- GIFs will be populated by JavaScript -->
+            </div>
+
+            <h3 style="color: #666; margin-bottom: 1rem;">Or paste your own GIF URL:</h3>
+            <div class="custom-gif-input">
+                <input type="text" id="customGifUrl" placeholder="https://media.giphy.com/media/...">
+                <button class="chat-button" onclick="sendCustomGif()">Send Custom GIF</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
     </footer>
@@ -273,7 +420,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, push, onChildAdded, limitToLast, query, serverTimestamp, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, push, onChildAdded, limitToLast, query, serverTimestamp, onValue, remove, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -291,13 +438,63 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const messagesRef = ref(database, 'chatroom/messages');
+        const bannedUsersRef = ref(database, 'chatroom/banned');
 
         let currentUser = localStorage.getItem('chatUsername') || '';
         let isFirstLoad = true;
+        let bannedUsers = new Set();
+
+        // Profanity filter - comprehensive list
+        const profanityList = [
+            'fuck', 'shit', 'bitch', 'ass', 'damn', 'hell', 'crap', 'bastard',
+            'dick', 'cock', 'pussy', 'cunt', 'whore', 'slut', 'fag', 'nigger',
+            'retard', 'piss', 'asshole', 'motherfucker', 'fucker', 'bullshit',
+            'sex', 'porn', 'xxx', 'nude', 'naked', 'kill yourself', 'kys'
+        ];
+
+        // Default pug GIFs
+        const defaultGifs = [
+            'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cHRhb3c0Mmdld3owMzllY2U4ejNpOHhyMXEyOHVvd2duYmxxOWxuMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/WNimlZt5dpzYXMtNth/giphy.gif',
+            'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cHRhb3c0Mmdld3owMzllY2U4ejNpOHhyMXEyOHVvd2duYmxxOWxuMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/9c4jnV04D29iw/giphy.gif',
+            'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aWl6eGx4OTZyY3Q4MjB6a3plc21xZHd6bnoyZXpkMmN3MXhvaHk3NyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xUOxfbuK9qc61NGiaI/giphy.gif',
+            'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cWdyMDE3MTkzZHJhMGt5aW5rMG9ybHIzN2hkd3YxeHI0bGV2azBlayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3lxD1O74siiz5FvrJs/giphy.gif',
+            'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmVncXpydHlxeHZnMWk1cTRkbXoxcjVjc3V2N3B5N2J2eG1xeXJzbCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fpXxIjftmkk9y/giphy.gif'
+        ];
+
+        // Populate GIF grid
+        function populateGifGrid() {
+            const gifGrid = document.getElementById('gifGrid');
+            gifGrid.innerHTML = defaultGifs.map(url => `
+                <div class="gif-option" onclick="sendGif('${url}')">
+                    <img src="${url}" alt="Pug GIF">
+                </div>
+            `).join('');
+        }
+
+        populateGifGrid();
+
+        // Load banned users from Firebase
+        onValue(bannedUsersRef, (snapshot) => {
+            bannedUsers = new Set();
+            snapshot.forEach((child) => {
+                bannedUsers.add(child.val());
+            });
+        });
 
         // Check if user already has a username
         if (currentUser) {
-            document.getElementById('usernameInput').value = currentUser;
+            checkBanAndSetUsername(currentUser);
+        }
+
+        function checkBanAndSetUsername(username) {
+            if (bannedUsers.has(username.toLowerCase())) {
+                alert('🚫 You have been permanently banned from the chatroom for using profanity!');
+                localStorage.removeItem('chatUsername');
+                currentUser = '';
+                document.getElementById('usernameInput').value = '';
+                return;
+            }
+            document.getElementById('usernameInput').value = username;
             setUsername();
         }
 
@@ -319,11 +516,49 @@
             scrollToBottom();
         }, 1000);
 
+        function containsProfanity(text) {
+            const lowerText = text.toLowerCase();
+            return profanityList.some(word => {
+                // Check for exact word match with word boundaries
+                const regex = new RegExp(`\\b${word}\\b`, 'i');
+                return regex.test(lowerText) || lowerText.includes(word);
+            });
+        }
+
+        function banUser(username) {
+            const bannedRef = ref(database, `chatroom/banned/${Date.now()}`);
+            set(bannedRef, username.toLowerCase());
+            bannedUsers.add(username.toLowerCase());
+            localStorage.removeItem('chatUsername');
+
+            // Send ban message
+            const banMessage = {
+                text: `🚫 ${username} has been permanently banned for using profanity!`,
+                timestamp: Date.now(),
+                type: 'ban'
+            };
+            push(messagesRef, banMessage);
+
+            // Clear interface
+            document.getElementById('chatInterface').style.display = 'none';
+            document.getElementById('usernameSetup').style.display = 'flex';
+            currentUser = '';
+
+            alert('🚫 YOU HAVE BEEN PERMANENTLY BANNED for using profanity! You cannot rejoin with the same username.');
+        }
+
         function setUsername() {
             const username = document.getElementById('usernameInput').value.trim();
 
             if (!username) {
                 alert('Please enter a username!');
+                return;
+            }
+
+            // Check if banned
+            if (bannedUsers.has(username.toLowerCase())) {
+                alert('🚫 This username has been banned for using profanity!');
+                document.getElementById('usernameInput').value = '';
                 return;
             }
 
@@ -371,6 +606,12 @@
                 return;
             }
 
+            // Check for profanity
+            if (containsProfanity(messageText)) {
+                banUser(currentUser);
+                return;
+            }
+
             const message = {
                 username: currentUser,
                 text: messageText,
@@ -381,6 +622,41 @@
             push(messagesRef, message);
             messageInput.value = '';
             messageInput.focus();
+        }
+
+        function sendGif(gifUrl) {
+            if (!currentUser) {
+                alert('Please set your username first!');
+                return;
+            }
+
+            const message = {
+                username: currentUser,
+                gifUrl: gifUrl,
+                timestamp: Date.now(),
+                type: 'gif'
+            };
+
+            push(messagesRef, message);
+            closeGifPicker();
+        }
+
+        function sendCustomGif() {
+            const customUrl = document.getElementById('customGifUrl').value.trim();
+
+            if (!customUrl) {
+                alert('Please enter a GIF URL!');
+                return;
+            }
+
+            // Validate URL
+            if (!customUrl.match(/\.(gif|jpg|jpeg|png)$/i) && !customUrl.includes('giphy.com') && !customUrl.includes('tenor.com')) {
+                alert('Please enter a valid image or GIF URL!');
+                return;
+            }
+
+            sendGif(customUrl);
+            document.getElementById('customGifUrl').value = '';
         }
 
         function sendSystemMessage(text) {
@@ -406,6 +682,24 @@
             if (message.type === 'system') {
                 messageDiv.className = 'system-message';
                 messageDiv.textContent = message.text;
+            } else if (message.type === 'ban') {
+                messageDiv.className = 'ban-message';
+                messageDiv.textContent = message.text;
+            } else if (message.type === 'gif') {
+                messageDiv.className = 'message';
+
+                const time = new Date(message.timestamp).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-username">${escapeHtml(message.username)}</span>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <img src="${escapeHtml(message.gifUrl)}" alt="GIF" class="message-gif" onerror="this.src='https://via.placeholder.com/300x200?text=GIF+Not+Found'">
+                `;
             } else {
                 messageDiv.className = 'message';
 
@@ -427,7 +721,7 @@
             container.appendChild(messageDiv);
 
             // Limit to 100 messages in DOM
-            const allMessages = container.querySelectorAll('.message, .system-message');
+            const allMessages = container.querySelectorAll('.message, .system-message, .ban-message');
             if (allMessages.length > 100) {
                 allMessages[0].remove();
             }
@@ -444,6 +738,14 @@
             messageInput.focus();
         }
 
+        function openGifPicker() {
+            document.getElementById('gifModal').style.display = 'flex';
+        }
+
+        function closeGifPicker() {
+            document.getElementById('gifModal').style.display = 'none';
+        }
+
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -455,11 +757,22 @@
         window.changeUsername = changeUsername;
         window.sendMessage = sendMessage;
         window.addEmoji = addEmoji;
+        window.openGifPicker = openGifPicker;
+        window.closeGifPicker = closeGifPicker;
+        window.sendGif = sendGif;
+        window.sendCustomGif = sendCustomGif;
 
         // Handle Enter key for username
         document.getElementById('usernameInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 setUsername();
+            }
+        });
+
+        // Handle Escape key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeGifPicker();
             }
         });
 
