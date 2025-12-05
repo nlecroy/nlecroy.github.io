@@ -82,6 +82,16 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #pugButton img {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 50%;
+            pointer-events: none;
         }
 
         #pugButton:hover {
@@ -223,7 +233,9 @@
                 </div>
             </div>
             <div style="position: relative;">
-                <button id="pugButton">🐶</button>
+                <button id="pugButton">
+                    <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3N3A0a2dmdHNncXRib3VmenluMmJyczEwb3p6bWhmdmVzM3c3bzFzciZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/3og0IHS9054lnYTzoY/giphy.gif" alt="Pug">
+                </button>
             </div>
             <button class="back-button" onclick="window.location.href='../index.html'">Back to Home</button>
         </div>

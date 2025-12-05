@@ -279,6 +279,8 @@
                 <li><a href="other-games.html">Other Games</a></li>
                 <li><a href="index.html#hacks">Hacks</a></li>
                 <li><a href="memes.html">Memes</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="contact.html">Contact</a></li>
                 <li><a href="index.html#about">About</a></li>
             </ul>
         </nav>
@@ -288,6 +290,7 @@
         <div class="memes-header">
             <h1>😂 Pug Meme Gallery 🤣</h1>
             <p style="color: #666; font-size: 1.2rem;">The ultimate collection of pug humor!</p>
+            <p style="color: #4ecdc4; font-size: 1rem; margin-top: 0.5rem;"><strong>🌐 LIVE:</strong> All memes are shared with everyone in real-time!</p>
         </div>
 
         <div class="add-meme-section">
@@ -362,43 +365,67 @@
         <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
     </footer>
 
-    <script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration - FREE tier (no credit card needed)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
+            authDomain: "pug-31646.firebaseapp.com",
+            databaseURL: "https://pug-31646-default-rtdb.firebaseio.com",
+            projectId: "pug-31646",
+            storageBucket: "pug-31646.firebasestorage.app",
+            messagingSenderId: "278556306232",
+            appId: "1:278556306232:web:7a82def7c10a1c22f2afcd",
+            measurementId: "G-2TBFS939SL"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         let memes = [];
         let currentFilter = 'all';
         let likedMemes = new Set();
         let deleteUnlocked = false;
         const ADMIN_PASSWORD = 'ITSBUBBA';
 
-        // Start with empty gallery - users can add their own memes!
-        const defaultMemes = [];
-
-        function loadMemes() {
-            const saved = localStorage.getItem('pugMemes');
-            if (saved) {
-                memes = JSON.parse(saved);
-            } else {
-                memes = [...defaultMemes];
-                saveMemes();
-            }
-
-            // Load liked memes
+        // Load liked memes from localStorage (per-user)
+        function loadLikedMemes() {
             const savedLikes = localStorage.getItem('likedMemes');
             if (savedLikes) {
                 likedMemes = new Set(JSON.parse(savedLikes));
             }
-
-            displayMemes();
-        }
-
-        function saveMemes() {
-            localStorage.setItem('pugMemes', JSON.stringify(memes));
         }
 
         function saveLikedMemes() {
             localStorage.setItem('likedMemes', JSON.stringify([...likedMemes]));
         }
 
-        function addMeme() {
+        // REAL-TIME Firebase listener for memes
+        function loadMemes() {
+            const memesRef = collection(db, 'memes');
+            const q = query(memesRef, orderBy('timestamp', 'desc'));
+
+            // Real-time updates!
+            onSnapshot(q, (snapshot) => {
+                memes = [];
+                snapshot.forEach((doc) => {
+                    memes.push({
+                        firestoreId: doc.id,
+                        ...doc.data()
+                    });
+                });
+                displayMemes();
+            });
+
+            loadLikedMemes();
+        }
+
+        // Add meme to Firebase
+        async function addMeme() {
             const urlInput = document.getElementById('memeUrl');
             const captionInput = document.getElementById('memeCaption');
             const categoryInput = document.getElementById('memeCategory');
@@ -423,49 +450,78 @@
                 caption: caption || 'Untitled Meme',
                 category: category,
                 likes: 0,
-                id: Date.now()
+                timestamp: Date.now()
             };
 
-            memes.unshift(newMeme);
-            saveMemes();
-            displayMemes();
+            try {
+                await addDoc(collection(db, 'memes'), newMeme);
 
-            urlInput.value = '';
-            captionInput.value = '';
-            categoryInput.value = 'funny';
+                urlInput.value = '';
+                captionInput.value = '';
+                categoryInput.value = 'funny';
 
-            alert('Meme added! 🎉');
+                alert('Meme added! 🎉 Everyone can now see it!');
+            } catch (error) {
+                console.error('Error adding meme:', error);
+                alert('Failed to add meme. Please try again.');
+            }
         }
 
-        function deleteMeme(id) {
+        // Delete meme from Firebase
+        async function deleteMeme(firestoreId) {
             if (!deleteUnlocked) {
                 alert('🔒 Delete mode is locked! Click "Unlock Delete Mode" button and enter the password.');
                 return;
             }
 
-            if (confirm('Delete this meme permanently?')) {
-                memes = memes.filter(m => m.id !== id);
-                saveMemes();
-                displayMemes();
+            if (confirm('Delete this meme permanently for EVERYONE?')) {
+                try {
+                    await deleteDoc(doc(db, 'memes', firestoreId));
+                    alert('Meme deleted! 🗑️');
+                } catch (error) {
+                    console.error('Error deleting meme:', error);
+                    alert('Failed to delete meme. Please try again.');
+                }
             }
         }
 
-        function likeMeme(id) {
-            // Check if already liked
-            if (likedMemes.has(id)) {
+        // Like meme in Firebase
+        async function likeMeme(firestoreId) {
+            // Check if already liked locally
+            if (likedMemes.has(firestoreId)) {
                 alert('You already liked this meme! 💖');
                 return;
             }
 
-            const meme = memes.find(m => m.id === id);
+            const meme = memes.find(m => m.firestoreId === firestoreId);
             if (meme) {
-                meme.likes++;
-                likedMemes.add(id);
-                saveMemes();
-                saveLikedMemes();
-                displayMemes();
+                try {
+                    const memeRef = doc(db, 'memes', firestoreId);
+                    await updateDoc(memeRef, {
+                        likes: meme.likes + 1
+                    });
+
+                    likedMemes.add(firestoreId);
+                    saveLikedMemes();
+                } catch (error) {
+                    console.error('Error liking meme:', error);
+                    alert('Failed to like meme. Please try again.');
+                }
             }
         }
+
+        // Make all functions global so onclick works
+        window.addMeme = addMeme;
+        window.deleteMeme = deleteMeme;
+        window.likeMeme = likeMeme;
+        window.filterByCategory = filterByCategory;
+        window.filterMemes = filterMemes;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.showPasswordPrompt = showPasswordPrompt;
+        window.closePasswordModal = closePasswordModal;
+        window.checkPassword = checkPassword;
+        window.lockDeleteMode = lockDeleteMode;
 
         function displayMemes() {
             const grid = document.getElementById('memesGrid');
@@ -510,7 +566,7 @@
             }
 
             grid.innerHTML = filteredMemes.map(meme => {
-                const isLiked = likedMemes.has(meme.id);
+                const isLiked = likedMemes.has(meme.firestoreId);
                 const likedClass = isLiked ? 'liked' : '';
 
                 // Add emoji to category display
@@ -534,10 +590,10 @@
                         <div class="meme-caption">${meme.caption}</div>
                         <span class="category-tag">${categoryDisplay}</span>
                         <div class="meme-actions">
-                            <button class="like-button ${likedClass}" onclick="likeMeme(${meme.id})">
+                            <button class="like-button ${likedClass}" onclick="likeMeme('${meme.firestoreId}')">
                                 ❤️ ${meme.likes}
                             </button>
-                            <button class="delete-button" onclick="deleteMeme(${meme.id})" style="${deleteButtonStyle}">
+                            <button class="delete-button" onclick="deleteMeme('${meme.firestoreId}')" style="${deleteButtonStyle}">
                                 ${deleteIcon}
                             </button>
                         </div>

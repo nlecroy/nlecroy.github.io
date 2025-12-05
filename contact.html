@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Pug Paradise</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .contact-header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .contact-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .contact-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .contact-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card p {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4ecdc4, #44a6c6);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .contact-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.5);
+        }
+
+        .email-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .info-section li {
+            padding: 0.5rem 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .info-section li strong {
+            color: #4ecdc4;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>🐶 PUG PARADISE</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#games">Pug Games</a></li>
+                <li><a href="other-games.html">Other Games</a></li>
+                <li><a href="index.html#hacks">Hacks</a></li>
+                <li><a href="memes.html">Memes</a></li>
+                <li><a href="donate.html">Donate</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+                <li><a href="index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="contact-header">
+            <h1>📬 Get In Touch!</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Questions? Suggestions? Bug Reports? Game Requests?</p>
+            <p style="font-size: 1rem; opacity: 0.9;">I'd love to hear from you!</p>
+        </div>
+
+        <div class="contact-cards">
+            <!-- Email Card -->
+            <div class="contact-card">
+                <div class="contact-icon">📧</div>
+                <h3>Email Me</h3>
+                <p>Send me an email for any inquiries, feedback, or just to say hi!</p>
+
+                <div class="email-display">
+                    nashlecroy@gmail.com
+                </div>
+
+                <a href="mailto:nashlecroy@gmail.com?subject=Pug Paradise - Contact" class="contact-button">
+                    ✉️ Open Email
+                </a>
+            </div>
+
+            <!-- Game Requests Card -->
+            <div class="contact-card">
+                <div class="contact-icon">🎮</div>
+                <h3>Game Requests</h3>
+                <p>Want to see a specific game added to the site? Let me know!</p>
+
+                <div class="info-section">
+                    <strong>What to include:</strong>
+                    <ul>
+                        <li>✓ Game name</li>
+                        <li>✓ Why you want it</li>
+                        <li>✓ Any links to the game (optional)</li>
+                    </ul>
+                </div>
+
+                <a href="mailto:nashlecroy@gmail.com?subject=Pug Paradise - Game Request&body=Hi Nash,%0D%0A%0D%0AI would like to request the following game:%0D%0A%0D%0AGame Name: %0D%0AReason: %0D%0ALink (optional): %0D%0A%0D%0AThanks!" class="contact-button">
+                    🎯 Request a Game
+                </a>
+            </div>
+
+            <!-- Bug Reports Card -->
+            <div class="contact-card">
+                <div class="contact-icon">🐛</div>
+                <h3>Bug Reports</h3>
+                <p>Found something broken? Help me fix it by reporting bugs!</p>
+
+                <div class="info-section">
+                    <strong>What to include:</strong>
+                    <ul>
+                        <li>✓ What page/game has the bug</li>
+                        <li>✓ What went wrong</li>
+                        <li>✓ What you expected to happen</li>
+                        <li>✓ Your browser/device</li>
+                    </ul>
+                </div>
+
+                <a href="mailto:nashlecroy@gmail.com?subject=Pug Paradise - Bug Report&body=Hi Nash,%0D%0A%0D%0AI found a bug:%0D%0A%0D%0APage/Game: %0D%0AWhat happened: %0D%0AWhat should happen: %0D%0ABrowser/Device: %0D%0A%0D%0AThanks!" class="contact-button">
+                    🔧 Report a Bug
+                </a>
+            </div>
+
+            <!-- Suggestions Card -->
+            <div class="contact-card">
+                <div class="contact-icon">💡</div>
+                <h3>Suggestions</h3>
+                <p>Have ideas to make the site better? I'm all ears!</p>
+
+                <div class="info-section">
+                    <strong>Ideas I'm looking for:</strong>
+                    <ul>
+                        <li>✓ New features</li>
+                        <li>✓ Design improvements</li>
+                        <li>✓ Site organization</li>
+                        <li>✓ Anything else!</li>
+                    </ul>
+                </div>
+
+                <a href="mailto:nashlecroy@gmail.com?subject=Pug Paradise - Suggestion&body=Hi Nash,%0D%0A%0D%0AI have a suggestion:%0D%0A%0D%0AMy idea: %0D%0AWhy it would be cool: %0D%0A%0D%0AThanks!" class="contact-button">
+                    ✨ Share Your Idea
+                </a>
+            </div>
+        </div>
+
+        <!-- General Contact Info Section -->
+        <section class="content-section" style="max-width: 800px; margin: 0 auto 3rem auto;">
+            <div style="background: linear-gradient(135deg, #ffd89b, #19547b); padding: 2.5rem; border-radius: 20px; color: white; text-align: center;">
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">📞 Contact Information</h2>
+
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 2rem; border-radius: 15px; margin: 1.5rem 0;">
+                    <p style="font-size: 1.3rem; margin-bottom: 1rem;"><strong>Email:</strong></p>
+                    <p style="font-size: 1.5rem; font-family: monospace; word-break: break-all; margin-bottom: 0;">
+                        nashlecroy@gmail.com
+                    </p>
+                </div>
+
+                <p style="font-size: 1.1rem; line-height: 1.6; margin: 1.5rem 0;">
+                    I try to respond to all emails within 24-48 hours. Feel free to reach out about anything -
+                    whether it's a game request, bug report, suggestion, or just to chat about pugs! 🐶
+                </p>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.1); border-radius: 10px;">
+                    <p style="margin: 0.5rem 0; font-size: 1.1rem;">
+                        <strong>Response Time:</strong> 24-48 hours
+                    </p>
+                    <p style="margin: 0.5rem 0; font-size: 1.1rem;">
+                        <strong>Best For:</strong> Game requests, bug reports, suggestions, general inquiries
+                    </p>
+                    <p style="margin: 0.5rem 0; font-size: 1.1rem;">
+                        <strong>Owner:</strong> Nash (the pug enthusiast 🐶)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <button class="back-button" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
+    </footer>
+</body>
+</html>

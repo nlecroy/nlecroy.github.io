@@ -255,6 +255,68 @@
             color: #fff;
             font-size: 0.9rem;
         }
+
+        .difficulty-selector {
+            margin: 2rem 0;
+        }
+
+        .difficulty-selector h3 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .difficulty-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 3px solid #666;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-btn.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .difficulty-btn.easy:hover {
+            border-color: #4caf50;
+        }
+
+        .difficulty-btn.normal:hover {
+            border-color: #2196f3;
+        }
+
+        .difficulty-btn.hard:hover {
+            border-color: #f44336;
+        }
+
+        .ammo-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        .ammo-low {
+            color: #ff6b35;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .reload-hint {
+            font-size: 0.9rem;
+            color: #ffd700;
+            margin-top: 0.3rem;
+        }
     </style>
 </head>
 <body>
@@ -262,6 +324,25 @@
         <h1>🐶 PUG SURVIVOR 3D 🐝</h1>
         <p>Fight off endless waves of evil wasps!</p>
         <p>Survive as long as you can!</p>
+
+        <div class="difficulty-selector">
+            <h3>Select Difficulty:</h3>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn easy" onclick="selectDifficulty('easy')">
+                    Easy<br>
+                    <small>Chill vibes</small>
+                </button>
+                <button class="difficulty-btn normal selected" onclick="selectDifficulty('normal')">
+                    Normal<br>
+                    <small>Balanced</small>
+                </button>
+                <button class="difficulty-btn hard" onclick="selectDifficulty('hard')">
+                    Hard<br>
+                    <small>Intense!</small>
+                </button>
+            </div>
+        </div>
+
         <button onclick="startGame()">Start Game</button>
         <button onclick="window.location.href='../index.html'">Back to Home</button>
     </div>
@@ -284,6 +365,9 @@
             Level: <span id="level">1</span> | XP: <span id="xp">0</span>/<span id="xpNeeded">100</span>
         </div>
         <div class="hud-item">
+            Wave: <span id="wave">1</span> | Enemies: <span id="enemyCount">0</span>
+        </div>
+        <div class="hud-item">
             <div>Health</div>
             <div class="health-bar">
                 <div class="health-fill" id="healthFill" style="width: 100%;"></div>
@@ -294,14 +378,16 @@
     <div class="weapon-display">
         <div class="weapon-icon" id="weaponIcon">🔫</div>
         <div id="weaponName">Pistol</div>
-        <div id="ammoDisplay">∞</div>
+        <div class="ammo-display" id="ammoDisplay">12 / 60</div>
+        <div class="reload-hint" id="reloadHint" style="display: none;">Press R to reload!</div>
     </div>
 
     <div class="controls">
         <strong>Controls:</strong><br>
         WASD - Move<br>
         Mouse - Aim<br>
-        Click - Shoot
+        Click - Shoot<br>
+        R - Reload
     </div>
 
     <div class="game-over" id="gameOver">
@@ -338,13 +424,31 @@
 
         let playerSpeed = 0.4;
         let healthRegenRate = 0;
+        let cameraShake = { x: 0, y: 0, intensity: 0, decay: 0.9 };
+        let waveNumber = 1;
+        let waspsPerWave = 1;
+        let waveStartTime = 0;
+        let waveDuration = 30000; // 30 seconds per wave
+        let enemiesKilledThisWave = 0;
+
+        let difficulty = 'normal';
+        let difficultyMultipliers = {
+            easy: { enemyHealth: 0.7, enemyDamage: 0.6, enemySpeed: 0.8, spawnRate: 1.3 },
+            normal: { enemyHealth: 1.0, enemyDamage: 1.0, enemySpeed: 1.0, spawnRate: 1.0 },
+            hard: { enemyHealth: 1.5, enemyDamage: 1.4, enemySpeed: 1.2, spawnRate: 0.7 }
+        };
+
+        let currentAmmo = 12;
+        let maxAmmo = 60;
+        let isReloading = false;
+        let ammoPickups = [];
 
         const weapons_list = [
-            { name: 'Pistol', damage: 25, fireRate: 200, icon: '🔫', range: 80 },
-            { name: 'Bone Blaster', damage: 35, fireRate: 250, icon: '🦴', range: 60 },
-            { name: 'Tennis Ball Gun', damage: 50, fireRate: 150, icon: '🎾', range: 70 },
-            { name: 'Treat Cannon', damage: 70, fireRate: 120, icon: '🍖', range: 90 },
-            { name: 'Mega Bark', damage: 120, fireRate: 80, icon: '💥', range: 100 }
+            { name: 'Pistol', damage: 25, fireRate: 200, icon: '🔫', range: 80, magSize: 12, maxAmmo: 60, reloadTime: 1500 },
+            { name: 'Bone Blaster', damage: 35, fireRate: 250, icon: '🦴', range: 60, magSize: 8, maxAmmo: 40, reloadTime: 1800 },
+            { name: 'Tennis Ball Gun', damage: 50, fireRate: 150, icon: '🎾', range: 70, magSize: 20, maxAmmo: 80, reloadTime: 2000 },
+            { name: 'Treat Cannon', damage: 70, fireRate: 120, icon: '🍖', range: 90, magSize: 6, maxAmmo: 30, reloadTime: 2200 },
+            { name: 'Mega Bark', damage: 120, fireRate: 80, icon: '💥', range: 100, magSize: 15, maxAmmo: 60, reloadTime: 2500 }
         ];
 
         const powerups = [
@@ -608,39 +712,126 @@
             const frontLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
             frontLeftLeg.position.set(-0.6, -1, 1);
             frontLeftLeg.castShadow = true;
+            frontLeftLeg.name = 'frontLeftLeg';
             pugGroup.add(frontLeftLeg);
 
             const frontRightLeg = new THREE.Mesh(legGeometry, legMaterial);
             frontRightLeg.position.set(0.6, -1, 1);
             frontRightLeg.castShadow = true;
+            frontRightLeg.name = 'frontRightLeg';
             pugGroup.add(frontRightLeg);
 
             const backLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
             backLeftLeg.position.set(-0.6, -1, -1);
             backLeftLeg.castShadow = true;
+            backLeftLeg.name = 'backLeftLeg';
             pugGroup.add(backLeftLeg);
 
             const backRightLeg = new THREE.Mesh(legGeometry, legMaterial);
             backRightLeg.position.set(0.6, -1, -1);
             backRightLeg.castShadow = true;
+            backRightLeg.name = 'backRightLeg';
             pugGroup.add(backRightLeg);
 
             pugGroup.position.set(0, 1.5, 0);
+            pugGroup.userData.walkCycle = 0;
             scene.add(pugGroup);
             pug = pugGroup;
         }
 
         const waspTypes = {
-            normal: { color: 0xffeb3b, health: 50, speed: 0.1, damage: 5, xp: 10, scale: 1 },
-            fast: { color: 0xff6b6b, health: 30, speed: 0.18, damage: 3, xp: 15, scale: 0.8 },
-            tank: { color: 0x8b00ff, health: 120, speed: 0.06, damage: 10, xp: 30, scale: 1.4 },
-            bomber: { color: 0xff4500, health: 40, speed: 0.12, damage: 0, xp: 25, scale: 1.1 },
-            boss: { color: 0xff0000, health: 300, speed: 0.08, damage: 15, xp: 100, scale: 2 }
+            normal: { color: 0xffeb3b, baseHealth: 50, baseSpeed: 0.1, baseDamage: 5, xp: 10, scale: 1 },
+            fast: { color: 0xff6b6b, baseHealth: 30, baseSpeed: 0.18, baseDamage: 3, xp: 15, scale: 0.8 },
+            tank: { color: 0x8b00ff, baseHealth: 120, baseSpeed: 0.06, baseDamage: 10, xp: 30, scale: 1.4 },
+            bomber: { color: 0xff4500, baseHealth: 40, baseSpeed: 0.12, baseDamage: 0, xp: 25, scale: 1.1 },
+            boss: { color: 0xff0000, baseHealth: 300, baseSpeed: 0.08, baseDamage: 15, xp: 100, scale: 2 }
         };
+
+        function selectDifficulty(diff) {
+            difficulty = diff;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function getScaledWaspStats(type) {
+            const base = waspTypes[type];
+            const diffMult = difficultyMultipliers[difficulty];
+            const levelMultiplier = 1 + (level - 1) * 0.15; // 15% increase per level
+            return {
+                health: Math.floor(base.baseHealth * levelMultiplier * diffMult.enemyHealth),
+                speed: base.baseSpeed * (1 + (level - 1) * 0.05) * diffMult.enemySpeed,
+                damage: Math.floor(base.baseDamage * levelMultiplier * diffMult.enemyDamage),
+                xp: base.xp,
+                scale: base.scale
+            };
+        }
+
+        function updateAmmoDisplay() {
+            const ammoDisplay = document.getElementById('ammoDisplay');
+            const reloadHint = document.getElementById('reloadHint');
+
+            ammoDisplay.textContent = `${currentAmmo} / ${maxAmmo - currentAmmo}`;
+
+            if (currentAmmo === 0) {
+                ammoDisplay.classList.add('ammo-low');
+                reloadHint.style.display = 'block';
+            } else if (currentAmmo <= currentWeapon.magSize * 0.3) {
+                ammoDisplay.classList.add('ammo-low');
+                reloadHint.style.display = 'none';
+            } else {
+                ammoDisplay.classList.remove('ammo-low');
+                reloadHint.style.display = 'none';
+            }
+        }
+
+        function reload() {
+            if (isReloading || currentAmmo === currentWeapon.magSize) return;
+            if (maxAmmo === currentAmmo) return; // No reserve ammo
+
+            isReloading = true;
+            document.getElementById('reloadHint').textContent = 'Reloading...';
+            document.getElementById('reloadHint').style.display = 'block';
+
+            setTimeout(() => {
+                const ammoNeeded = currentWeapon.magSize - currentAmmo;
+                const ammoToReload = Math.min(ammoNeeded, maxAmmo - currentAmmo);
+
+                currentAmmo += ammoToReload;
+
+                isReloading = false;
+                updateAmmoDisplay();
+            }, currentWeapon.reloadTime);
+        }
+
+        function spawnAmmoPickup() {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 20 + Math.random() * 40;
+            const x = pug.position.x + Math.cos(angle) * distance;
+            const z = pug.position.z + Math.sin(angle) * distance;
+
+            const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x00ff00,
+                roughness: 0.3,
+                metalness: 0.8,
+                emissive: 0x00aa00,
+                emissiveIntensity: 0.4
+            });
+            const ammoBox = new THREE.Mesh(geometry, material);
+            const groundHeight = getGroundHeight(x, z);
+            ammoBox.position.set(x, groundHeight + 0.8, z);
+            ammoBox.castShadow = true;
+            ammoBox.userData.rotation = 0;
+            ammoBox.userData.baseHeight = groundHeight;
+            ammoBox.userData.ammoAmount = 30;
+            scene.add(ammoBox);
+            ammoPickups.push(ammoBox);
+        }
 
         function createWasp(x, z, type = 'normal') {
             const waspGroup = new THREE.Group();
             const waspData = waspTypes[type];
+            const scaledStats = getScaledWaspStats(type);
 
             const yellowMaterial = new THREE.MeshStandardMaterial({
                 color: type === 'boss' ? 0xff0000 : (type === 'fast' ? 0xff6b6b : (type === 'tank' ? 0x8b00ff : (type === 'bomber' ? 0xff4500 : 0xffeb3b))),
@@ -791,11 +982,11 @@
             waspGroup.add(rightWingBack);
 
             waspGroup.position.set(x, 3, z);
-            waspGroup.userData.health = waspData.health;
-            waspGroup.userData.maxHealth = waspData.health;
-            waspGroup.userData.speed = waspData.speed;
-            waspGroup.userData.damage = waspData.damage;
-            waspGroup.userData.xpValue = waspData.xp;
+            waspGroup.userData.health = scaledStats.health;
+            waspGroup.userData.maxHealth = scaledStats.health;
+            waspGroup.userData.speed = scaledStats.speed;
+            waspGroup.userData.damage = scaledStats.damage;
+            waspGroup.userData.xpValue = scaledStats.xp;
             waspGroup.userData.type = type;
             waspGroup.userData.lastDamage = 0;
             waspGroup.userData.wingIndices = [waspGroup.children.length - 4, waspGroup.children.length - 3, waspGroup.children.length - 2, waspGroup.children.length - 1];
@@ -810,6 +1001,30 @@
             if (rand < 0.25 && level >= 3) return 'tank';
             if (rand < 0.45) return 'fast';
             return 'normal';
+        }
+
+        function createHitParticles(position) {
+            for (let i = 0; i < 8; i++) {
+                const geometry = new THREE.SphereGeometry(0.15);
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0xffaa00,
+                    emissive: 0xff6600,
+                    emissiveIntensity: 0.8
+                });
+                const particle = new THREE.Mesh(geometry, material);
+                particle.position.copy(position);
+
+                const direction = new THREE.Vector3(
+                    (Math.random() - 0.5) * 2,
+                    Math.random() * 2,
+                    (Math.random() - 0.5) * 2
+                );
+                particle.userData.velocity = direction.normalize().multiplyScalar(0.3);
+                particle.userData.life = 30;
+
+                scene.add(particle);
+                projectiles.push(particle);
+            }
         }
 
         function addXP(amount) {
@@ -894,10 +1109,12 @@
                 emissiveIntensity: 0.3
             });
             const weaponMesh = new THREE.Mesh(geometry, material);
-            weaponMesh.position.set(x, 1, z);
+            const groundHeight = getGroundHeight(x, z);
+            weaponMesh.position.set(x, groundHeight + 1, z);
             weaponMesh.castShadow = true;
             weaponMesh.userData.weapon = weaponData;
             weaponMesh.userData.rotation = 0;
+            weaponMesh.userData.baseHeight = groundHeight;
             scene.add(weaponMesh);
             weapons.push(weaponMesh);
         }
@@ -905,10 +1122,24 @@
         function shoot(event) {
             if (!gameRunning) return;
             if (event.button !== 0) return;
+            if (isReloading) return;
+            if (currentAmmo <= 0) {
+                reload();
+                return;
+            }
 
             const now = Date.now();
             if (now - lastShot < currentWeapon.fireRate) return;
             lastShot = now;
+
+            // Use ammo
+            currentAmmo--;
+            updateAmmoDisplay();
+
+            // Auto reload if empty
+            if (currentAmmo === 0) {
+                setTimeout(() => reload(), 300);
+            }
 
             mouse.x = mouseX;
             mouse.y = mouseY;
@@ -919,31 +1150,54 @@
             const target = new THREE.Vector3();
             raycaster.ray.intersectPlane(plane, target);
 
-            const projectileGeometry = new THREE.SphereGeometry(0.4);
-            const projectileMaterial = new THREE.MeshStandardMaterial({
-                color: 0xff6b35,
-                emissive: 0xff6b35,
-                emissiveIntensity: 0.8,
-                roughness: 0.2,
-                metalness: 0.8
-            });
-            const projectile = new THREE.Mesh(projectileGeometry, projectileMaterial);
+            // Create realistic bullet shape (cylinder)
+            const bulletGroup = new THREE.Group();
 
-            projectile.position.copy(pug.position);
-            projectile.position.y = pug.position.y + 1;
+            const bulletGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8);
+            const bulletMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffd700,
+                emissive: 0xff6b35,
+                emissiveIntensity: 0.6,
+                roughness: 0.2,
+                metalness: 0.9
+            });
+            const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
+            bullet.rotation.z = Math.PI / 2; // Rotate to point forward
+            bulletGroup.add(bullet);
+
+            // Add bullet tip
+            const tipGeometry = new THREE.ConeGeometry(0.12, 0.3, 8);
+            const tipMaterial = new THREE.MeshStandardMaterial({
+                color: 0xff6b35,
+                emissive: 0xff4500,
+                emissiveIntensity: 0.8,
+                roughness: 0.1,
+                metalness: 1.0
+            });
+            const tip = new THREE.Mesh(tipGeometry, tipMaterial);
+            tip.rotation.z = -Math.PI / 2;
+            tip.position.x = 0.55;
+            bulletGroup.add(tip);
+
+            bulletGroup.position.copy(pug.position);
+            bulletGroup.position.y = pug.position.y + 1;
 
             const direction = new THREE.Vector3();
             direction.subVectors(target, pug.position);
             direction.y = 0;
             direction.normalize();
 
-            projectile.userData.velocity = direction.multiplyScalar(2);
-            projectile.userData.damage = currentWeapon.damage;
-            projectile.userData.distance = 0;
-            projectile.castShadow = true;
+            // Rotate bullet to face direction
+            const angle = Math.atan2(direction.x, direction.z);
+            bulletGroup.rotation.y = angle;
 
-            scene.add(projectile);
-            projectiles.push(projectile);
+            bulletGroup.userData.velocity = direction.multiplyScalar(2.5);
+            bulletGroup.userData.damage = currentWeapon.damage;
+            bulletGroup.userData.distance = 0;
+            bulletGroup.castShadow = true;
+
+            scene.add(bulletGroup);
+            projectiles.push(bulletGroup);
         }
 
         function updateGame() {
@@ -953,6 +1207,8 @@
             const minutes = Math.floor(survivalTime / 60);
             const seconds = survivalTime % 60;
             document.getElementById('time').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('wave').textContent = waveNumber;
+            document.getElementById('enemyCount').textContent = wasps.length;
 
             if (healthRegenRate > 0) {
                 health = Math.min(health + healthRegenRate / 60, maxHealth);
@@ -974,29 +1230,112 @@
             if (moveX !== 0 || moveZ !== 0) {
                 const angle = Math.atan2(moveX, moveZ);
                 pug.rotation.y = angle;
+
+                // Walking animation
+                pug.userData.walkCycle += 0.15;
+                const frontLeftLeg = pug.children.find(child => child.name === 'frontLeftLeg');
+                const frontRightLeg = pug.children.find(child => child.name === 'frontRightLeg');
+                const backLeftLeg = pug.children.find(child => child.name === 'backLeftLeg');
+                const backRightLeg = pug.children.find(child => child.name === 'backRightLeg');
+
+                if (frontLeftLeg) frontLeftLeg.rotation.x = Math.sin(pug.userData.walkCycle) * 0.5;
+                if (frontRightLeg) frontRightLeg.rotation.x = Math.sin(pug.userData.walkCycle + Math.PI) * 0.5;
+                if (backLeftLeg) backLeftLeg.rotation.x = Math.sin(pug.userData.walkCycle + Math.PI) * 0.5;
+                if (backRightLeg) backRightLeg.rotation.x = Math.sin(pug.userData.walkCycle) * 0.5;
+            } else {
+                // Reset legs when not moving
+                const frontLeftLeg = pug.children.find(child => child.name === 'frontLeftLeg');
+                const frontRightLeg = pug.children.find(child => child.name === 'frontRightLeg');
+                const backLeftLeg = pug.children.find(child => child.name === 'backLeftLeg');
+                const backRightLeg = pug.children.find(child => child.name === 'backRightLeg');
+
+                if (frontLeftLeg) frontLeftLeg.rotation.x = 0;
+                if (frontRightLeg) frontRightLeg.rotation.x = 0;
+                if (backLeftLeg) backLeftLeg.rotation.x = 0;
+                if (backRightLeg) backRightLeg.rotation.x = 0;
             }
 
-            camera.position.x = pug.position.x;
-            camera.position.z = pug.position.z + 25;
-            camera.position.y = pug.position.y + 15;
-            camera.lookAt(pug.position);
+            // Camera shake
+            if (cameraShake.intensity > 0.01) {
+                cameraShake.x = (Math.random() - 0.5) * cameraShake.intensity;
+                cameraShake.y = (Math.random() - 0.5) * cameraShake.intensity;
+                cameraShake.intensity *= cameraShake.decay;
+            } else {
+                cameraShake.x = 0;
+                cameraShake.y = 0;
+                cameraShake.intensity = 0;
+            }
+
+            camera.position.x = pug.position.x + cameraShake.x;
+            camera.position.z = pug.position.z + 25 + cameraShake.y;
+            camera.position.y = pug.position.y + 15 + cameraShake.y;
+            camera.lookAt(new THREE.Vector3(pug.position.x + cameraShake.x, pug.position.y, pug.position.z + cameraShake.y));
 
             const now = Date.now();
 
-            spawnTimer++;
-            if (spawnTimer > Math.max(60, 120 - level * 3)) {
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 50 + Math.random() * 30;
-                const x = pug.position.x + Math.cos(angle) * distance;
-                const z = pug.position.z + Math.sin(angle) * distance;
-                const waspType = getRandomWaspType();
-                createWasp(x, z, waspType);
-                spawnTimer = 0;
+            // Time-based wave system - wave advances every 30 seconds
+            const currentWaveTime = now - waveStartTime;
+            if (currentWaveTime >= waveDuration) {
+                waveNumber++;
+                waveStartTime = now;
+                enemiesKilledThisWave = 0;
+                document.getElementById('wave').textContent = waveNumber;
             }
 
-            if (Math.random() < 0.001) {
+            // Spawn enemies periodically throughout the wave
+            spawnTimer++;
+            const diffMult = difficultyMultipliers[difficulty];
+            const spawnRate = Math.max(60, (180 - level * 8) * diffMult.spawnRate); // Difficulty affects spawn rate
+            if (spawnTimer > spawnRate) {
+                // Spawn multiple wasps at once at higher levels
+                waspsPerWave = Math.min(Math.floor(1 + level / 2), 5); // Up to 5 wasps per spawn
+
+                for (let i = 0; i < waspsPerWave; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 50 + Math.random() * 30;
+                    const x = pug.position.x + Math.cos(angle) * distance;
+                    const z = pug.position.z + Math.sin(angle) * distance;
+                    const waspType = getRandomWaspType();
+                    createWasp(x, z, waspType);
+                }
+
+                spawnTimer = 0;
+
+                // Boss wave every 5 levels
+                if (level % 5 === 0 && Math.random() < 0.3) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 60;
+                    const x = pug.position.x + Math.cos(angle) * distance;
+                    const z = pug.position.z + Math.sin(angle) * distance;
+                    createWasp(x, z, 'boss');
+                }
+            }
+
+            // Reduced weapon spawn rate - about every 55 seconds at 60fps
+            if (Math.random() < 0.0003) {
                 spawnWeapon();
             }
+
+            // Ammo pickup spawn rate - about every 20 seconds at 60fps
+            if (Math.random() < 0.0008) {
+                spawnAmmoPickup();
+            }
+
+            // Update and collect ammo pickups
+            ammoPickups.forEach((ammoBox, index) => {
+                ammoBox.userData.rotation += 0.04;
+                ammoBox.rotation.y = ammoBox.userData.rotation;
+                ammoBox.rotation.x = Math.sin(ammoBox.userData.rotation * 2) * 0.2;
+                ammoBox.position.y = ammoBox.userData.baseHeight + 0.8 + Math.sin(ammoBox.userData.rotation * 3) * 0.3;
+
+                const dist = pug.position.distanceTo(ammoBox.position);
+                if (dist < 3) {
+                    maxAmmo += ammoBox.userData.ammoAmount;
+                    updateAmmoDisplay();
+                    scene.remove(ammoBox);
+                    ammoPickups.splice(index, 1);
+                }
+            });
 
             wasps.forEach((wasp, index) => {
                 const toPlayer = new THREE.Vector3();
@@ -1042,6 +1381,7 @@
                 if (dist < 3 && now - wasp.userData.lastDamage > 500) {
                     health -= wasp.userData.damage;
                     wasp.userData.lastDamage = now;
+                    cameraShake.intensity = 2; // Screen shake on damage
                     document.getElementById('healthFill').style.width = Math.max(0, health / maxHealth * 100) + '%';
                     if (health <= 0) {
                         gameOver();
@@ -1050,6 +1390,20 @@
             });
 
             projectiles.forEach((projectile, index) => {
+                // Handle hit particles
+                if (projectile.userData.life !== undefined) {
+                    projectile.userData.life--;
+                    projectile.userData.velocity.y -= 0.02; // Gravity
+                    projectile.position.add(projectile.userData.velocity);
+                    projectile.scale.multiplyScalar(0.95);
+
+                    if (projectile.userData.life <= 0) {
+                        scene.remove(projectile);
+                        projectiles.splice(index, 1);
+                    }
+                    return;
+                }
+
                 projectile.position.add(projectile.userData.velocity);
                 projectile.userData.distance += projectile.userData.velocity.length();
 
@@ -1063,10 +1417,16 @@
                     const dist = projectile.position.distanceTo(wasp.position);
                     if (dist < 1.5) {
                         wasp.userData.health -= projectile.userData.damage;
+
+                        // Hit particle effect
+                        createHitParticles(wasp.position);
+                        cameraShake.intensity = Math.min(cameraShake.intensity + 0.3, 3);
+
                         scene.remove(projectile);
                         projectiles.splice(index, 1);
 
                         if (wasp.userData.health <= 0) {
+                            cameraShake.intensity = Math.min(cameraShake.intensity + 0.8, 4);
                             if (wasp.userData.type === 'bomber') {
                                 const bombRange = 10;
                                 wasps.forEach(otherWasp => {
@@ -1097,13 +1457,17 @@
                 weapon.userData.rotation += 0.03;
                 weapon.rotation.y = weapon.userData.rotation;
                 weapon.rotation.x = Math.sin(weapon.userData.rotation * 2) * 0.2;
-                weapon.position.y = 1.5 + Math.sin(weapon.userData.rotation * 3) * 0.5;
+                // Bounce relative to ground height
+                weapon.position.y = weapon.userData.baseHeight + 1.5 + Math.sin(weapon.userData.rotation * 3) * 0.5;
 
                 const dist = pug.position.distanceTo(weapon.position);
                 if (dist < 3) {
-                    currentWeapon = weapon.userData.weapon;
+                    currentWeapon = { ...weapon.userData.weapon };
+                    currentAmmo = currentWeapon.magSize;
+                    maxAmmo = currentWeapon.maxAmmo;
                     document.getElementById('weaponIcon').textContent = currentWeapon.icon;
                     document.getElementById('weaponName').textContent = currentWeapon.name;
+                    updateAmmoDisplay();
                     scene.remove(weapon);
                     weapons.splice(index, 1);
                 }
@@ -1130,6 +1494,9 @@
             spawnTimer = 0;
             startTime = Date.now();
             currentWeapon = { ...weapons_list[0] };
+            currentAmmo = currentWeapon.magSize;
+            maxAmmo = currentWeapon.maxAmmo;
+            isReloading = false;
             playerSpeed = 0.4;
             healthRegenRate = 0;
 
@@ -1139,6 +1506,7 @@
             document.getElementById('healthFill').style.width = '100%';
             document.getElementById('weaponIcon').textContent = '🔫';
             document.getElementById('weaponName').textContent = 'Pistol';
+            updateAmmoDisplay();
 
             for (let i = 0; i < 5; i++) {
                 const angle = Math.random() * Math.PI * 2;
@@ -1151,15 +1519,25 @@
             level = 1;
             xp = 0;
             xpNeeded = 100;
+            waveNumber = 1;
+            waspsPerWave = 1;
+            waveStartTime = Date.now();
+            waveDuration = 30000;
+            enemiesKilledThisWave = 0;
+            cameraShake = { x: 0, y: 0, intensity: 0, decay: 0.9 };
+            pug.userData.walkCycle = 0;
             document.getElementById('level').textContent = '1';
             document.getElementById('xp').textContent = '0';
             document.getElementById('xpNeeded').textContent = '100';
+            document.getElementById('wave').textContent = '1';
+            document.getElementById('enemyCount').textContent = '0';
         }
 
         function restartGame() {
             wasps.forEach(wasp => scene.remove(wasp));
             projectiles.forEach(proj => scene.remove(proj));
             weapons.forEach(weapon => scene.remove(weapon));
+            ammoPickups.forEach(ammo => scene.remove(ammo));
 
             pug.position.set(0, 1.5, 0);
             document.getElementById('gameOver').style.display = 'none';
@@ -1183,6 +1561,9 @@
                 case 'KeyS': moveBackward = true; break;
                 case 'KeyA': moveLeft = true; break;
                 case 'KeyD': moveRight = true; break;
+                case 'KeyR':
+                    if (gameRunning) reload();
+                    break;
             }
         }
 
