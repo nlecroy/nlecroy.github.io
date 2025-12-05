@@ -501,7 +501,7 @@
         // Load messages from Firebase (last 100 messages)
         const messagesQuery = query(messagesRef, limitToLast(100));
         onChildAdded(messagesQuery, (snapshot) => {
-            const message = snapshot.data();
+            const message = snapshot.val();
             displayMessage(message, snapshot.key);
 
             // Auto-scroll to bottom on new messages (but not on initial load)
