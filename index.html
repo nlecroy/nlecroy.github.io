@@ -243,6 +243,7 @@
                 <h3 style="color: #ffd700; margin-bottom: 1rem;">🍬 Skittles</h3>
                 <button onclick="toggleSkittles()" class="admin-btn" id="skittlesToggleBtn">🍬 Toggle Skittles</button>
                 <button onclick="spawnSkittle()" class="admin-btn">✨ Spawn Skittle</button>
+                <button onclick="refreshItemEffects()" class="admin-btn">🔄 Refresh Upgrades</button>
                 <div style="color: #4ecdc4; margin-top: 1rem; font-weight: bold;">Balance: <span id="skittlesBalance">0</span></div>
             </div>
         </div>
@@ -583,6 +584,30 @@
             }
         });
 
+        // Debug function to add test items (type in console: testUpgrades())
+        window.testUpgrades = function() {
+            const testItems = [
+                { id: 10, name: "Infinity Treat", icon: "🍖", description: "Ultimate power-up!", price: 500, tradable: false },
+                { id: 3, name: "Skittle Magnet", icon: "🧲", description: "2x collection!", price: 200, tradable: false },
+                { id: 4, name: "Top Hat of Fortune", icon: "🎩", description: "Luck!", price: 120, tradable: true, tradeValue: 80 }
+            ];
+
+            localStorage.setItem('inventory', JSON.stringify(testItems));
+            console.log('🧪 Test items added! Run refreshItemEffects() to activate them.');
+            alert('🧪 Test items added! Click "Refresh Upgrades" in admin panel or type refreshItemEffects() in console!');
+        };
+
+        // Debug: Log current inventory
+        window.checkInventory = function() {
+            const inv = getOwnedItems();
+            console.log('📦 Current Inventory:', inv);
+            console.log('📊 Item count:', inv.length);
+            inv.forEach(item => {
+                console.log(`  - ${item.icon} ${item.name}`);
+            });
+            return inv;
+        };
+
         // Skittles System
         let skittlesEnabled = localStorage.getItem('skittlesEnabled') === 'true' || false;
         let skittlesInterval = null;
@@ -609,12 +634,52 @@
 
             if (skittlesEnabled) {
                 startSkittlesSpawning();
+                showActiveEffects();
                 alert('🍬 Skittles are now enabled! They will randomly appear on the site - click them to collect!');
             } else {
                 stopSkittlesSpawning();
                 document.querySelectorAll('.skittle').forEach(s => s.remove());
                 alert('Skittles disabled!');
             }
+        }
+
+        function showActiveEffects() {
+            const inventory = getOwnedItems();
+            if (inventory.length === 0) return;
+
+            const effectsDiv = document.createElement('div');
+            effectsDiv.id = 'activeEffects';
+            effectsDiv.style.position = 'fixed';
+            effectsDiv.style.bottom = '20px';
+            effectsDiv.style.left = '20px';
+            effectsDiv.style.background = 'rgba(0,0,0,0.8)';
+            effectsDiv.style.color = 'white';
+            effectsDiv.style.padding = '1rem';
+            effectsDiv.style.borderRadius = '15px';
+            effectsDiv.style.zIndex = '10000';
+            effectsDiv.style.maxWidth = '300px';
+            effectsDiv.style.fontSize = '0.9rem';
+
+            let effects = '<strong>🔥 Active Effects:</strong><br>';
+
+            if (hasItem('Infinity Treat')) effects += '• 3x Skittles<br>';
+            if (hasItem('Hacker Shades')) effects += '• 1.5x Skittles Bonus<br>';
+            if (hasItem('Pug Crown')) effects += '• +2 Skittles Per Collect<br>';
+            if (hasItem('Top Hat of Fortune')) effects += '• Double Spawn Rate<br>';
+            if (hasItem('Skittle Magnet')) effects += '• Fast Spawning (8s)<br>';
+            if (hasItem('Lightning Speed Boots')) effects += '• 30% Faster Spawns<br>';
+            if (hasItem('Skittle Printer')) effects += '• +10 Skittles/Minute<br>';
+            if (hasItem('Nyan Pug Transformation')) effects += '• Rainbow Cursor Trail<br>';
+            if (hasItem('Laser Eyes')) effects += '• Laser Click Effects<br>';
+            if (hasItem('Diamond Shield')) effects += '• Shield Protection<br>';
+
+            effectsDiv.innerHTML = effects;
+
+            // Remove old effects div if it exists
+            const oldDiv = document.getElementById('activeEffects');
+            if (oldDiv) oldDiv.remove();
+
+            document.body.appendChild(effectsDiv);
         }
 
         function getOwnedItems() {
@@ -627,7 +692,11 @@
         }
 
         function startSkittlesSpawning() {
-            if (skittlesInterval) return;
+            // Stop existing interval first
+            if (skittlesInterval) {
+                clearInterval(skittlesInterval);
+                skittlesInterval = null;
+            }
 
             // Check for upgrades that affect spawn rate
             let spawnChance = 0.3; // Base 30% chance
@@ -636,18 +705,23 @@
             // Top Hat of Fortune - rare skittles appear more often
             if (hasItem('Top Hat of Fortune')) {
                 spawnChance = 0.6; // Double spawn chance
+                console.log('✅ Top Hat of Fortune active - Double spawn chance!');
             }
 
             // Skittle Magnet - 2x collection rate means more frequent spawns
             if (hasItem('Skittle Magnet')) {
                 spawnInterval = 8000; // Spawn much faster
                 spawnChance = 0.5;
+                console.log('✅ Skittle Magnet active - Spawning every 8 seconds!');
             }
 
             // Lightning Speed Boots - faster everything
             if (hasItem('Lightning Speed Boots')) {
                 spawnInterval = Math.floor(spawnInterval * 0.7); // 30% faster
+                console.log('✅ Lightning Speed Boots active - 30% faster!');
             }
+
+            console.log(`🍬 Skittles spawning every ${spawnInterval}ms with ${spawnChance * 100}% chance`);
 
             skittlesInterval = setInterval(() => {
                 if (Math.random() < spawnChance) {
@@ -692,21 +766,30 @@
 
             // Calculate skittles based on multipliers
             let skittlesEarned = 1;
+            let multiplierText = '';
 
             // Infinity Treat - 3x multiplier
             if (hasItem('Infinity Treat')) {
                 skittlesEarned *= 3;
+                multiplierText += ' (Infinity Treat x3)';
+                console.log('✅ Infinity Treat multiplier applied!');
             }
 
             // Hacker Shades - reveals bonus skittles (1.5x)
             if (hasItem('Hacker Shades')) {
                 skittlesEarned = Math.floor(skittlesEarned * 1.5);
+                multiplierText += ' (Hacker Shades x1.5)';
+                console.log('✅ Hacker Shades bonus applied!');
             }
 
             // Pug Crown - VIP bonus (+2 skittles)
             if (hasItem('Pug Crown')) {
                 skittlesEarned += 2;
+                multiplierText += ' (Pug Crown +2)';
+                console.log('✅ Pug Crown bonus applied!');
             }
+
+            console.log(`💰 Collected ${skittlesEarned} skittles!${multiplierText}`);
 
             const currentSkittles = loadSkittles();
             saveSkittles(currentSkittles + skittlesEarned);
@@ -889,15 +972,59 @@
             }
         }
 
+        // Function to refresh all effects
+        window.refreshItemEffects = function() {
+            console.log('🔄 Refreshing all item effects...');
+
+            // Restart spawning with new parameters
+            if (skittlesEnabled) {
+                startSkittlesSpawning();
+            }
+
+            // Reapply visual effects
+            applyItemEffects();
+
+            // Restart printer if needed
+            startSkittlePrinter();
+
+            // Show active effects
+            if (skittlesEnabled) {
+                showActiveEffects();
+            }
+
+            console.log('✅ Effects refreshed!');
+            alert('✅ Item effects refreshed! Your upgrades are now active!');
+        };
+
         // Apply item effects
         applyItemEffects();
         startSkittlePrinter();
+        if (skittlesEnabled) {
+            showActiveEffects();
+        }
 
-        // Reapply effects when inventory changes
+        // Listen for storage changes (when items are purchased)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'inventory') {
+                console.log('🎒 Inventory changed! Refreshing effects...');
+                setTimeout(() => refreshItemEffects(), 500);
+            }
+        });
+
+        // Check for inventory changes periodically
+        let lastInventory = JSON.stringify(getOwnedItems());
         setInterval(() => {
-            applyItemEffects();
-            startSkittlePrinter();
-        }, 5000);
+            const currentInventory = JSON.stringify(getOwnedItems());
+            if (currentInventory !== lastInventory) {
+                console.log('🎒 Inventory changed! Refreshing effects...');
+                lastInventory = currentInventory;
+
+                if (skittlesEnabled) {
+                    startSkittlesSpawning();
+                    showActiveEffects();
+                }
+            }
+        }, 2000);
     </script>
 </body>
 </html>
