@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pugs Aren't Evil - First Person Shooter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: #000;
+            font-family: 'Courier New', monospace;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: #1a1a1a;
+            cursor: none;
+        }
+
+        #hud {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff0000;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff0000;
+            z-index: 100;
+            text-align: center;
+        }
+
+        #crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        #crosshair::before,
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        #crosshair::before {
+            width: 2px;
+            height: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #crosshair::after {
+            width: 20px;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #startScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000, #1a0000);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        #startScreen h1 {
+            font-size: 4rem;
+            color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        #startScreen p {
+            font-size: 1.5rem;
+            color: #fff;
+            margin: 0.5rem 0;
+        }
+
+        #startButton {
+            margin-top: 2rem;
+            padding: 1rem 3rem;
+            font-size: 1.5rem;
+            background: #ff0000;
+            color: #fff;
+            border: 3px solid #fff;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            box-shadow: 0 0 20px #ff0000;
+            transition: all 0.3s;
+        }
+
+        #startButton:hover {
+            background: #fff;
+            color: #ff0000;
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        #weapon {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 300px;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        .muzzle-flash {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,0,0.8) 0%, rgba(255,128,0,0.4) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 98;
+            animation: flash 0.1s;
+        }
+
+        @keyframes flash {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>🐶 PUGS AREN'T EVIL 🐶</h1>
+        <p>A Resident Evil 4 Remix</p>
+        <p style="color: #ff0000; font-size: 1.2rem; margin-top: 1rem;">⚠️ JUST RELEASED ⚠️</p>
+        <p style="margin-top: 2rem;">WASD - Move | Mouse - Look | Click - Shoot</p>
+        <p>ESC - Pause | R - Reload</p>
+        <button id="startButton">START GAME</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+    <div id="crosshair"></div>
+    <div id="hud">
+        <div>HEALTH: <span id="health">100</span></div>
+        <div>AMMO: <span id="ammo">15</span> / <span id="totalAmmo">45</span></div>
+        <div>SCORE: <span id="score">0</span></div>
+    </div>
+    <canvas id="weapon"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const weaponCanvas = document.getElementById('weapon');
+        const weaponCtx = weaponCanvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        weaponCanvas.width = 400;
+        weaponCanvas.height = 300;
+
+        // Game state
+        let gameStarted = false;
+        let player = {
+            x: 5,
+            y: 5,
+            angle: 0,
+            health: 100,
+            ammo: 15,
+            totalAmmo: 45,
+            score: 0
+        };
+
+        // Map (1 = wall, 0 = empty, 2 = enemy spawn)
+        const map = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,2,0,0,0,0,0,0,2,0,0,0,0,1],
+            [1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1],
+            [1,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,2,0,0,0,0,0,0,0,2,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1],
+            [1,0,2,0,0,0,0,0,0,0,0,0,2,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,2,0,0,0,0,0,0,0,2,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        // Enemies
+        let enemies = [];
+
+        // Initialize enemies from map
+        for (let y = 0; y < map.length; y++) {
+            for (let x = 0; x < map[0].length; x++) {
+                if (map[y][x] === 2) {
+                    enemies.push({
+                        x: x + 0.5,
+                        y: y + 0.5,
+                        health: 30,
+                        alive: true,
+                        angle: Math.random() * Math.PI * 2
+                    });
+                    map[y][x] = 0; // Clear spawn point
+                }
+            }
+        }
+
+        // Input handling
+        const keys = {};
+        let mouseX = 0;
+        let mouseLocked = false;
+
+        document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+        document.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+        canvas.addEventListener('click', () => {
+            if (!mouseLocked && gameStarted) {
+                canvas.requestPointerLock();
+            }
+            if (gameStarted && mouseLocked) shoot();
+        });
+
+        document.addEventListener('pointerlockchange', () => {
+            mouseLocked = document.pointerLockElement === canvas;
+        });
+
+        document.addEventListener('mousemove', e => {
+            if (mouseLocked) {
+                player.angle += e.movementX * 0.003;
+            }
+        });
+
+        // Start game
+        document.getElementById('startButton').addEventListener('click', () => {
+            document.getElementById('startScreen').style.display = 'none';
+            gameStarted = true;
+            canvas.requestPointerLock();
+            gameLoop();
+        });
+
+        // Shooting
+        function shoot() {
+            if (player.ammo <= 0) {
+                // Click sound for empty gun
+                return;
+            }
+
+            player.ammo--;
+            updateHUD();
+
+            // Muzzle flash
+            const flash = document.createElement('div');
+            flash.className = 'muzzle-flash';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 100);
+
+            // Weapon recoil animation
+            weaponRecoil();
+
+            // Raycast to hit enemy
+            checkHit();
+        }
+
+        function weaponRecoil() {
+            let recoil = 0;
+            const recoilInterval = setInterval(() => {
+                recoil += 5;
+                if (recoil > 20) {
+                    clearInterval(recoilInterval);
+                    const returnInterval = setInterval(() => {
+                        recoil -= 2;
+                        if (recoil <= 0) clearInterval(returnInterval);
+                    }, 16);
+                }
+            }, 16);
+        }
+
+        function checkHit() {
+            // Simple raycast for center of screen
+            const rayAngle = player.angle;
+
+            enemies.forEach(enemy => {
+                if (!enemy.alive) return;
+
+                const dx = enemy.x - player.x;
+                const dy = enemy.y - player.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angleToEnemy = Math.atan2(dy, dx);
+
+                let angleDiff = angleToEnemy - rayAngle;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+
+                if (Math.abs(angleDiff) < 0.1 && distance < 10) {
+                    enemy.health -= 15;
+                    if (enemy.health <= 0) {
+                        enemy.alive = false;
+                        player.score += 100;
+                        updateHUD();
+                    }
+                }
+            });
+        }
+
+        function updateHUD() {
+            document.getElementById('health').textContent = player.health;
+            document.getElementById('ammo').textContent = player.ammo;
+            document.getElementById('totalAmmo').textContent = player.totalAmmo;
+            document.getElementById('score').textContent = player.score;
+        }
+
+        // Movement
+        function updatePlayer() {
+            const moveSpeed = 0.05;
+            const newX = player.x + Math.cos(player.angle) * moveSpeed * (keys['w'] ? 1 : keys['s'] ? -1 : 0);
+            const newY = player.y + Math.sin(player.angle) * moveSpeed * (keys['w'] ? 1 : keys['s'] ? -1 : 0);
+
+            if (map[Math.floor(newY)][Math.floor(newX)] === 0) {
+                player.x = newX;
+                player.y = newY;
+            }
+
+            // Strafe
+            const strafeAngle = player.angle + Math.PI / 2;
+            const strafeX = player.x + Math.cos(strafeAngle) * moveSpeed * (keys['d'] ? 1 : keys['a'] ? -1 : 0);
+            const strafeY = player.y + Math.sin(strafeAngle) * moveSpeed * (keys['d'] ? 1 : keys['a'] ? -1 : 0);
+
+            if (map[Math.floor(strafeY)][Math.floor(strafeX)] === 0) {
+                player.x = strafeX;
+                player.y = strafeY;
+            }
+
+            // Reload
+            if (keys['r'] && player.totalAmmo > 0) {
+                const needed = 15 - player.ammo;
+                const toReload = Math.min(needed, player.totalAmmo);
+                player.ammo += toReload;
+                player.totalAmmo -= toReload;
+                updateHUD();
+                keys['r'] = false;
+            }
+        }
+
+        // Raycasting
+        function castRays() {
+            const fov = Math.PI / 3;
+            const numRays = canvas.width;
+            const rayStep = fov / numRays;
+
+            for (let i = 0; i < numRays; i++) {
+                const rayAngle = player.angle - fov / 2 + rayStep * i;
+
+                let distance = 0;
+                let hit = false;
+                let hitWall = false;
+
+                while (!hit && distance < 20) {
+                    distance += 0.05;
+
+                    const testX = player.x + Math.cos(rayAngle) * distance;
+                    const testY = player.y + Math.sin(rayAngle) * distance;
+
+                    if (map[Math.floor(testY)] && map[Math.floor(testY)][Math.floor(testX)] === 1) {
+                        hit = true;
+                        hitWall = true;
+                    }
+                }
+
+                // Fix fish-eye
+                distance *= Math.cos(rayAngle - player.angle);
+
+                const wallHeight = canvas.height / distance;
+                const color = hitWall ? `rgb(${100 - distance * 5}, ${50 - distance * 2}, ${50 - distance * 2})` : '#000';
+
+                ctx.fillStyle = color;
+                ctx.fillRect(i, canvas.height / 2 - wallHeight / 2, 1, wallHeight);
+
+                // Floor and ceiling
+                ctx.fillStyle = '#2a1a1a';
+                ctx.fillRect(i, canvas.height / 2 + wallHeight / 2, 1, canvas.height);
+                ctx.fillStyle = '#1a1a2a';
+                ctx.fillRect(i, 0, 1, canvas.height / 2 - wallHeight / 2);
+            }
+
+            // Draw enemies
+            enemies.forEach(enemy => {
+                if (!enemy.alive) return;
+
+                const dx = enemy.x - player.x;
+                const dy = enemy.y - player.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angleToEnemy = Math.atan2(dy, dx);
+
+                let angleDiff = angleToEnemy - player.angle;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+
+                if (Math.abs(angleDiff) < fov / 2) {
+                    const screenX = (angleDiff / (fov / 2) + 1) * canvas.width / 2;
+                    const enemyHeight = canvas.height / distance * 2;
+
+                    ctx.fillStyle = `rgb(${200 - distance * 10}, ${100 - distance * 5}, ${100 - distance * 5})`;
+                    ctx.fillRect(screenX - enemyHeight / 4, canvas.height / 2 - enemyHeight / 2, enemyHeight / 2, enemyHeight);
+
+                    // Enemy "face"
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fillRect(screenX - enemyHeight / 6, canvas.height / 2 - enemyHeight / 3, enemyHeight / 12, enemyHeight / 12);
+                    ctx.fillRect(screenX + enemyHeight / 12, canvas.height / 2 - enemyHeight / 3, enemyHeight / 12, enemyHeight / 12);
+                }
+            });
+        }
+
+        // Draw weapon
+        function drawWeapon() {
+            weaponCtx.clearRect(0, 0, weaponCanvas.width, weaponCanvas.height);
+
+            // Simple pistol
+            weaponCtx.fillStyle = '#333';
+            weaponCtx.fillRect(150, 100, 100, 150);
+            weaponCtx.fillStyle = '#222';
+            weaponCtx.fillRect(170, 80, 60, 30);
+            weaponCtx.fillStyle = '#555';
+            weaponCtx.fillRect(195, 100, 10, 50);
+        }
+
+        // Game loop
+        function gameLoop() {
+            if (!gameStarted) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            updatePlayer();
+            castRays();
+            drawWeapon();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize
+        updateHUD();
+        drawWeapon();
+    </script>
+</body>
+</html>
