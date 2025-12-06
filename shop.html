@@ -38,22 +38,35 @@
         .pug-trader {
             text-align: center;
             margin-bottom: 2rem;
+            position: relative;
         }
 
         .pug-trader img {
-            width: 200px;
+            width: 250px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .pug-trader img:hover {
+            transform: scale(1.1);
+            border-color: #ffd700;
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5);
         }
 
         .pug-message {
-            background: white;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
             padding: 1.5rem;
             border-radius: 15px;
             margin-top: 1rem;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #667eea;
+            border: 3px solid #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            font-family: 'Courier New', monospace;
         }
 
         .shop-sections {
@@ -81,23 +94,49 @@
         }
 
         .shop-item {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
             padding: 1.5rem;
             border-radius: 15px;
             text-align: center;
             transition: all 0.3s ease;
             border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shop-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .shop-item:hover::before {
+            left: 100%;
         }
 
         .shop-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px) scale(1.02);
             border-color: #667eea;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
         }
 
         .item-icon {
             font-size: 4rem;
             margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .shop-item:hover .item-icon {
+            transform: rotate(360deg) scale(1.2);
         }
 
         .item-name {
@@ -114,7 +153,9 @@
         }
 
         .item-price {
-            background: linear-gradient(45deg, #ff6b6b, #f093fb);
+            background: linear-gradient(45deg, #ff6b6b, #f093fb, #667eea);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 10px;
@@ -122,6 +163,15 @@
             font-size: 1.1rem;
             display: inline-block;
             margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .buy-btn {
@@ -214,6 +264,11 @@
             from { transform: translateX(400px); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
 <body>
@@ -244,8 +299,8 @@
         </div>
 
         <div class="pug-trader">
-            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDNlODE4aGVwaGs1eWhrNzgxdWY3NzA2b2lpbm92M3Q4djJxdjFibSZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/xTiTnFFSmYktPjiNYQ/giphy.gif" alt="Pug Trader">
-            <div class="pug-message">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDNlODE4aGVwaGs1eWhrNzgxdWY3NzA2b2lpbm92M3Q4djJxdjFibSZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/xTiTnFFSmYktPjiNYQ/giphy.gif" alt="Pug Trader" onclick="pugTraderSpeak()">
+            <div class="pug-message" id="pugMessage">
                 "Woof! Welcome to my shop! Trade your skittles for awesome items!"
             </div>
         </div>
@@ -263,6 +318,31 @@
                     <input type="text" class="gift-input" id="giftUsername" placeholder="Enter username...">
                     <input type="number" class="gift-input" id="giftAmount" placeholder="Amount..." min="1">
                     <button class="gift-btn" onclick="giftSkittles()">🎁 Send Gift</button>
+                </div>
+            </div>
+
+            <div class="shop-section" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 107, 0.1)); border: 3px solid #ffd700;">
+                <h2>💱 Trade with the Pug</h2>
+                <p style="color: #666; margin-bottom: 1rem;">Exchange items with the mysterious pug trader!</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div style="background: white; padding: 1rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2rem;">🦴</div>
+                        <div style="font-weight: bold; margin-top: 0.5rem;">Golden Bone</div>
+                        <div style="color: #666; font-size: 0.9rem;">Trade for 50 skittles</div>
+                        <button class="buy-btn" onclick="tradeItem('bone')" style="margin-top: 0.5rem;">Trade</button>
+                    </div>
+                    <div style="background: white; padding: 1rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2rem;">💎</div>
+                        <div style="font-weight: bold; margin-top: 0.5rem;">Mystery Diamond</div>
+                        <div style="color: #666; font-size: 0.9rem;">Trade for 100 skittles</div>
+                        <button class="buy-btn" onclick="tradeItem('diamond')" style="margin-top: 0.5rem;">Trade</button>
+                    </div>
+                    <div style="background: white; padding: 1rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2rem;">👑</div>
+                        <div style="font-weight: bold; margin-top: 0.5rem;">Royal Crown</div>
+                        <div style="color: #666; font-size: 0.9rem;">Trade for 250 skittles</div>
+                        <button class="buy-btn" onclick="tradeItem('crown')" style="margin-top: 0.5rem;">Trade</button>
+                    </div>
                 </div>
             </div>
 
@@ -296,6 +376,32 @@
             { id: 9, name: "Shield", icon: "🛡️", description: "Protect yourself!", price: 60 },
             { id: 10, name: "Mega Treat", icon: "🍖", description: "Ultimate power-up!", price: 200 }
         ];
+
+        // Resident Evil 4 quotes
+        const re4Quotes = [
+            "What're ya buyin'?",
+            "What're ya sellin'?",
+            "Got some rare things on sale, stranger!",
+            "Come back anytime!",
+            "Not enough cash, stranger!",
+            "Hehehehe, thank you!",
+            "Got somethin' that might interest ya!",
+            "Stranger, stranger! Now that's a weapon!",
+            "I'll buy it at a high price!",
+            "Is that all, stranger?",
+            "Ahh, I'll buy it at a high price!",
+            "Not only will you need cash, but you'll need guts to buy that weapon!"
+        ];
+
+        function pugTraderSpeak() {
+            const randomQuote = re4Quotes[Math.floor(Math.random() * re4Quotes.length)];
+            const messageEl = document.getElementById('pugMessage');
+            messageEl.textContent = `"${randomQuote}"`;
+            messageEl.style.animation = 'none';
+            setTimeout(() => {
+                messageEl.style.animation = 'pulse 0.5s ease';
+            }, 10);
+        }
 
         function loadSkittles() {
             const skittles = parseInt(localStorage.getItem('skittles') || '0');
@@ -401,6 +507,23 @@
             showNotification(`Successfully gifted ${amount} skittles to ${username}!`);
             document.getElementById('giftUsername').value = '';
             document.getElementById('giftAmount').value = '';
+        }
+
+        function tradeItem(itemType) {
+            const skittles = loadSkittles();
+            const trades = {
+                bone: { name: 'Golden Bone', reward: 50, cost: 0 },
+                diamond: { name: 'Mystery Diamond', reward: 100, cost: 0 },
+                crown: { name: 'Royal Crown', reward: 250, cost: 0 }
+            };
+
+            const trade = trades[itemType];
+            if (!trade) return;
+
+            // For this simple version, just give skittles
+            saveSkittles(skittles + trade.reward);
+            pugTraderSpeak();
+            showNotification(`🎉 Traded for ${trade.name}! Received ${trade.reward} skittles!`);
         }
 
         function showNotification(message) {
