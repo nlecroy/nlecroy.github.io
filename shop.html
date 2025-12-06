@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skittles Shop - Pug Paradise</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            min-height: 100vh;
+        }
+
+        .shop-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .skittles-balance {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .skittles-count {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a6f, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pug-trader {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .pug-trader img {
+            width: 200px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .pug-message {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .shop-sections {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .shop-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .shop-section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .shop-item {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .item-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-price {
+            background: linear-gradient(45deg, #ff6b6b, #f093fb);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .buy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .gift-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .gift-input {
+            flex: 1;
+            padding: 1rem;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            font-size: 1rem;
+        }
+
+        .gift-btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gift-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(240, 147, 251, 0.5);
+        }
+
+        .inventory-section {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+        }
+
+        .inventory-item {
+            background: rgba(255,255,255,0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            animation: slideInRight 0.3s ease;
+            z-index: 10002;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>🐶 PUG PARADISE</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">🏠 Home</a></li>
+                <li><a href="index.html#games">🎮 Pug Games</a></li>
+                <li><a href="other-games.html">🕹️ Other Games</a></li>
+                <li><a href="chatroom.html">💬 Chat</a></li>
+                <li><a href="memes.html">😂 Memes</a></li>
+                <li><a href="index.html#hacks">💻 Hacks</a></li>
+                <li><a href="donate.html">💖 Donate</a></li>
+                <li><a href="contact.html">📧 Contact</a></li>
+                <li><a href="index.html#about">ℹ️ About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="shop-container">
+        <div class="skittles-balance">
+            <h1>Your Skittles Balance</h1>
+            <div class="skittles-count" id="skittlesCount">0</div>
+            <p style="color: #666; font-size: 1.1rem;">Collect skittles across the Pugaverse!</p>
+        </div>
+
+        <div class="pug-trader">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDNlODE4aGVwaGs1eWhrNzgxdWY3NzA2b2lpbm92M3Q4djJxdjFibSZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/xTiTnFFSmYktPjiNYQ/giphy.gif" alt="Pug Trader">
+            <div class="pug-message">
+                "Woof! Welcome to my shop! Trade your skittles for awesome items!"
+            </div>
+        </div>
+
+        <div class="shop-sections">
+            <div class="shop-section">
+                <h2>🛍️ Items for Sale</h2>
+                <div class="shop-items" id="shopItems"></div>
+            </div>
+
+            <div class="shop-section">
+                <h2>🎁 Gift Skittles</h2>
+                <p style="color: #666; margin-bottom: 1rem;">Send skittles to your friends!</p>
+                <div class="gift-section">
+                    <input type="text" class="gift-input" id="giftUsername" placeholder="Enter username...">
+                    <input type="number" class="gift-input" id="giftAmount" placeholder="Amount..." min="1">
+                    <button class="gift-btn" onclick="giftSkittles()">🎁 Send Gift</button>
+                </div>
+            </div>
+
+            <div class="shop-section">
+                <h2>📦 Your Inventory</h2>
+                <div id="inventoryList">
+                    <p style="color: #999;">Your purchased items will appear here...</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; margin: 2rem auto; display: block;">
+            🏠 Back to Home
+        </button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
+    </footer>
+
+    <script>
+        const shopItems = [
+            { id: 1, name: "Rainbow Pug Skin", icon: "🌈", description: "Make your pug sparkle!", price: 50 },
+            { id: 2, name: "Speed Boost", icon: "⚡", description: "Move faster in games!", price: 30 },
+            { id: 3, name: "Double Skittles", icon: "💰", description: "2x skittles for 1 hour!", price: 100 },
+            { id: 4, name: "Pug Hat", icon: "🎩", description: "Fancy hat for your pug!", price: 25 },
+            { id: 5, name: "Jetpack", icon: "🚀", description: "Fly like a bird!", price: 75 },
+            { id: 6, name: "Golden Bone", icon: "🦴", description: "Legendary item!", price: 150 },
+            { id: 7, name: "Pug Glasses", icon: "🕶️", description: "Look cool!", price: 20 },
+            { id: 8, name: "Super Jump", icon: "🦘", description: "Jump higher!", price: 40 },
+            { id: 9, name: "Shield", icon: "🛡️", description: "Protect yourself!", price: 60 },
+            { id: 10, name: "Mega Treat", icon: "🍖", description: "Ultimate power-up!", price: 200 }
+        ];
+
+        function loadSkittles() {
+            const skittles = parseInt(localStorage.getItem('skittles') || '0');
+            document.getElementById('skittlesCount').textContent = skittles;
+            return skittles;
+        }
+
+        function saveSkittles(amount) {
+            localStorage.setItem('skittles', amount.toString());
+            loadSkittles();
+        }
+
+        function loadInventory() {
+            const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            return inventory;
+        }
+
+        function saveInventory(inventory) {
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            displayInventory();
+        }
+
+        function displayInventory() {
+            const inventory = loadInventory();
+            const inventoryList = document.getElementById('inventoryList');
+
+            if (inventory.length === 0) {
+                inventoryList.innerHTML = '<p style="color: #999;">Your purchased items will appear here...</p>';
+                return;
+            }
+
+            inventoryList.innerHTML = inventory.map(item => `
+                <div class="inventory-item">
+                    <span>${item.icon} ${item.name}</span>
+                    <span style="background: rgba(0,0,0,0.2); padding: 0.5rem 1rem; border-radius: 10px;">Owned</span>
+                </div>
+            `).join('');
+        }
+
+        function displayShopItems() {
+            const skittles = loadSkittles();
+            const inventory = loadInventory();
+            const shopItemsContainer = document.getElementById('shopItems');
+
+            shopItemsContainer.innerHTML = shopItems.map(item => {
+                const owned = inventory.some(inv => inv.id === item.id);
+                const canAfford = skittles >= item.price;
+
+                return `
+                    <div class="shop-item">
+                        <div class="item-icon">${item.icon}</div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-description">${item.description}</div>
+                        <div class="item-price">🍬 ${item.price} Skittles</div>
+                        <button class="buy-btn"
+                                onclick="buyItem(${item.id})"
+                                ${owned || !canAfford ? 'disabled' : ''}>
+                            ${owned ? '✅ Owned' : (canAfford ? '🛒 Buy Now' : '🔒 Not Enough Skittles')}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buyItem(itemId) {
+            const item = shopItems.find(i => i.id === itemId);
+            const skittles = loadSkittles();
+
+            if (skittles >= item.price) {
+                const inventory = loadInventory();
+                inventory.push(item);
+                saveInventory(inventory);
+                saveSkittles(skittles - item.price);
+                showNotification(`Successfully purchased ${item.name}!`);
+                displayShopItems();
+            } else {
+                showNotification('Not enough skittles!');
+            }
+        }
+
+        function giftSkittles() {
+            const username = document.getElementById('giftUsername').value.trim();
+            const amount = parseInt(document.getElementById('giftAmount').value);
+            const skittles = loadSkittles();
+
+            if (!username) {
+                showNotification('Please enter a username!');
+                return;
+            }
+
+            if (!amount || amount <= 0) {
+                showNotification('Please enter a valid amount!');
+                return;
+            }
+
+            if (amount > skittles) {
+                showNotification('Not enough skittles to gift!');
+                return;
+            }
+
+            // In a real app, this would send to the server
+            saveSkittles(skittles - amount);
+            showNotification(`Successfully gifted ${amount} skittles to ${username}!`);
+            document.getElementById('giftUsername').value = '';
+            document.getElementById('giftAmount').value = '';
+        }
+
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3000);
+        }
+
+        // Initialize
+        loadSkittles();
+        displayShopItems();
+        displayInventory();
+
+        // Refresh display periodically
+        setInterval(() => {
+            displayShopItems();
+        }, 1000);
+    </script>
+</body>
+</html>

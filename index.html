@@ -48,6 +48,15 @@
                     <span class="float-emoji delay-5">🎪</span>
                 </div>
                 <button class="cta-button" onclick="window.location.href='menu.html'">Explore the Pugverse ✨</button>
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+                    <button onclick="toggleSkittles()" class="cta-button" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f, #f093fb);" id="skittlesToggleBtnMain">
+                        <span id="skittlesStatusText">Enable Skittles 🍬</span>
+                    </button>
+                    <div style="background: white; padding: 1rem 2rem; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
+                        <span style="font-weight: bold; color: #667eea;">Skittles: </span>
+                        <span style="font-weight: bold; font-size: 1.3rem; color: #ff6b6b;" id="skittlesBalanceMain">0</span> 🍬
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -228,6 +237,14 @@
                 <button onclick="addSnowEffect()" class="admin-btn">❄️ Snow Effect</button>
                 <button onclick="clearEffects()" class="admin-btn">🧹 Clear All</button>
             </div>
+
+            <!-- Skittles Controls -->
+            <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 15px; border: 2px solid rgba(78,205,196,0.3);">
+                <h3 style="color: #ffd700; margin-bottom: 1rem;">🍬 Skittles</h3>
+                <button onclick="toggleSkittles()" class="admin-btn" id="skittlesToggleBtn">🍬 Toggle Skittles</button>
+                <button onclick="spawnSkittle()" class="admin-btn">✨ Spawn Skittle</button>
+                <div style="color: #4ecdc4; margin-top: 1rem; font-weight: bold;">Balance: <span id="skittlesBalance">0</span></div>
+            </div>
         </div>
 
         <div style="margin-top: 2rem; padding: 1rem; background: rgba(255,215,0,0.2); border-radius: 10px; border: 2px solid #ffd700;">
@@ -291,6 +308,41 @@
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        .skittle {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 9999;
+            animation: skittleFloat 3s ease-in-out infinite, skittlePulse 1s ease-in-out infinite;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.8));
+        }
+
+        .skittle:hover {
+            transform: scale(1.3) rotate(20deg);
+            filter: drop-shadow(0 0 20px rgba(255, 107, 107, 1));
+        }
+
+        @keyframes skittleFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes skittlePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .skittle-collect {
+            animation: skittleCollect 0.5s ease-out;
+        }
+
+        @keyframes skittleCollect {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg) translateY(-100px); opacity: 0; }
         }
     </style>
 
@@ -530,6 +582,115 @@
                 closeAdminLogin();
             }
         });
+
+        // Skittles System
+        let skittlesEnabled = localStorage.getItem('skittlesEnabled') === 'true' || false;
+        let skittlesInterval = null;
+        const SKITTLE_IMG = 'data:image/jpeg;base64,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';
+
+        function loadSkittles() {
+            const skittles = parseInt(localStorage.getItem('skittles') || '0');
+            document.getElementById('skittlesBalance').textContent = skittles;
+            document.getElementById('skittlesBalanceMain').textContent = skittles;
+            return skittles;
+        }
+
+        function saveSkittles(amount) {
+            localStorage.setItem('skittles', amount.toString());
+            loadSkittles();
+        }
+
+        function toggleSkittles() {
+            skittlesEnabled = !skittlesEnabled;
+            localStorage.setItem('skittlesEnabled', skittlesEnabled.toString());
+
+            const statusText = document.getElementById('skittlesStatusText');
+            statusText.textContent = skittlesEnabled ? 'Disable Skittles 🍬' : 'Enable Skittles 🍬';
+
+            if (skittlesEnabled) {
+                startSkittlesSpawning();
+                alert('🍬 Skittles are now enabled! They will randomly appear on the site - click them to collect!');
+            } else {
+                stopSkittlesSpawning();
+                document.querySelectorAll('.skittle').forEach(s => s.remove());
+                alert('Skittles disabled!');
+            }
+        }
+
+        function startSkittlesSpawning() {
+            if (skittlesInterval) return;
+
+            // Spawn skittles rarely (every 10-30 seconds)
+            skittlesInterval = setInterval(() => {
+                if (Math.random() < 0.3) { // 30% chance every interval
+                    spawnSkittle();
+                }
+            }, 15000); // Check every 15 seconds
+        }
+
+        function stopSkittlesSpawning() {
+            if (skittlesInterval) {
+                clearInterval(skittlesInterval);
+                skittlesInterval = null;
+            }
+        }
+
+        function spawnSkittle() {
+            const skittle = document.createElement('img');
+            skittle.src = SKITTLE_IMG;
+            skittle.className = 'skittle';
+
+            // Random position on screen
+            const x = Math.random() * (window.innerWidth - 60);
+            const y = Math.random() * (window.innerHeight - 60);
+            skittle.style.left = x + 'px';
+            skittle.style.top = y + 'px';
+
+            // Click to collect
+            skittle.onclick = () => collectSkittle(skittle);
+
+            document.body.appendChild(skittle);
+
+            // Auto-remove after 10 seconds if not collected
+            setTimeout(() => {
+                if (document.body.contains(skittle)) {
+                    skittle.remove();
+                }
+            }, 10000);
+        }
+
+        function collectSkittle(skittleElement) {
+            skittleElement.classList.add('skittle-collect');
+
+            const currentSkittles = loadSkittles();
+            saveSkittles(currentSkittles + 1);
+
+            // Show notification
+            const notif = document.createElement('div');
+            notif.textContent = '+1 Skittle! 🍬';
+            notif.style.position = 'fixed';
+            notif.style.left = skittleElement.style.left;
+            notif.style.top = (parseInt(skittleElement.style.top) - 50) + 'px';
+            notif.style.color = '#ff6b6b';
+            notif.style.fontWeight = 'bold';
+            notif.style.fontSize = '1.5rem';
+            notif.style.zIndex = '10000';
+            notif.style.animation = 'fadeOut 1s ease-out';
+            notif.style.pointerEvents = 'none';
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                skittleElement.remove();
+                notif.remove();
+            }, 500);
+        }
+
+        // Initialize skittles on page load
+        loadSkittles();
+        if (skittlesEnabled) {
+            document.getElementById('skittlesStatusText').textContent = 'Disable Skittles 🍬';
+            startSkittlesSpawning();
+        }
     </script>
 </body>
 </html>
