@@ -245,6 +245,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .inventory-item > span:first-child {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .inventory-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .inventory-item > div {
+                flex-direction: column;
+                width: 100%;
+            }
         }
 
         .notification {
@@ -322,27 +341,11 @@
             </div>
 
             <div class="shop-section" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 107, 0.1)); border: 3px solid #ffd700;">
-                <h2>💱 Trade with the Pug</h2>
-                <p style="color: #666; margin-bottom: 1rem;">Exchange items with the mysterious pug trader!</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                    <div style="background: white; padding: 1rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 2rem;">🦴</div>
-                        <div style="font-weight: bold; margin-top: 0.5rem;">Golden Bone</div>
-                        <div style="color: #666; font-size: 0.9rem;">Trade for 50 skittles</div>
-                        <button class="buy-btn" onclick="tradeItem('bone')" style="margin-top: 0.5rem;">Trade</button>
-                    </div>
-                    <div style="background: white; padding: 1rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 2rem;">💎</div>
-                        <div style="font-weight: bold; margin-top: 0.5rem;">Mystery Diamond</div>
-                        <div style="color: #666; font-size: 0.9rem;">Trade for 100 skittles</div>
-                        <button class="buy-btn" onclick="tradeItem('diamond')" style="margin-top: 0.5rem;">Trade</button>
-                    </div>
-                    <div style="background: white; padding: 1rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 2rem;">👑</div>
-                        <div style="font-weight: bold; margin-top: 0.5rem;">Royal Crown</div>
-                        <div style="color: #666; font-size: 0.9rem;">Trade for 250 skittles</div>
-                        <button class="buy-btn" onclick="tradeItem('crown')" style="margin-top: 0.5rem;">Trade</button>
-                    </div>
+                <h2>💱 Trade Items Back to the Pug</h2>
+                <p style="color: #666; margin-bottom: 1rem;">Sell your purchased items back to the merchant for skittles!</p>
+                <p style="color: #ff6b6b; font-weight: bold; margin-bottom: 1rem;">⚠️ You must own an item to trade it! Some items cannot be traded!</p>
+                <div id="tradableItems">
+                    <p style="color: #999; text-align: center;">Buy some items first to see what you can trade!</p>
                 </div>
             </div>
 
@@ -365,16 +368,21 @@
 
     <script>
         const shopItems = [
-            { id: 1, name: "Rainbow Pug Skin", icon: "🌈", description: "Make your pug sparkle!", price: 50 },
-            { id: 2, name: "Speed Boost", icon: "⚡", description: "Move faster in games!", price: 30 },
-            { id: 3, name: "Double Skittles", icon: "💰", description: "2x skittles for 1 hour!", price: 100 },
-            { id: 4, name: "Pug Hat", icon: "🎩", description: "Fancy hat for your pug!", price: 25 },
-            { id: 5, name: "Jetpack", icon: "🚀", description: "Fly like a bird!", price: 75 },
-            { id: 6, name: "Golden Bone", icon: "🦴", description: "Legendary item!", price: 150 },
-            { id: 7, name: "Pug Glasses", icon: "🕶️", description: "Look cool!", price: 20 },
-            { id: 8, name: "Super Jump", icon: "🦘", description: "Jump higher!", price: 40 },
-            { id: 9, name: "Shield", icon: "🛡️", description: "Protect yourself!", price: 60 },
-            { id: 10, name: "Mega Treat", icon: "🍖", description: "Ultimate power-up!", price: 200 }
+            { id: 1, name: "Nyan Pug Transformation", icon: "🌈", description: "Transform into a rainbow-trailing pug! Leave sparkles everywhere!", price: 150, tradable: true, tradeValue: 100 },
+            { id: 2, name: "Lightning Speed Boots", icon: "⚡", description: "Run at supersonic speeds! Time slows down for you!", price: 75, tradable: true, tradeValue: 50 },
+            { id: 3, name: "Skittle Magnet", icon: "🧲", description: "Automatically attract nearby skittles! 2x collection rate!", price: 200, tradable: false },
+            { id: 4, name: "Top Hat of Fortune", icon: "🎩", description: "Increases your luck! Rare skittles appear more often!", price: 120, tradable: true, tradeValue: 80 },
+            { id: 5, name: "Rocket Jetpack", icon: "🚀", description: "Fly anywhere on the site! Explore hidden areas!", price: 180, tradable: true, tradeValue: 120 },
+            { id: 6, name: "Ancient Golden Bone", icon: "🦴", description: "Mysterious artifact! Unlocks secret shop items!", price: 300, tradable: true, tradeValue: 250 },
+            { id: 7, name: "Hacker Shades", icon: "🕶️", description: "See the Matrix! Reveals hidden skittles and secrets!", price: 90, tradable: true, tradeValue: 60 },
+            { id: 8, name: "Gravity Defier", icon: "🦘", description: "Jump impossibly high! Reach the sky!", price: 85, tradable: true, tradeValue: 55 },
+            { id: 9, name: "Diamond Shield", icon: "🛡️", description: "Invincibility mode! Nothing can stop you!", price: 250, tradable: true, tradeValue: 200 },
+            { id: 10, name: "Infinity Treat", icon: "🍖", description: "Ultimate power! Permanent 3x skittles multiplier!", price: 500, tradable: false },
+            { id: 11, name: "Portal Gun", icon: "🌀", description: "Teleport anywhere instantly! Create shortcuts!", price: 220, tradable: true, tradeValue: 150 },
+            { id: 12, name: "Time Manipulator", icon: "⏰", description: "Slow down or speed up time! Control reality!", price: 400, tradable: true, tradeValue: 350 },
+            { id: 13, name: "Pug Crown", icon: "👑", description: "Become royalty! VIP status everywhere!", price: 175, tradable: true, tradeValue: 125 },
+            { id: 14, name: "Laser Eyes", icon: "👀", description: "Shoot lasers from your eyes! Zap skittles from afar!", price: 160, tradable: true, tradeValue: 110 },
+            { id: 15, name: "Invisible Cloak", icon: "🥷", description: "Become invisible! Sneak past anything!", price: 195, tradable: true, tradeValue: 140 }
         ];
 
         // Resident Evil 4 quotes
@@ -436,7 +444,13 @@
             inventoryList.innerHTML = inventory.map(item => `
                 <div class="inventory-item">
                     <span>${item.icon} ${item.name}</span>
-                    <span style="background: rgba(0,0,0,0.2); padding: 0.5rem 1rem; border-radius: 10px;">Owned</span>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        ${item.tradable ?
+                            `<span style="background: rgba(255, 215, 0, 0.2); color: #ff6b6b; padding: 0.5rem 1rem; border-radius: 10px; border: 2px solid #ffd700;">💰 Tradable (${item.tradeValue} 🍬)</span>` :
+                            `<span style="background: rgba(102, 126, 234, 0.2); color: #667eea; padding: 0.5rem 1rem; border-radius: 10px; border: 2px solid #667eea;">🔒 Non-Tradable</span>`
+                        }
+                        <span style="background: rgba(0,200,0,0.2); color: #008800; padding: 0.5rem 1rem; border-radius: 10px; font-weight: bold;">✓ Owned</span>
+                    </div>
                 </div>
             `).join('');
         }
@@ -455,6 +469,10 @@
                         <div class="item-icon">${item.icon}</div>
                         <div class="item-name">${item.name}</div>
                         <div class="item-description">${item.description}</div>
+                        ${item.tradable ?
+                            `<div style="color: #ffd700; font-size: 0.85rem; margin: 0.5rem 0; font-weight: bold;">💰 Tradable for ${item.tradeValue} 🍬</div>` :
+                            `<div style="color: #667eea; font-size: 0.85rem; margin: 0.5rem 0; font-weight: bold;">🔒 Cannot be traded</div>`
+                        }
                         <div class="item-price">🍬 ${item.price} Skittles</div>
                         <button class="buy-btn"
                                 onclick="buyItem(${item.id})"
@@ -509,21 +527,61 @@
             document.getElementById('giftAmount').value = '';
         }
 
-        function tradeItem(itemType) {
+        function displayTradableItems() {
+            const inventory = loadInventory();
+            const tradableContainer = document.getElementById('tradableItems');
+
+            const tradableItems = inventory.filter(item => item.tradable);
+
+            if (tradableItems.length === 0) {
+                tradableContainer.innerHTML = '<p style="color: #999; text-align: center;">You don\'t have any tradable items yet!</p>';
+                return;
+            }
+
+            tradableContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    ${tradableItems.map(item => `
+                        <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; border: 2px solid #667eea;">
+                            <div style="font-size: 3rem;">${item.icon}</div>
+                            <div style="font-weight: bold; margin-top: 0.5rem; color: #333;">${item.name}</div>
+                            <div style="color: #ff6b6b; font-size: 0.9rem; margin: 0.5rem 0;">Sell for: 🍬 ${item.tradeValue} skittles</div>
+                            <button class="buy-btn" onclick="tradeItem(${item.id})" style="margin-top: 0.5rem; width: 100%;">💰 Sell Item</button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function tradeItem(itemId) {
+            const inventory = loadInventory();
+            const item = inventory.find(i => i.id === itemId);
+
+            if (!item) {
+                showNotification('❌ You don\'t own this item!');
+                pugTraderSpeak();
+                return;
+            }
+
+            if (!item.tradable) {
+                showNotification('❌ This item cannot be traded!');
+                pugTraderSpeak();
+                return;
+            }
+
+            // Remove item from inventory
+            const newInventory = inventory.filter(i => i.id !== itemId);
+            saveInventory(newInventory);
+
+            // Give skittles
             const skittles = loadSkittles();
-            const trades = {
-                bone: { name: 'Golden Bone', reward: 50, cost: 0 },
-                diamond: { name: 'Mystery Diamond', reward: 100, cost: 0 },
-                crown: { name: 'Royal Crown', reward: 250, cost: 0 }
-            };
+            saveSkittles(skittles + item.tradeValue);
 
-            const trade = trades[itemType];
-            if (!trade) return;
-
-            // For this simple version, just give skittles
-            saveSkittles(skittles + trade.reward);
             pugTraderSpeak();
-            showNotification(`🎉 Traded for ${trade.name}! Received ${trade.reward} skittles!`);
+            showNotification(`💰 Sold ${item.name} for ${item.tradeValue} skittles!`);
+
+            // Refresh displays
+            displayTradableItems();
+            displayShopItems();
         }
 
         function showNotification(message) {
@@ -538,10 +596,12 @@
         loadSkittles();
         displayShopItems();
         displayInventory();
+        displayTradableItems();
 
         // Refresh display periodically
         setInterval(() => {
             displayShopItems();
+            displayTradableItems();
         }, 1000);
     </script>
 </body>
