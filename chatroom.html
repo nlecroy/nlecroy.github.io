@@ -855,6 +855,16 @@
                     <div style="color: rgba(255,255,255,0.7);">Click "Refresh List" to load...</div>
                 </div>
             </div>
+
+            <div class="admin-section">
+                <h3>🚫 Banned Words Management</h3>
+                <input type="text" class="admin-input" id="banWord" placeholder="Word to ban...">
+                <button class="admin-btn" onclick="adminBanWord()">🚫 Ban Word</button>
+                <button class="admin-btn" onclick="loadBannedWords()">🔄 Refresh List</button>
+                <div class="banned-list" id="bannedWordsList">
+                    <div style="color: rgba(255,255,255,0.7);">Click "Refresh List" to load...</div>
+                </div>
+            </div>
         </div>
 
         <div id="analyticsTab" style="display: none;">
@@ -1038,12 +1048,14 @@
         const database = getDatabase(app);
         const messagesRef = ref(database, 'chatroom/messages');
         const bannedUsersRef = ref(database, 'chatroom/banned');
+        const bannedWordsRef = ref(database, 'chatroom/bannedWords');
         const typingRef = ref(database, 'chatroom/typing');
         const onlineUsersRef = ref(database, 'chatroom/online');
 
         let currentUser = '';
         let isFirstLoad = true;
         let bannedUsers = new Set();
+        let bannedWords = new Set();
         let onlineUsers = new Set();
         let isAdmin = false;
         let typingTimeout;
@@ -1126,6 +1138,13 @@
                 bannedUsers = new Set();
                 snapshot.forEach((child) => {
                     bannedUsers.add(child.val());
+                });
+            });
+
+            onValue(bannedWordsRef, (snapshot) => {
+                bannedWords = new Set();
+                snapshot.forEach((child) => {
+                    bannedWords.add(child.val().toLowerCase());
                 });
             });
 
@@ -1267,10 +1286,20 @@
 
         function containsProfanity(text) {
             const lowerText = text.toLowerCase();
-            return profanityList.some(word => {
+
+            // Check hardcoded profanity list
+            const hasProfanity = profanityList.some(word => {
                 const regex = new RegExp(`\\b${word}\\b`, 'i');
                 return regex.test(lowerText) || lowerText.includes(word);
             });
+
+            // Check dynamically banned words
+            const hasBannedWord = Array.from(bannedWords).some(word => {
+                const regex = new RegExp(`\\b${word}\\b`, 'i');
+                return regex.test(lowerText) || lowerText.includes(word);
+            });
+
+            return hasProfanity || hasBannedWord;
         }
 
         function banUser(username) {
@@ -1708,6 +1737,52 @@
             }
         }
 
+        function adminBanWord() {
+            const word = document.getElementById('banWord').value.trim().toLowerCase();
+            if (!word) {
+                alert('Enter a word to ban!');
+                return;
+            }
+
+            const bannedWordRef = ref(database, `chatroom/bannedWords/${Date.now()}`);
+            set(bannedWordRef, word);
+            document.getElementById('banWord').value = '';
+            showNotification(`✅ "${word}" has been banned!`);
+            loadBannedWords();
+        }
+
+        function loadBannedWords() {
+            const list = document.getElementById('bannedWordsList');
+            list.innerHTML = '';
+
+            onValue(bannedWordsRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    list.innerHTML = '<div style="color: rgba(255,255,255,0.7);">No banned words</div>';
+                    return;
+                }
+
+                list.innerHTML = '';
+                snapshot.forEach((child) => {
+                    const word = child.val();
+                    const item = document.createElement('div');
+                    item.className = 'banned-item';
+                    item.innerHTML = `
+                        <span>${word}</span>
+                        <button class="admin-btn" style="padding: 0.5rem 1rem; margin: 0;" onclick="unbanWord('${child.key}', '${word}')">Unban</button>
+                    `;
+                    list.appendChild(item);
+                });
+            }, { onlyOnce: true });
+        }
+
+        function unbanWord(key, word) {
+            if (confirm(`Unban the word "${word}"?`)) {
+                remove(ref(database, `chatroom/bannedWords/${key}`));
+                showNotification(`✅ "${word}" unbanned!`);
+                loadBannedWords();
+            }
+        }
+
         function updateUserList() {
             const list = document.getElementById('userList');
             if (!list) return;
@@ -1814,6 +1889,9 @@
         window.sendAnnouncement = sendAnnouncement;
         window.loadBannedUsers = loadBannedUsers;
         window.unbanUser = unbanUser;
+        window.adminBanWord = adminBanWord;
+        window.loadBannedWords = loadBannedWords;
+        window.unbanWord = unbanWord;
         window.deleteMessage = deleteMessage;
         window.addReaction = addReaction;
         window.replyToMessage = replyToMessage;
