@@ -617,15 +617,43 @@
             }
         }
 
+        function getOwnedItems() {
+            return JSON.parse(localStorage.getItem('inventory') || '[]');
+        }
+
+        function hasItem(itemName) {
+            const inventory = getOwnedItems();
+            return inventory.some(item => item.name === itemName);
+        }
+
         function startSkittlesSpawning() {
             if (skittlesInterval) return;
 
-            // Spawn skittles rarely (every 10-30 seconds)
+            // Check for upgrades that affect spawn rate
+            let spawnChance = 0.3; // Base 30% chance
+            let spawnInterval = 15000; // Base 15 seconds
+
+            // Top Hat of Fortune - rare skittles appear more often
+            if (hasItem('Top Hat of Fortune')) {
+                spawnChance = 0.6; // Double spawn chance
+            }
+
+            // Skittle Magnet - 2x collection rate means more frequent spawns
+            if (hasItem('Skittle Magnet')) {
+                spawnInterval = 8000; // Spawn much faster
+                spawnChance = 0.5;
+            }
+
+            // Lightning Speed Boots - faster everything
+            if (hasItem('Lightning Speed Boots')) {
+                spawnInterval = Math.floor(spawnInterval * 0.7); // 30% faster
+            }
+
             skittlesInterval = setInterval(() => {
-                if (Math.random() < 0.3) { // 30% chance every interval
+                if (Math.random() < spawnChance) {
                     spawnSkittle();
                 }
-            }, 15000); // Check every 15 seconds
+            }, spawnInterval);
         }
 
         function stopSkittlesSpawning() {
@@ -662,21 +690,40 @@
         function collectSkittle(skittleElement) {
             skittleElement.classList.add('skittle-collect');
 
+            // Calculate skittles based on multipliers
+            let skittlesEarned = 1;
+
+            // Infinity Treat - 3x multiplier
+            if (hasItem('Infinity Treat')) {
+                skittlesEarned *= 3;
+            }
+
+            // Hacker Shades - reveals bonus skittles (1.5x)
+            if (hasItem('Hacker Shades')) {
+                skittlesEarned = Math.floor(skittlesEarned * 1.5);
+            }
+
+            // Pug Crown - VIP bonus (+2 skittles)
+            if (hasItem('Pug Crown')) {
+                skittlesEarned += 2;
+            }
+
             const currentSkittles = loadSkittles();
-            saveSkittles(currentSkittles + 1);
+            saveSkittles(currentSkittles + skittlesEarned);
 
             // Show notification
             const notif = document.createElement('div');
-            notif.textContent = '+1 Skittle! 🍬';
+            notif.textContent = `+${skittlesEarned} Skittle${skittlesEarned > 1 ? 's' : ''}! 🍬`;
             notif.style.position = 'fixed';
             notif.style.left = skittleElement.style.left;
             notif.style.top = (parseInt(skittleElement.style.top) - 50) + 'px';
-            notif.style.color = '#ff6b6b';
+            notif.style.color = skittlesEarned > 1 ? '#ffd700' : '#ff6b6b';
             notif.style.fontWeight = 'bold';
-            notif.style.fontSize = '1.5rem';
+            notif.style.fontSize = skittlesEarned > 2 ? '2rem' : '1.5rem';
             notif.style.zIndex = '10000';
             notif.style.animation = 'fadeOut 1s ease-out';
             notif.style.pointerEvents = 'none';
+            notif.style.textShadow = '0 0 10px rgba(255,215,0,0.8)';
             document.body.appendChild(notif);
 
             setTimeout(() => {
@@ -685,12 +732,172 @@
             }, 500);
         }
 
+        // Apply visual effects based on owned items
+        function applyItemEffects() {
+            // Nyan Pug Transformation - Rainbow trail on cursor
+            if (hasItem('Nyan Pug Transformation')) {
+                document.addEventListener('mousemove', (e) => {
+                    const trail = document.createElement('div');
+                    trail.textContent = '🌈';
+                    trail.style.position = 'fixed';
+                    trail.style.left = e.clientX + 'px';
+                    trail.style.top = e.clientY + 'px';
+                    trail.style.pointerEvents = 'none';
+                    trail.style.fontSize = '1.5rem';
+                    trail.style.zIndex = '9998';
+                    trail.style.opacity = '1';
+                    trail.style.transition = 'all 0.5s ease-out';
+                    document.body.appendChild(trail);
+                    setTimeout(() => {
+                        trail.style.opacity = '0';
+                        trail.style.transform = 'translateY(20px)';
+                    }, 10);
+                    setTimeout(() => trail.remove(), 500);
+                });
+            }
+
+            // Rocket Jetpack - Floating animation on body
+            if (hasItem('Rocket Jetpack')) {
+                document.body.style.animation = 'float 3s ease-in-out infinite';
+            }
+
+            // Gravity Defier - Make page elements bounce
+            if (hasItem('Gravity Defier')) {
+                document.querySelectorAll('h1, h2, h3').forEach(el => {
+                    el.style.animation = 'bounce 2s ease-in-out infinite';
+                });
+            }
+
+            // Time Manipulator - Slow down animations
+            if (hasItem('Time Manipulator')) {
+                document.querySelectorAll('*').forEach(el => {
+                    const currentDuration = getComputedStyle(el).animationDuration;
+                    if (currentDuration !== '0s') {
+                        el.style.animationDuration = `${parseFloat(currentDuration) * 2}s`;
+                    }
+                });
+            }
+
+            // Invisible Cloak - Make cursor invisible
+            if (hasItem('Invisible Cloak')) {
+                document.body.style.cursor = 'none';
+            }
+
+            // Diamond Shield - Add shield effect
+            if (hasItem('Diamond Shield')) {
+                const shield = document.createElement('div');
+                shield.style.position = 'fixed';
+                shield.style.top = '0';
+                shield.style.left = '0';
+                shield.style.width = '100%';
+                shield.style.height = '100%';
+                shield.style.border = '5px solid rgba(0, 191, 255, 0.5)';
+                shield.style.pointerEvents = 'none';
+                shield.style.zIndex = '9997';
+                shield.style.animation = 'pulse 2s ease-in-out infinite';
+                document.body.appendChild(shield);
+            }
+
+            // Laser Eyes - Add laser cursor effect
+            if (hasItem('Laser Eyes')) {
+                document.addEventListener('click', (e) => {
+                    const laser = document.createElement('div');
+                    laser.style.position = 'fixed';
+                    laser.style.left = e.clientX + 'px';
+                    laser.style.top = e.clientY + 'px';
+                    laser.style.width = '100px';
+                    laser.style.height = '2px';
+                    laser.style.background = 'red';
+                    laser.style.boxShadow = '0 0 10px red';
+                    laser.style.pointerEvents = 'none';
+                    laser.style.zIndex = '9999';
+                    laser.style.transformOrigin = 'left center';
+                    laser.style.animation = 'laser 0.3s ease-out';
+                    document.body.appendChild(laser);
+                    setTimeout(() => laser.remove(), 300);
+                });
+            }
+
+            // Portal Gun - Add portal effects
+            if (hasItem('Portal Gun')) {
+                setInterval(() => {
+                    const portal = document.createElement('div');
+                    portal.textContent = '🌀';
+                    portal.style.position = 'fixed';
+                    portal.style.left = Math.random() * window.innerWidth + 'px';
+                    portal.style.top = Math.random() * window.innerHeight + 'px';
+                    portal.style.fontSize = '3rem';
+                    portal.style.pointerEvents = 'none';
+                    portal.style.zIndex = '9996';
+                    portal.style.animation = 'spin 2s linear';
+                    portal.style.opacity = '0.5';
+                    document.body.appendChild(portal);
+                    setTimeout(() => portal.remove(), 2000);
+                }, 5000);
+            }
+        }
+
+        // Add bounce animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-20px); }
+            }
+            @keyframes laser {
+                from { width: 0; opacity: 1; }
+                to { width: 200px; opacity: 0; }
+            }
+            @keyframes spin {
+                from { transform: rotate(0deg) scale(1); opacity: 0.5; }
+                to { transform: rotate(360deg) scale(0); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
         // Initialize skittles on page load
         loadSkittles();
         if (skittlesEnabled) {
             document.getElementById('skittlesStatusText').textContent = 'Disable Skittles 🍬';
             startSkittlesSpawning();
         }
+
+        // Skittle Printer - Auto generate skittles
+        function startSkittlePrinter() {
+            if (hasItem('Skittle Printer')) {
+                setInterval(() => {
+                    const currentSkittles = loadSkittles();
+                    saveSkittles(currentSkittles + 10);
+
+                    // Show notification
+                    const notif = document.createElement('div');
+                    notif.textContent = '🖨️ Printer generated +10 skittles!';
+                    notif.style.position = 'fixed';
+                    notif.style.top = '120px';
+                    notif.style.right = '20px';
+                    notif.style.background = 'linear-gradient(135deg, #4ecdc4, #44a6c6)';
+                    notif.style.color = 'white';
+                    notif.style.padding = '1rem 2rem';
+                    notif.style.borderRadius = '15px';
+                    notif.style.fontWeight = 'bold';
+                    notif.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
+                    notif.style.zIndex = '10001';
+                    notif.style.animation = 'slideInRight 0.3s ease';
+                    document.body.appendChild(notif);
+                    setTimeout(() => notif.remove(), 3000);
+                }, 60000); // Every 60 seconds
+            }
+        }
+
+        // Apply item effects
+        applyItemEffects();
+        startSkittlePrinter();
+
+        // Reapply effects when inventory changes
+        setInterval(() => {
+            applyItemEffects();
+            startSkittlePrinter();
+        }, 5000);
     </script>
 </body>
 </html>

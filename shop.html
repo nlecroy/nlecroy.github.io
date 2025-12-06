@@ -382,7 +382,11 @@
             { id: 12, name: "Time Manipulator", icon: "⏰", description: "Slow down or speed up time! Control reality!", price: 400, tradable: true, tradeValue: 350 },
             { id: 13, name: "Pug Crown", icon: "👑", description: "Become royalty! VIP status everywhere!", price: 175, tradable: true, tradeValue: 125 },
             { id: 14, name: "Laser Eyes", icon: "👀", description: "Shoot lasers from your eyes! Zap skittles from afar!", price: 160, tradable: true, tradeValue: 110 },
-            { id: 15, name: "Invisible Cloak", icon: "🥷", description: "Become invisible! Sneak past anything!", price: 195, tradable: true, tradeValue: 140 }
+            { id: 15, name: "Invisible Cloak", icon: "🥷", description: "Become invisible! Sneak past anything!", price: 195, tradable: true, tradeValue: 140 },
+            // SECRET ITEMS - Only visible with Ancient Golden Bone
+            { id: 16, name: "God Mode", icon: "⚡", description: "ULTIMATE POWER! All abilities unlocked!", price: 1000, tradable: false, secret: true },
+            { id: 17, name: "Skittle Printer", icon: "🖨️", description: "Generate 10 skittles every minute automatically!", price: 800, tradable: false, secret: true },
+            { id: 18, name: "Reality Bender", icon: "🌌", description: "Change the laws of physics! Control everything!", price: 1500, tradable: false, secret: true }
         ];
 
         // Resident Evil 4 quotes
@@ -455,12 +459,27 @@
             `).join('');
         }
 
+        function hasItem(itemName) {
+            const inventory = loadInventory();
+            return inventory.some(item => item.name === itemName);
+        }
+
         function displayShopItems() {
             const skittles = loadSkittles();
             const inventory = loadInventory();
             const shopItemsContainer = document.getElementById('shopItems');
 
-            shopItemsContainer.innerHTML = shopItems.map(item => {
+            // Filter items - show secret items only if user has Ancient Golden Bone
+            const hasGoldenBone = hasItem('Ancient Golden Bone');
+            const visibleItems = shopItems.filter(item => !item.secret || hasGoldenBone);
+
+            if (hasGoldenBone && visibleItems.some(item => item.secret)) {
+                shopItemsContainer.innerHTML = '<div style="background: linear-gradient(135deg, #ffd700, #ff6b6b); padding: 1rem; border-radius: 15px; text-align: center; margin-bottom: 1rem; color: white; font-weight: bold; font-size: 1.2rem;">🦴 SECRET ITEMS UNLOCKED! 🦴</div>';
+            } else {
+                shopItemsContainer.innerHTML = '';
+            }
+
+            shopItemsContainer.innerHTML += visibleItems.map(item => {
                 const owned = inventory.some(inv => inv.id === item.id);
                 const canAfford = skittles >= item.price;
 
