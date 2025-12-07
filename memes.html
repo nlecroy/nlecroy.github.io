@@ -277,7 +277,9 @@
                 <li><a href="index.html#home">🏠 Home</a></li>
                 <li><a href="index.html#games">🎮 Pug Games</a></li>
                 <li><a href="other-games.html">🕹️ Other Games</a></li>
+                <li><a href="shop.html">🛍️ Shop</a></li>
                 <li><a href="chatroom.html">💬 Chat</a></li>
+                <li><a href="pug-ai.html">🤖 Pug AI</a></li>
                 <li><a href="memes.html">😂 Memes</a></li>
                 <li><a href="index.html#hacks">💻 Hacks</a></li>
                 <li><a href="donate.html">💖 Donate</a></li>
@@ -292,6 +294,7 @@
             <h1>😂 Pug Meme Gallery 🤣</h1>
             <p style="color: #666; font-size: 1.2rem;">The ultimate collection of pug humor!</p>
             <p style="color: #4ecdc4; font-size: 1rem; margin-top: 0.5rem;"><strong>🌐 LIVE:</strong> All memes are shared with everyone in real-time!</p>
+            <p style="color: #667eea; font-size: 0.95rem; margin-top: 0.5rem;"><strong>👤 Attribution:</strong> Every meme shows who added it!</p>
         </div>
 
         <div class="add-meme-section">
@@ -392,6 +395,7 @@
         let likedMemes = new Set();
         let deleteUnlocked = false;
         const ADMIN_PASSWORD = 'ITSBUBBA';
+        const currentUsername = localStorage.getItem('currentUsername') || 'Anonymous';
 
         // Load liked memes from localStorage (per-user)
         function loadLikedMemes() {
@@ -451,6 +455,7 @@
                 caption: caption || 'Untitled Meme',
                 category: category,
                 likes: 0,
+                addedBy: currentUsername,
                 timestamp: Date.now()
             };
 
@@ -589,6 +594,9 @@
                          onerror="this.src='https://via.placeholder.com/300x300?text=Image+Not+Found'">
                     <div class="meme-info">
                         <div class="meme-caption">${meme.caption}</div>
+                        <div style="color: #667eea; font-size: 0.9rem; margin: 0.5rem 0; font-weight: bold;">
+                            👤 Added by: ${meme.addedBy || 'Anonymous'}
+                        </div>
                         <span class="category-tag">${categoryDisplay}</span>
                         <div class="meme-actions">
                             <button class="like-button ${likedClass}" onclick="likeMeme('${meme.firestoreId}')">

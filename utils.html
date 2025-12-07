@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilities - Pug Paradise</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .utils-header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .utils-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .category-section {
+            margin-bottom: 3rem;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tool-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .tool-title {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .tool-input, .tool-select {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .tool-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .tool-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        .tool-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 10px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .color-preview {
+            width: 100%;
+            height: 100px;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 3px solid #667eea;
+        }
+
+        textarea.tool-input {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .small-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .todo-item {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .qr-code {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        #qrCodeDisplay {
+            max-width: 100%;
+            margin: 1rem auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>🐶 PUG PARADISE</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">🏠 Home</a></li>
+                <li><a href="index.html#games">🎮 Pug Games</a></li>
+                <li><a href="other-games.html">🕹️ Other Games</a></li>
+                <li><a href="shop.html">🛍️ Shop</a></li>
+                <li><a href="chatroom.html">💬 Chat</a></li>
+                <li><a href="pug-ai.html">🤖 Pug AI</a></li>
+                <li><a href="memes.html">😂 Memes</a></li>
+                <li><a href="utils.html">🛠️ Utils</a></li>
+                <li><a href="index.html#hacks">💻 Hacks</a></li>
+                <li><a href="donate.html">💖 Donate</a></li>
+                <li><a href="contact.html">📧 Contact</a></li>
+                <li><a href="index.html#about">ℹ️ About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="utils-header">
+            <h1>🛠️ Utility Tools</h1>
+            <p style="font-size: 1.2rem;">Crazy useful tools for everyday life!</p>
+        </div>
+
+        <!-- Calculators & Converters -->
+        <div class="category-section">
+            <h2 class="category-title">🧮 Calculators & Converters</h2>
+            <div class="tools-grid">
+                <!-- Tip Calculator -->
+                <div class="tool-card">
+                    <div class="tool-title">💵 Tip Calculator</div>
+                    <input type="number" class="tool-input" id="billAmount" placeholder="Bill amount..." step="0.01">
+                    <input type="number" class="tool-input" id="tipPercent" placeholder="Tip percentage..." value="15">
+                    <input type="number" class="tool-input" id="numPeople" placeholder="Number of people..." value="1">
+                    <button class="tool-button" onclick="calculateTip()">Calculate</button>
+                    <div class="tool-result" id="tipResult"></div>
+                </div>
+
+                <!-- Unit Converter -->
+                <div class="tool-card">
+                    <div class="tool-title">📏 Unit Converter</div>
+                    <select class="tool-select" id="conversionType" onchange="updateUnitLabels()">
+                        <option value="length">Length</option>
+                        <option value="weight">Weight</option>
+                        <option value="temperature">Temperature</option>
+                    </select>
+                    <input type="number" class="tool-input" id="fromValue" placeholder="From value...">
+                    <select class="tool-select" id="fromUnit"></select>
+                    <select class="tool-select" id="toUnit"></select>
+                    <button class="tool-button" onclick="convertUnits()">Convert</button>
+                    <div class="tool-result" id="conversionResult"></div>
+                </div>
+
+                <!-- BMI Calculator -->
+                <div class="tool-card">
+                    <div class="tool-title">⚖️ BMI Calculator</div>
+                    <input type="number" class="tool-input" id="heightCm" placeholder="Height (cm)...">
+                    <input type="number" class="tool-input" id="weightKg" placeholder="Weight (kg)...">
+                    <button class="tool-button" onclick="calculateBMI()">Calculate BMI</button>
+                    <div class="tool-result" id="bmiResult"></div>
+                </div>
+
+                <!-- Age Calculator -->
+                <div class="tool-card">
+                    <div class="tool-title">🎂 Age Calculator</div>
+                    <input type="date" class="tool-input" id="birthDate">
+                    <button class="tool-button" onclick="calculateAge()">Calculate Age</button>
+                    <div class="tool-result" id="ageResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Tools -->
+        <div class="category-section">
+            <h2 class="category-title">📝 Text Tools</h2>
+            <div class="tools-grid">
+                <!-- Word Counter -->
+                <div class="tool-card">
+                    <div class="tool-title">📊 Word & Character Counter</div>
+                    <textarea class="tool-input" id="textInput" placeholder="Type or paste your text here..." oninput="countText()"></textarea>
+                    <div class="tool-result" id="textStats"></div>
+                </div>
+
+                <!-- Case Converter -->
+                <div class="tool-card">
+                    <div class="tool-title">🔤 Case Converter</div>
+                    <textarea class="tool-input" id="caseText" placeholder="Enter text..."></textarea>
+                    <div class="button-group">
+                        <button class="tool-button small-button" onclick="convertCase('upper')">UPPERCASE</button>
+                        <button class="tool-button small-button" onclick="convertCase('lower')">lowercase</button>
+                        <button class="tool-button small-button" onclick="convertCase('title')">Title Case</button>
+                        <button class="tool-button small-button" onclick="convertCase('sentence')">Sentence case</button>
+                    </div>
+                    <div class="tool-result" id="caseResult"></div>
+                </div>
+
+                <!-- Lorem Ipsum Generator -->
+                <div class="tool-card">
+                    <div class="tool-title">📜 Lorem Ipsum Generator</div>
+                    <input type="number" class="tool-input" id="paragraphs" placeholder="Number of paragraphs..." value="3">
+                    <button class="tool-button" onclick="generateLorem()">Generate</button>
+                    <textarea class="tool-input" id="loremResult" readonly></textarea>
+                    <button class="tool-button" onclick="copyToClipboard('loremResult')">📋 Copy</button>
+                </div>
+
+                <!-- Password Generator -->
+                <div class="tool-card">
+                    <div class="tool-title">🔐 Password Generator</div>
+                    <input type="number" class="tool-input" id="passwordLength" placeholder="Password length..." value="16">
+                    <label style="display: block; margin: 0.5rem 0;">
+                        <input type="checkbox" id="includeSymbols" checked> Include symbols (!@#$%)
+                    </label>
+                    <label style="display: block; margin: 0.5rem 0;">
+                        <input type="checkbox" id="includeNumbers" checked> Include numbers
+                    </label>
+                    <button class="tool-button" onclick="generatePassword()">Generate Password</button>
+                    <div class="tool-result" id="passwordResult" style="word-break: break-all;"></div>
+                    <button class="tool-button" onclick="copyPassword()">📋 Copy Password</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productivity Tools -->
+        <div class="category-section">
+            <h2 class="category-title">⏰ Productivity Tools</h2>
+            <div class="tools-grid">
+                <!-- Pomodoro Timer -->
+                <div class="tool-card">
+                    <div class="tool-title">🍅 Pomodoro Timer</div>
+                    <div class="timer-display" id="pomodoroDisplay">25:00</div>
+                    <div class="button-group">
+                        <button class="tool-button" id="pomodoroBtn" onclick="togglePomodoro()">Start</button>
+                        <button class="tool-button" onclick="resetPomodoro()">Reset</button>
+                    </div>
+                    <div class="tool-result" id="pomodoroStatus">Work session: 25 minutes</div>
+                </div>
+
+                <!-- To-Do List -->
+                <div class="tool-card">
+                    <div class="tool-title">✅ To-Do List</div>
+                    <input type="text" class="tool-input" id="todoInput" placeholder="Add a task..." onkeypress="if(event.key==='Enter') addTodo()">
+                    <button class="tool-button" onclick="addTodo()">Add Task</button>
+                    <div id="todoList"></div>
+                </div>
+
+                <!-- Notes -->
+                <div class="tool-card">
+                    <div class="tool-title">📝 Quick Notes</div>
+                    <textarea class="tool-input" id="notesArea" placeholder="Write your notes here..."></textarea>
+                    <div class="button-group">
+                        <button class="tool-button small-button" onclick="saveNotes()">💾 Save</button>
+                        <button class="tool-button small-button" onclick="loadNotes()">📂 Load</button>
+                        <button class="tool-button small-button" onclick="clearNotes()">🗑️ Clear</button>
+                    </div>
+                    <div class="tool-result" id="notesStatus"></div>
+                </div>
+
+                <!-- Countdown Timer -->
+                <div class="tool-card">
+                    <div class="tool-title">⏱️ Countdown Timer</div>
+                    <input type="number" class="tool-input" id="countdownMinutes" placeholder="Minutes..." value="5">
+                    <input type="number" class="tool-input" id="countdownSeconds" placeholder="Seconds..." value="0">
+                    <div class="timer-display" id="countdownDisplay">00:00</div>
+                    <div class="button-group">
+                        <button class="tool-button" id="countdownBtn" onclick="toggleCountdown()">Start</button>
+                        <button class="tool-button" onclick="resetCountdown()">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fun Tools -->
+        <div class="category-section">
+            <h2 class="category-title">🎲 Fun Tools</h2>
+            <div class="tools-grid">
+                <!-- Random Decision Maker -->
+                <div class="tool-card">
+                    <div class="tool-title">🤔 Decision Maker</div>
+                    <textarea class="tool-input" id="decisionOptions" placeholder="Enter options (one per line)...
+Pizza
+Burger
+Sushi
+Tacos"></textarea>
+                    <button class="tool-button" onclick="makeDecision()">🎯 Decide for Me!</button>
+                    <div class="tool-result" id="decisionResult"></div>
+                </div>
+
+                <!-- Dice Roller -->
+                <div class="tool-card">
+                    <div class="tool-title">🎲 Dice Roller</div>
+                    <select class="tool-select" id="numDice">
+                        <option value="1">1 Die</option>
+                        <option value="2">2 Dice</option>
+                        <option value="3">3 Dice</option>
+                        <option value="4">4 Dice</option>
+                        <option value="5">5 Dice</option>
+                    </select>
+                    <select class="tool-select" id="diceSides">
+                        <option value="6">6-sided (D6)</option>
+                        <option value="10">10-sided (D10)</option>
+                        <option value="20">20-sided (D20)</option>
+                        <option value="100">100-sided (D100)</option>
+                    </select>
+                    <button class="tool-button" onclick="rollDice()">🎲 Roll!</button>
+                    <div class="tool-result" id="diceResult"></div>
+                </div>
+
+                <!-- Color Picker -->
+                <div class="tool-card">
+                    <div class="tool-title">🎨 Color Picker</div>
+                    <input type="color" class="tool-input" id="colorPicker" value="#667eea" oninput="updateColor()">
+                    <div class="color-preview" id="colorPreview" style="background: #667eea;"></div>
+                    <div class="tool-result" id="colorValues"></div>
+                    <button class="tool-button" onclick="copyColor()">📋 Copy HEX</button>
+                </div>
+
+                <!-- Random Name Generator -->
+                <div class="tool-card">
+                    <div class="tool-title">👤 Random Name Generator</div>
+                    <select class="tool-select" id="nameType">
+                        <option value="full">Full Name</option>
+                        <option value="username">Username</option>
+                        <option value="fantasy">Fantasy Name</option>
+                    </select>
+                    <button class="tool-button" onclick="generateName()">Generate</button>
+                    <div class="tool-result" id="nameResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date & Time Tools -->
+        <div class="category-section">
+            <h2 class="category-title">📅 Date & Time Tools</h2>
+            <div class="tools-grid">
+                <!-- World Clock -->
+                <div class="tool-card">
+                    <div class="tool-title">🌍 World Clock</div>
+                    <div style="text-align: center;">
+                        <p><strong>🇺🇸 New York:</strong> <span id="nyTime"></span></p>
+                        <p><strong>🇬🇧 London:</strong> <span id="londonTime"></span></p>
+                        <p><strong>🇯🇵 Tokyo:</strong> <span id="tokyoTime"></span></p>
+                        <p><strong>🇦🇺 Sydney:</strong> <span id="sydneyTime"></span></p>
+                    </div>
+                </div>
+
+                <!-- Days Until -->
+                <div class="tool-card">
+                    <div class="tool-title">📆 Days Until...</div>
+                    <input type="date" class="tool-input" id="targetDate">
+                    <button class="tool-button" onclick="calculateDaysUntil()">Calculate</button>
+                    <div class="tool-result" id="daysUntilResult"></div>
+                </div>
+
+                <!-- QR Code Generator -->
+                <div class="tool-card">
+                    <div class="tool-title">📱 QR Code Generator</div>
+                    <input type="text" class="tool-input" id="qrText" placeholder="Enter text or URL...">
+                    <button class="tool-button" onclick="generateQR()">Generate QR Code</button>
+                    <div class="qr-code" id="qrCodeDisplay"></div>
+                </div>
+
+                <!-- Base64 Encoder/Decoder -->
+                <div class="tool-card">
+                    <div class="tool-title">🔢 Base64 Encoder/Decoder</div>
+                    <textarea class="tool-input" id="base64Input" placeholder="Enter text to encode/decode..."></textarea>
+                    <div class="button-group">
+                        <button class="tool-button" onclick="encodeBase64()">Encode</button>
+                        <button class="tool-button" onclick="decodeBase64()">Decode</button>
+                    </div>
+                    <div class="tool-result" id="base64Result"></div>
+                </div>
+            </div>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; margin: 2rem auto; display: block;">
+            🏠 Back to Home
+        </button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
+    </footer>
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <script>
+        // Tip Calculator
+        function calculateTip() {
+            const bill = parseFloat(document.getElementById('billAmount').value);
+            const tip = parseFloat(document.getElementById('tipPercent').value);
+            const people = parseInt(document.getElementById('numPeople').value);
+
+            if (!bill || !tip || !people) {
+                document.getElementById('tipResult').innerHTML = '❌ Please fill all fields!';
+                return;
+            }
+
+            const tipAmount = (bill * tip / 100);
+            const total = bill + tipAmount;
+            const perPerson = total / people;
+
+            document.getElementById('tipResult').innerHTML = `
+                💵 Tip Amount: $${tipAmount.toFixed(2)}<br>
+                💰 Total: $${total.toFixed(2)}<br>
+                👥 Per Person: $${perPerson.toFixed(2)}
+            `;
+        }
+
+        // Unit Converter
+        const units = {
+            length: ['meters', 'kilometers', 'feet', 'miles', 'inches', 'centimeters'],
+            weight: ['kilograms', 'pounds', 'grams', 'ounces'],
+            temperature: ['Celsius', 'Fahrenheit', 'Kelvin']
+        };
+
+        function updateUnitLabels() {
+            const type = document.getElementById('conversionType').value;
+            const fromUnit = document.getElementById('fromUnit');
+            const toUnit = document.getElementById('toUnit');
+
+            fromUnit.innerHTML = '';
+            toUnit.innerHTML = '';
+
+            units[type].forEach(unit => {
+                fromUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+                toUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+            });
+        }
+
+        function convertUnits() {
+            const value = parseFloat(document.getElementById('fromValue').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const type = document.getElementById('conversionType').value;
+
+            if (!value) {
+                document.getElementById('conversionResult').innerHTML = '❌ Please enter a value!';
+                return;
+            }
+
+            let result;
+
+            if (type === 'length') {
+                // Convert to meters first
+                const toMeters = {
+                    meters: 1,
+                    kilometers: 1000,
+                    feet: 0.3048,
+                    miles: 1609.34,
+                    inches: 0.0254,
+                    centimeters: 0.01
+                };
+
+                const meters = value * toMeters[fromUnit];
+                result = meters / toMeters[toUnit];
+            } else if (type === 'weight') {
+                const toKg = {
+                    kilograms: 1,
+                    pounds: 0.453592,
+                    grams: 0.001,
+                    ounces: 0.0283495
+                };
+
+                const kg = value * toKg[fromUnit];
+                result = kg / toKg[toUnit];
+            } else if (type === 'temperature') {
+                if (fromUnit === 'Celsius' && toUnit === 'Fahrenheit') {
+                    result = (value * 9/5) + 32;
+                } else if (fromUnit === 'Fahrenheit' && toUnit === 'Celsius') {
+                    result = (value - 32) * 5/9;
+                } else if (fromUnit === 'Celsius' && toUnit === 'Kelvin') {
+                    result = value + 273.15;
+                } else if (fromUnit === 'Kelvin' && toUnit === 'Celsius') {
+                    result = value - 273.15;
+                } else if (fromUnit === 'Fahrenheit' && toUnit === 'Kelvin') {
+                    result = (value - 32) * 5/9 + 273.15;
+                } else if (fromUnit === 'Kelvin' && toUnit === 'Fahrenheit') {
+                    result = (value - 273.15) * 9/5 + 32;
+                } else {
+                    result = value;
+                }
+            }
+
+            document.getElementById('conversionResult').innerHTML = `
+                ✅ ${value} ${fromUnit} = <strong>${result.toFixed(4)} ${toUnit}</strong>
+            `;
+        }
+
+        // BMI Calculator
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('heightCm').value) / 100; // convert to meters
+            const weight = parseFloat(document.getElementById('weightKg').value);
+
+            if (!height || !weight) {
+                document.getElementById('bmiResult').innerHTML = '❌ Please fill all fields!';
+                return;
+            }
+
+            const bmi = weight / (height * height);
+            let category;
+
+            if (bmi < 18.5) category = 'Underweight';
+            else if (bmi < 25) category = 'Normal weight';
+            else if (bmi < 30) category = 'Overweight';
+            else category = 'Obese';
+
+            document.getElementById('bmiResult').innerHTML = `
+                📊 Your BMI: <strong>${bmi.toFixed(1)}</strong><br>
+                Category: ${category}
+            `;
+        }
+
+        // Age Calculator
+        function calculateAge() {
+            const birthDate = new Date(document.getElementById('birthDate').value);
+            const today = new Date();
+
+            if (!document.getElementById('birthDate').value) {
+                document.getElementById('ageResult').innerHTML = '❌ Please select your birth date!';
+                return;
+            }
+
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            let days = today.getDate() - birthDate.getDate();
+
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const totalDays = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24));
+
+            document.getElementById('ageResult').innerHTML = `
+                🎂 You are <strong>${years}</strong> years, <strong>${months}</strong> months, and <strong>${days}</strong> days old!<br>
+                That's ${totalDays.toLocaleString()} days! 🎉
+            `;
+        }
+
+        // Text Counter
+        function countText() {
+            const text = document.getElementById('textInput').value;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+            const chars = text.length;
+            const charsNoSpaces = text.replace(/\s/g, '').length;
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+
+            document.getElementById('textStats').innerHTML = `
+                📊 Words: <strong>${words}</strong><br>
+                📝 Characters: <strong>${chars}</strong><br>
+                ✏️ Characters (no spaces): <strong>${charsNoSpaces}</strong><br>
+                📄 Sentences: <strong>${sentences}</strong>
+            `;
+        }
+
+        // Case Converter
+        function convertCase(type) {
+            let text = document.getElementById('caseText').value;
+
+            if (!text) {
+                document.getElementById('caseResult').innerHTML = '❌ Please enter some text!';
+                return;
+            }
+
+            let result;
+            if (type === 'upper') {
+                result = text.toUpperCase();
+            } else if (type === 'lower') {
+                result = text.toLowerCase();
+            } else if (type === 'title') {
+                result = text.replace(/\b\w/g, l => l.toUpperCase());
+            } else if (type === 'sentence') {
+                result = text.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, l => l.toUpperCase());
+            }
+
+            document.getElementById('caseText').value = result;
+            document.getElementById('caseResult').innerHTML = '✅ Text converted!';
+        }
+
+        // Lorem Ipsum Generator
+        function generateLorem() {
+            const paragraphs = parseInt(document.getElementById('paragraphs').value) || 3;
+            const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+            let result = '';
+            for (let i = 0; i < paragraphs; i++) {
+                result += lorem + '\n\n';
+            }
+
+            document.getElementById('loremResult').value = result;
+        }
+
+        // Password Generator
+        function generatePassword() {
+            const length = parseInt(document.getElementById('passwordLength').value) || 16;
+            const includeSymbols = document.getElementById('includeSymbols').checked;
+            const includeNumbers = document.getElementById('includeNumbers').checked;
+
+            let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (includeNumbers) chars += '0123456789';
+            if (includeSymbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            document.getElementById('passwordResult').innerHTML = `🔐 <strong>${password}</strong>`;
+        }
+
+        function copyPassword() {
+            const text = document.getElementById('passwordResult').textContent.replace('🔐 ', '');
+            navigator.clipboard.writeText(text);
+            alert('✅ Password copied to clipboard!');
+        }
+
+        // Pomodoro Timer
+        let pomodoroInterval;
+        let pomodoroTime = 25 * 60;
+        let pomodoroRunning = false;
+        let isWorkSession = true;
+
+        function togglePomodoro() {
+            if (pomodoroRunning) {
+                clearInterval(pomodoroInterval);
+                document.getElementById('pomodoroBtn').textContent = 'Resume';
+                pomodoroRunning = false;
+            } else {
+                pomodoroInterval = setInterval(() => {
+                    pomodoroTime--;
+                    updatePomodoroDisplay();
+
+                    if (pomodoroTime === 0) {
+                        clearInterval(pomodoroInterval);
+                        alert(isWorkSession ? '🎉 Work session complete! Take a 5-minute break!' : '⏰ Break over! Time to work!');
+                        isWorkSession = !isWorkSession;
+                        pomodoroTime = isWorkSession ? 25 * 60 : 5 * 60;
+                        updatePomodoroDisplay();
+                        document.getElementById('pomodoroBtn').textContent = 'Start';
+                        pomodoroRunning = false;
+                    }
+                }, 1000);
+                document.getElementById('pomodoroBtn').textContent = 'Pause';
+                pomodoroRunning = true;
+            }
+        }
+
+        function resetPomodoro() {
+            clearInterval(pomodoroInterval);
+            pomodoroTime = 25 * 60;
+            isWorkSession = true;
+            pomodoroRunning = false;
+            document.getElementById('pomodoroBtn').textContent = 'Start';
+            updatePomodoroDisplay();
+        }
+
+        function updatePomodoroDisplay() {
+            const minutes = Math.floor(pomodoroTime / 60);
+            const seconds = pomodoroTime % 60;
+            document.getElementById('pomodoroDisplay').textContent =
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('pomodoroStatus').textContent =
+                isWorkSession ? '💼 Work session: 25 minutes' : '☕ Break: 5 minutes';
+        }
+
+        // To-Do List
+        let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            todos.push({ text, completed: false, id: Date.now() });
+            input.value = '';
+            saveTodos();
+            displayTodos();
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) todo.completed = !todo.completed;
+            saveTodos();
+            displayTodos();
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveTodos();
+            displayTodos();
+        }
+
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function displayTodos() {
+            const list = document.getElementById('todoList');
+            list.innerHTML = todos.map(todo => `
+                <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                    <span onclick="toggleTodo(${todo.id})" style="cursor: pointer; flex: 1;">
+                        ${todo.completed ? '✅' : '⬜'} ${todo.text}
+                    </span>
+                    <button class="delete-btn" onclick="deleteTodo(${todo.id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        // Notes
+        function saveNotes() {
+            const notes = document.getElementById('notesArea').value;
+            localStorage.setItem('quickNotes', notes);
+            document.getElementById('notesStatus').innerHTML = '✅ Notes saved!';
+        }
+
+        function loadNotes() {
+            const notes = localStorage.getItem('quickNotes') || '';
+            document.getElementById('notesArea').value = notes;
+            document.getElementById('notesStatus').innerHTML = '📂 Notes loaded!';
+        }
+
+        function clearNotes() {
+            if (confirm('Are you sure you want to clear all notes?')) {
+                document.getElementById('notesArea').value = '';
+                localStorage.removeItem('quickNotes');
+                document.getElementById('notesStatus').innerHTML = '🗑️ Notes cleared!';
+            }
+        }
+
+        // Countdown Timer
+        let countdownInterval;
+        let countdownTime = 0;
+        let countdownRunning = false;
+
+        function toggleCountdown() {
+            if (countdownRunning) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdownBtn').textContent = 'Resume';
+                countdownRunning = false;
+            } else {
+                if (countdownTime === 0) {
+                    const minutes = parseInt(document.getElementById('countdownMinutes').value) || 0;
+                    const seconds = parseInt(document.getElementById('countdownSeconds').value) || 0;
+                    countdownTime = minutes * 60 + seconds;
+                }
+
+                countdownInterval = setInterval(() => {
+                    countdownTime--;
+                    updateCountdownDisplay();
+
+                    if (countdownTime === 0) {
+                        clearInterval(countdownInterval);
+                        alert('⏰ Time\'s up!');
+                        document.getElementById('countdownBtn').textContent = 'Start';
+                        countdownRunning = false;
+                    }
+                }, 1000);
+                document.getElementById('countdownBtn').textContent = 'Pause';
+                countdownRunning = true;
+            }
+        }
+
+        function resetCountdown() {
+            clearInterval(countdownInterval);
+            countdownTime = 0;
+            countdownRunning = false;
+            document.getElementById('countdownBtn').textContent = 'Start';
+            document.getElementById('countdownDisplay').textContent = '00:00';
+        }
+
+        function updateCountdownDisplay() {
+            const minutes = Math.floor(countdownTime / 60);
+            const seconds = countdownTime % 60;
+            document.getElementById('countdownDisplay').textContent =
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Decision Maker
+        function makeDecision() {
+            const options = document.getElementById('decisionOptions').value
+                .split('\n')
+                .map(o => o.trim())
+                .filter(o => o.length > 0);
+
+            if (options.length === 0) {
+                document.getElementById('decisionResult').innerHTML = '❌ Please enter at least one option!';
+                return;
+            }
+
+            const choice = options[Math.floor(Math.random() * options.length)];
+            document.getElementById('decisionResult').innerHTML = `
+                🎯 <strong style="font-size: 1.3rem;">${choice}</strong>
+            `;
+        }
+
+        // Dice Roller
+        function rollDice() {
+            const numDice = parseInt(document.getElementById('numDice').value);
+            const sides = parseInt(document.getElementById('diceSides').value);
+
+            let rolls = [];
+            let total = 0;
+
+            for (let i = 0; i < numDice; i++) {
+                const roll = Math.floor(Math.random() * sides) + 1;
+                rolls.push(roll);
+                total += roll;
+            }
+
+            document.getElementById('diceResult').innerHTML = `
+                🎲 Rolls: <strong>${rolls.join(', ')}</strong><br>
+                📊 Total: <strong>${total}</strong>
+            `;
+        }
+
+        // Color Picker
+        function updateColor() {
+            const color = document.getElementById('colorPicker').value;
+            document.getElementById('colorPreview').style.background = color;
+
+            // Convert to RGB
+            const r = parseInt(color.substr(1, 2), 16);
+            const g = parseInt(color.substr(3, 2), 16);
+            const b = parseInt(color.substr(5, 2), 16);
+
+            document.getElementById('colorValues').innerHTML = `
+                🎨 HEX: <strong>${color.toUpperCase()}</strong><br>
+                RGB: <strong>rgb(${r}, ${g}, ${b})</strong>
+            `;
+        }
+
+        function copyColor() {
+            const color = document.getElementById('colorPicker').value;
+            navigator.clipboard.writeText(color.toUpperCase());
+            alert('✅ Color copied to clipboard!');
+        }
+
+        // Name Generator
+        const firstNames = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Avery', 'Quinn', 'Sage', 'River'];
+        const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+        const fantasyNames = ['Aelindor', 'Thorin', 'Elara', 'Zephyr', 'Lyra', 'Kael', 'Mira', 'Darius', 'Nova', 'Phoenix'];
+
+        function generateName() {
+            const type = document.getElementById('nameType').value;
+            let result;
+
+            if (type === 'full') {
+                const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+                result = `${first} ${last}`;
+            } else if (type === 'username') {
+                const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const num = Math.floor(Math.random() * 9999);
+                result = `${name}${num}`;
+            } else {
+                result = fantasyNames[Math.floor(Math.random() * fantasyNames.length)];
+            }
+
+            document.getElementById('nameResult').innerHTML = `👤 <strong>${result}</strong>`;
+        }
+
+        // World Clock
+        function updateWorldClocks() {
+            const now = new Date();
+
+            document.getElementById('nyTime').textContent = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
+            document.getElementById('londonTime').textContent = now.toLocaleTimeString('en-GB', { timeZone: 'Europe/London' });
+            document.getElementById('tokyoTime').textContent = now.toLocaleTimeString('ja-JP', { timeZone: 'Asia/Tokyo' });
+            document.getElementById('sydneyTime').textContent = now.toLocaleTimeString('en-AU', { timeZone: 'Australia/Sydney' });
+        }
+
+        // Days Until
+        function calculateDaysUntil() {
+            const targetDate = new Date(document.getElementById('targetDate').value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (!document.getElementById('targetDate').value) {
+                document.getElementById('daysUntilResult').innerHTML = '❌ Please select a date!';
+                return;
+            }
+
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let message;
+            if (diffDays === 0) {
+                message = '🎉 It\'s today!';
+            } else if (diffDays === 1) {
+                message = '📅 1 day until!';
+            } else if (diffDays > 0) {
+                message = `📅 <strong>${diffDays}</strong> days until!`;
+            } else {
+                message = `📅 That date was <strong>${Math.abs(diffDays)}</strong> days ago!`;
+            }
+
+            document.getElementById('daysUntilResult').innerHTML = message;
+        }
+
+        // QR Code Generator
+        let qrCode = null;
+
+        function generateQR() {
+            const text = document.getElementById('qrText').value.trim();
+
+            if (!text) {
+                alert('Please enter text or URL!');
+                return;
+            }
+
+            const container = document.getElementById('qrCodeDisplay');
+            container.innerHTML = '';
+
+            qrCode = new QRCode(container, {
+                text: text,
+                width: 200,
+                height: 200,
+                colorDark: "#667eea",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // Base64 Encoder/Decoder
+        function encodeBase64() {
+            const text = document.getElementById('base64Input').value;
+
+            if (!text) {
+                document.getElementById('base64Result').innerHTML = '❌ Please enter some text!';
+                return;
+            }
+
+            const encoded = btoa(unescape(encodeURIComponent(text)));
+            document.getElementById('base64Result').innerHTML = `✅ <strong>${encoded}</strong>`;
+        }
+
+        function decodeBase64() {
+            const text = document.getElementById('base64Input').value;
+
+            if (!text) {
+                document.getElementById('base64Result').innerHTML = '❌ Please enter some text!';
+                return;
+            }
+
+            try {
+                const decoded = decodeURIComponent(escape(atob(text)));
+                document.getElementById('base64Result').innerHTML = `✅ <strong>${decoded}</strong>`;
+            } catch (e) {
+                document.getElementById('base64Result').innerHTML = '❌ Invalid Base64 string!';
+            }
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).value;
+            navigator.clipboard.writeText(text);
+            alert('✅ Copied to clipboard!');
+        }
+
+        // Initialize
+        updateUnitLabels();
+        updateColor();
+        displayTodos();
+        loadNotes();
+        updateWorldClocks();
+        setInterval(updateWorldClocks, 1000);
+    </script>
+</body>
+</html>
