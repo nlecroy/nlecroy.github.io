@@ -830,6 +830,7 @@
             <button class="admin-tab active" onclick="switchTab('moderation')">👮 Moderation</button>
             <button class="admin-tab" onclick="switchTab('analytics')">📊 Analytics</button>
             <button class="admin-tab" onclick="switchTab('settings')">⚙️ Settings</button>
+            <button class="admin-tab" onclick="switchTab('adminAbuse')">😈 Admin Abuse</button>
         </div>
 
         <div id="moderationTab">
@@ -924,6 +925,70 @@
                 <textarea id="chatRules" style="width: 100%; padding: 1rem; border-radius: 10px; min-height: 150px;" placeholder="Enter chat rules..."></textarea>
                 <button class="admin-btn" onclick="saveChatRules()">💾 Save Rules</button>
                 <button class="admin-btn" onclick="broadcastRules()">📢 Broadcast Rules</button>
+            </div>
+        </div>
+
+        <div id="adminAbuseTab" style="display: none;">
+            <div class="admin-section">
+                <h3>😈 Admin Abuse Features</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1rem;">Activate special events and bonuses for all users!</p>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h4 style="color: #ffd700; margin-bottom: 0.5rem;">🍬 2x Skittles in Chat</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">Everyone who sends a message gets 2 skittles!</p>
+                    <button class="admin-btn" onclick="toggle2xSkittles()" id="toggle2xBtn">Activate 2x Skittles</button>
+                    <span id="2xStatus" style="color: #4ecdc4; margin-left: 1rem; font-weight: bold;"></span>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h4 style="color: #ffd700; margin-bottom: 0.5rem;">🏁 Word Race</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">First person to type a specific word wins skittles!</p>
+                    <input type="text" id="raceWord" placeholder="Word to race for..." class="admin-input" style="display: block; margin-bottom: 0.5rem;">
+                    <input type="number" id="raceReward" placeholder="Skittles reward..." class="admin-input" style="width: 150px; display: block; margin-bottom: 0.5rem;">
+                    <button class="admin-btn" onclick="startWordRace()">🏁 Start Race!</button>
+                    <span id="raceStatus" style="color: #4ecdc4; margin-left: 1rem; font-weight: bold;"></span>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h4 style="color: #ffd700; margin-bottom: 0.5rem;">💰 Skittles Rain</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">Rain skittles on everyone in chat!</p>
+                    <input type="number" id="rainAmount" placeholder="Amount per user..." class="admin-input" style="width: 150px; display: block; margin-bottom: 0.5rem;">
+                    <button class="admin-btn" onclick="skittlesRain()">🌧️ Make it Rain!</button>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h4 style="color: #ffd700; margin-bottom: 0.5rem;">🎲 Random User Bonus</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">Give a random online user bonus skittles!</p>
+                    <input type="number" id="randomBonus" placeholder="Bonus amount..." class="admin-input" style="width: 150px; display: block; margin-bottom: 0.5rem;">
+                    <button class="admin-btn" onclick="randomUserBonus()">🎲 Random Bonus!</button>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h4 style="color: #ffd700; margin-bottom: 0.5rem;">💬 Chat Multiplier Event</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">For 5 minutes, everyone gets bonus skittles per message!</p>
+                    <input type="number" id="multiplier" placeholder="Multiplier (e.g., 3)..." class="admin-input" style="width: 150px; display: block; margin-bottom: 0.5rem;">
+                    <button class="admin-btn" onclick="startMultiplierEvent()">⚡ Start Event!</button>
+                    <span id="eventStatus" style="color: #4ecdc4; margin-left: 1rem; font-weight: bold;"></span>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h4 style="color: #ffd700; margin-bottom: 0.5rem;">🎯 Trivia Challenge</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">Ask a trivia question, first correct answer wins!</p>
+                    <input type="text" id="triviaQuestion" placeholder="Question..." class="admin-input" style="width: 100%; display: block; margin-bottom: 0.5rem;">
+                    <input type="text" id="triviaAnswer" placeholder="Answer..." class="admin-input" style="width: 100%; display: block; margin-bottom: 0.5rem;">
+                    <input type="number" id="triviaReward" placeholder="Reward..." class="admin-input" style="width: 150px; display: block; margin-bottom: 0.5rem;">
+                    <button class="admin-btn" onclick="startTrivia()">🎯 Start Trivia!</button>
+                    <span id="triviaStatus" style="color: #4ecdc4; margin-left: 1rem; font-weight: bold;"></span>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px;">
+                    <h4 style="color: #ffd700; margin-bottom: 0.5rem;">🎰 Lucky Number</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">First person to send a message with the lucky number wins!</p>
+                    <input type="number" id="luckyNumber" placeholder="Lucky number..." class="admin-input" style="width: 150px; display: block; margin-bottom: 0.5rem;">
+                    <input type="number" id="luckyReward" placeholder="Reward..." class="admin-input" style="width: 150px; display: block; margin-bottom: 0.5rem;">
+                    <button class="admin-btn" onclick="startLuckyNumber()">🎰 Start!</button>
+                    <span id="luckyStatus" style="color: #4ecdc4; margin-left: 1rem; font-weight: bold;"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -1134,6 +1199,12 @@
         }
 
         function initChat() {
+            // Auto-fill username from logged-in account
+            const savedUsername = localStorage.getItem('currentUsername');
+            if (savedUsername) {
+                document.getElementById('usernameInput').value = savedUsername;
+            }
+
             onValue(bannedUsersRef, (snapshot) => {
                 bannedUsers = new Set();
                 snapshot.forEach((child) => {
@@ -1321,7 +1392,7 @@
             }
         }
 
-        function sendMessage(event) {
+        async function sendMessage(event) {
             event.preventDefault();
             const messageInput = document.getElementById('messageInput');
             const messageText = messageInput.value.trim();
@@ -1337,6 +1408,57 @@
             if (containsProfanity(messageText)) {
                 banUser(currentUser);
                 return;
+            }
+
+            // Check for word race
+            if (wordRaceActive && messageText.toLowerCase().includes(wordRaceData.word)) {
+                await giveUserSkittles(currentUser, wordRaceData.reward);
+                const announcement = {
+                    text: `🏁 ${currentUser} won the word race and earned ${wordRaceData.reward} skittles!`,
+                    timestamp: Date.now(),
+                    type: 'announcement'
+                };
+                push(messagesRef, announcement);
+                wordRaceActive = false;
+                document.getElementById('raceStatus').textContent = '';
+            }
+
+            // Check for trivia
+            if (triviaActive && messageText.toLowerCase().includes(triviaData.answer)) {
+                await giveUserSkittles(currentUser, triviaData.reward);
+                const announcement = {
+                    text: `🎯 ${currentUser} answered correctly and won ${triviaData.reward} skittles!`,
+                    timestamp: Date.now(),
+                    type: 'announcement'
+                };
+                push(messagesRef, announcement);
+                triviaActive = false;
+                document.getElementById('triviaStatus').textContent = '';
+            }
+
+            // Check for lucky number
+            if (luckyNumberActive && messageText.includes(luckyNumberData.number.toString())) {
+                await giveUserSkittles(currentUser, luckyNumberData.reward);
+                const announcement = {
+                    text: `🎰 ${currentUser} sent the lucky number ${luckyNumberData.number} and won ${luckyNumberData.reward} skittles!`,
+                    timestamp: Date.now(),
+                    type: 'announcement'
+                };
+                push(messagesRef, announcement);
+                luckyNumberActive = false;
+                document.getElementById('luckyStatus').textContent = '';
+            }
+
+            // Give skittles for sending message
+            let skittlesToGive = 0;
+            if (doubleSkittlesEnabled) {
+                skittlesToGive = 2;
+            }
+            if (multiplierActive && Date.now() < multiplierData.endTime) {
+                skittlesToGive = multiplierData.multiplier;
+            }
+            if (skittlesToGive > 0) {
+                await giveUserSkittles(currentUser, skittlesToGive);
             }
 
             const message = {
@@ -1613,6 +1735,14 @@
 
         // Admin functions
         function showAdminLogin() {
+            // Check if admin code is saved
+            const savedCode = localStorage.getItem('chatAdminCode');
+            if (savedCode === ADMIN_PASSWORD) {
+                isAdmin = true;
+                document.getElementById('adminPanel').style.display = 'block';
+                return;
+            }
+
             document.getElementById('adminLoginModal').style.display = 'flex';
             setTimeout(() => {
                 document.getElementById('adminPasswordInput').focus();
@@ -1628,9 +1758,11 @@
             const password = document.getElementById('adminPasswordInput').value;
             if (password === ADMIN_PASSWORD) {
                 isAdmin = true;
+                // Save admin code
+                localStorage.setItem('chatAdminCode', password);
                 closeAdminLogin();
                 document.getElementById('adminPanel').style.display = 'block';
-                showNotification('✅ Admin access granted!');
+                showNotification('✅ Admin access granted! Code saved for next time.');
                 updateStats();
             } else {
                 alert('❌ Incorrect admin password!');
@@ -1649,6 +1781,7 @@
             document.getElementById('moderationTab').style.display = tab === 'moderation' ? 'block' : 'none';
             document.getElementById('analyticsTab').style.display = tab === 'analytics' ? 'block' : 'none';
             document.getElementById('settingsTab').style.display = tab === 'settings' ? 'block' : 'none';
+            document.getElementById('adminAbuseTab').style.display = tab === 'adminAbuse' ? 'block' : 'none';
         }
 
         function adminBanUser() {
@@ -1855,6 +1988,207 @@
             sendAnnouncement();
         }
 
+        // Admin Abuse Features
+        let doubleSkittlesEnabled = false;
+        let wordRaceActive = false;
+        let wordRaceData = null;
+        let triviaActive = false;
+        let triviaData = null;
+        let luckyNumberActive = false;
+        let luckyNumberData = null;
+        let multiplierActive = false;
+        let multiplierData = null;
+
+        async function giveUserSkittles(username, amount) {
+            try {
+                const usersRef = ref(database, 'users');
+                const snapshot = await get(usersRef);
+
+                let foundUser = null;
+                snapshot.forEach((child) => {
+                    if (child.val().username === username) {
+                        foundUser = { uid: child.key, data: child.val() };
+                    }
+                });
+
+                if (foundUser) {
+                    const newBalance = (foundUser.data.skittles || 0) + amount;
+                    await update(ref(database, `users/${foundUser.uid}`), {
+                        skittles: newBalance
+                    });
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error giving skittles:', error);
+            }
+            return false;
+        }
+
+        function toggle2xSkittles() {
+            doubleSkittlesEnabled = !doubleSkittlesEnabled;
+            const btn = document.getElementById('toggle2xBtn');
+            const status = document.getElementById('2xStatus');
+
+            if (doubleSkittlesEnabled) {
+                btn.textContent = 'Deactivate 2x Skittles';
+                status.textContent = '✅ ACTIVE';
+                sendSystemMessage('🍬 2X SKITTLES ENABLED! Everyone gets 2 skittles per message!');
+                showNotification('✅ 2x Skittles activated!');
+            } else {
+                btn.textContent = 'Activate 2x Skittles';
+                status.textContent = '';
+                sendSystemMessage('2x Skittles event ended.');
+                showNotification('2x Skittles deactivated');
+            }
+        }
+
+        function startWordRace() {
+            const word = document.getElementById('raceWord').value.trim();
+            const reward = parseInt(document.getElementById('raceReward').value);
+
+            if (!word || isNaN(reward) || reward <= 0) {
+                alert('Please enter a word and reward amount!');
+                return;
+            }
+
+            wordRaceActive = true;
+            wordRaceData = { word: word.toLowerCase(), reward: reward };
+            document.getElementById('raceStatus').textContent = '🏁 ACTIVE!';
+
+            const announcement = {
+                text: `🏁 WORD RACE! First person to type "${word}" wins ${reward} skittles! GO GO GO!`,
+                timestamp: Date.now(),
+                type: 'announcement'
+            };
+            push(messagesRef, announcement);
+            showNotification(`Word race started for "${word}"!`);
+        }
+
+        async function skittlesRain() {
+            const amount = parseInt(document.getElementById('rainAmount').value);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount!');
+                return;
+            }
+
+            // Give skittles to all online users
+            for (const username of onlineUsers) {
+                await giveUserSkittles(username, amount);
+            }
+
+            const announcement = {
+                text: `🌧️ SKITTLES RAIN! Everyone just received ${amount} skittles!`,
+                timestamp: Date.now(),
+                type: 'announcement'
+            };
+            push(messagesRef, announcement);
+            showNotification(`Gave ${amount} skittles to ${onlineUsers.size} users!`);
+        }
+
+        async function randomUserBonus() {
+            const amount = parseInt(document.getElementById('randomBonus').value);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount!');
+                return;
+            }
+
+            if (onlineUsers.size === 0) {
+                alert('No users online!');
+                return;
+            }
+
+            // Pick random user
+            const usersArray = Array.from(onlineUsers);
+            const randomUser = usersArray[Math.floor(Math.random() * usersArray.length)];
+
+            await giveUserSkittles(randomUser, amount);
+
+            const announcement = {
+                text: `🎲 ${randomUser} won ${amount} skittles in a random draw! Lucky!`,
+                timestamp: Date.now(),
+                type: 'announcement'
+            };
+            push(messagesRef, announcement);
+            showNotification(`Gave ${amount} skittles to ${randomUser}!`);
+        }
+
+        function startMultiplierEvent() {
+            const mult = parseInt(document.getElementById('multiplier').value);
+
+            if (isNaN(mult) || mult <= 1) {
+                alert('Please enter a valid multiplier (2 or higher)!');
+                return;
+            }
+
+            multiplierActive = true;
+            multiplierData = { multiplier: mult, endTime: Date.now() + (5 * 60 * 1000) };
+            document.getElementById('eventStatus').textContent = `⚡ ${mult}x for 5 min!`;
+
+            const announcement = {
+                text: `⚡ ${mult}X MULTIPLIER EVENT! For the next 5 minutes, get ${mult} skittles per message!`,
+                timestamp: Date.now(),
+                type: 'announcement'
+            };
+            push(messagesRef, announcement);
+
+            setTimeout(() => {
+                if (multiplierActive) {
+                    multiplierActive = false;
+                    document.getElementById('eventStatus').textContent = '';
+                    sendSystemMessage('⚡ Multiplier event ended!');
+                }
+            }, 5 * 60 * 1000);
+
+            showNotification(`${mult}x multiplier event started!`);
+        }
+
+        function startTrivia() {
+            const question = document.getElementById('triviaQuestion').value.trim();
+            const answer = document.getElementById('triviaAnswer').value.trim();
+            const reward = parseInt(document.getElementById('triviaReward').value);
+
+            if (!question || !answer || isNaN(reward) || reward <= 0) {
+                alert('Please fill in all trivia fields!');
+                return;
+            }
+
+            triviaActive = true;
+            triviaData = { answer: answer.toLowerCase(), reward: reward };
+            document.getElementById('triviaStatus').textContent = '🎯 ACTIVE!';
+
+            const announcement = {
+                text: `🎯 TRIVIA TIME! ${question}\n\nFirst correct answer wins ${reward} skittles!`,
+                timestamp: Date.now(),
+                type: 'announcement'
+            };
+            push(messagesRef, announcement);
+            showNotification('Trivia challenge started!');
+        }
+
+        function startLuckyNumber() {
+            const number = parseInt(document.getElementById('luckyNumber').value);
+            const reward = parseInt(document.getElementById('luckyReward').value);
+
+            if (isNaN(number) || isNaN(reward) || reward <= 0) {
+                alert('Please enter valid numbers!');
+                return;
+            }
+
+            luckyNumberActive = true;
+            luckyNumberData = { number: number, reward: reward };
+            document.getElementById('luckyStatus').textContent = '🎰 ACTIVE!';
+
+            const announcement = {
+                text: `🎰 LUCKY NUMBER! First person to send a message containing the number ${number} wins ${reward} skittles!`,
+                timestamp: Date.now(),
+                type: 'announcement'
+            };
+            push(messagesRef, announcement);
+            showNotification(`Lucky number ${number} activated!`);
+        }
+
         // Make functions global
         window.checkChatPassword = checkChatPassword;
         window.setUsername = setUsername;
@@ -1900,6 +2234,13 @@
         window.saveAdminSettings = saveAdminSettings;
         window.saveChatRules = saveChatRules;
         window.broadcastRules = broadcastRules;
+        window.toggle2xSkittles = toggle2xSkittles;
+        window.startWordRace = startWordRace;
+        window.skittlesRain = skittlesRain;
+        window.randomUserBonus = randomUserBonus;
+        window.startMultiplierEvent = startMultiplierEvent;
+        window.startTrivia = startTrivia;
+        window.startLuckyNumber = startLuckyNumber;
 
         document.getElementById('usernameInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') setUsername();
