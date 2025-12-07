@@ -1096,7 +1096,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, push, onChildAdded, onChildRemoved, limitToLast, query, onValue, remove, set, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, push, onChildAdded, onChildRemoved, limitToLast, query, onValue, remove, set, get, onDisconnect } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
@@ -1118,6 +1118,7 @@
         const onlineUsersRef = ref(database, 'chatroom/online');
 
         let currentUser = '';
+        let currentUserOnlineRef = null; // Store reference to current user's online status
         let isFirstLoad = true;
         let bannedUsers = new Set();
         let bannedWords = new Set();
@@ -1341,14 +1342,26 @@
             document.getElementById('currentUsername').textContent = username;
             document.getElementById('messageInput').focus();
 
-            const userRef = ref(database, `chatroom/online/${Date.now()}`);
+            // Add user to online list with auto-removal on disconnect
+            const userRef = ref(database, `chatroom/online/${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+            currentUserOnlineRef = userRef;
             set(userRef, username);
+
+            // Automatically remove user when they disconnect
+            onDisconnect(userRef).remove();
 
             sendSystemMessage(`${username} joined the chat! 👋`);
         }
 
         function changeUsername() {
             sendSystemMessage(`${currentUser} left the chat 👋`);
+
+            // Remove user from online list
+            if (currentUserOnlineRef) {
+                remove(currentUserOnlineRef);
+                currentUserOnlineRef = null;
+            }
+
             currentUser = '';
             document.getElementById('usernameSetup').style.display = 'flex';
             document.getElementById('chatInterface').style.display = 'none';
