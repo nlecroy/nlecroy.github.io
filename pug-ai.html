@@ -331,6 +331,14 @@
 
         let messageCount = 0;
         let username = localStorage.getItem('currentUsername') || 'Anonymous';
+        let conversationHistory = [];
+        let currentTopic = null;
+        let userProfile = {
+            name: username,
+            mood: 'neutral',
+            interests: [],
+            previousQuestions: []
+        };
 
         // Set initial time
         document.getElementById('initialTime').textContent = new Date().toLocaleTimeString('en-US', {
@@ -355,6 +363,9 @@
 
             if (!messageText) return;
 
+            // Add to conversation history
+            conversationHistory.push({ role: 'user', text: messageText, timestamp: Date.now() });
+
             // Display user message
             displayMessage(messageText, 'user');
 
@@ -371,9 +382,12 @@
             // Show typing indicator
             document.getElementById('typingIndicator').classList.add('active');
 
-            // Generate AI response
+            // Generate AI response (with realistic delay based on message length)
+            const thinkingTime = 800 + (messageText.length * 20) + (Math.random() * 500);
             setTimeout(() => {
                 const response = generateAIResponse(messageText);
+                conversationHistory.push({ role: 'ai', text: response, timestamp: Date.now() });
+
                 document.getElementById('typingIndicator').classList.remove('active');
                 displayMessage(response, 'ai');
 
@@ -387,7 +401,7 @@
 
                 messageCount++;
                 document.getElementById('messageCount').textContent = messageCount;
-            }, 1000 + Math.random() * 1000);
+            }, thinkingTime);
         }
 
         function sendSuggestion(text) {
@@ -417,8 +431,231 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        // Advanced AI Functions
+
+        function analyzeSentiment(msg) {
+            const positiveWords = ['happy', 'great', 'awesome', 'love', 'excellent', 'good', 'wonderful', 'amazing', 'perfect', 'thanks'];
+            const negativeWords = ['sad', 'bad', 'hate', 'terrible', 'awful', 'angry', 'upset', 'depressed', 'horrible', 'worst'];
+
+            const positiveCount = positiveWords.filter(word => msg.includes(word)).length;
+            const negativeCount = negativeWords.filter(word => msg.includes(word)).length;
+
+            if (positiveCount > negativeCount) {
+                userProfile.mood = 'positive';
+            } else if (negativeCount > positiveCount) {
+                userProfile.mood = 'negative';
+            } else {
+                userProfile.mood = 'neutral';
+            }
+        }
+
+        function handleMath(msg) {
+            // Handle calculations
+            const mathPatterns = [
+                /what is (\d+\.?\d*)\s*\+\s*(\d+\.?\d*)/i,
+                /what is (\d+\.?\d*)\s*\-\s*(\d+\.?\d*)/i,
+                /what is (\d+\.?\d*)\s*\*\s*(\d+\.?\d*)/i,
+                /what is (\d+\.?\d*)\s*\/\s*(\d+\.?\d*)/i,
+                /(\d+\.?\d*)\s*\+\s*(\d+\.?\d*)\s*=?\??/,
+                /(\d+\.?\d*)\s*\-\s*(\d+\.?\d*)\s*=?\??/,
+                /(\d+\.?\d*)\s*\*\s*(\d+\.?\d*)\s*=?\??/,
+                /(\d+\.?\d*)\s*\/\s*(\d+\.?\d*)\s*=?\??/,
+                /calculate (\d+\.?\d*)\s*\+\s*(\d+\.?\d*)/i,
+                /calculate (\d+\.?\d*)\s*\-\s*(\d+\.?\d*)/i,
+                /calculate (\d+\.?\d*)\s*\*\s*(\d+\.?\d*)/i,
+                /calculate (\d+\.?\d*)\s*\/\s*(\d+\.?\d*)/i,
+            ];
+
+            for (const pattern of mathPatterns) {
+                const match = msg.match(pattern);
+                if (match) {
+                    const num1 = parseFloat(match[1]);
+                    const num2 = parseFloat(match[2]);
+                    let result;
+                    let operation;
+
+                    if (msg.includes('+')) {
+                        result = num1 + num2;
+                        operation = 'plus';
+                    } else if (msg.includes('-')) {
+                        result = num1 - num2;
+                        operation = 'minus';
+                    } else if (msg.includes('*') || msg.includes('×')) {
+                        result = num1 * num2;
+                        operation = 'times';
+                    } else if (msg.includes('/') || msg.includes('÷')) {
+                        result = num1 / num2;
+                        operation = 'divided by';
+                    }
+
+                    return `🧮 Let me calculate that for you! ${num1} ${operation} ${num2} equals ${result}! Math is fun, especially when treats are involved! 🦴`;
+                }
+            }
+
+            // Handle square root
+            if (msg.match(/square root of (\d+\.?\d*)/i)) {
+                const match = msg.match(/square root of (\d+\.?\d*)/i);
+                const num = parseFloat(match[1]);
+                const result = Math.sqrt(num);
+                return `🧮 The square root of ${num} is ${result.toFixed(2)}! Woof, that's some advanced math! 🐶📐`;
+            }
+
+            return null;
+        }
+
+        function handleQuestion(msg) {
+            const knowledgeBase = {
+                // Science
+                'speed of light': 'The speed of light is approximately 299,792,458 meters per second (or about 186,282 miles per second)! That\'s super fast - even faster than a pug chasing treats! 🚀✨',
+                'planets': 'Our solar system has 8 planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune! Poor Pluto got demoted to a dwarf planet. 🪐',
+                'sun': 'The Sun is a star at the center of our solar system! It\'s about 4.6 billion years old and provides the light and heat that makes life on Earth possible! ☀️',
+
+                // Programming
+                'python': 'Python is an amazing programming language! It\'s great for beginners and powerful enough for professionals. Fun fact: It wasn\'t named after the snake, but after Monty Python! 🐍',
+                'javascript': 'JavaScript is the language of the web! It runs in browsers and lets you create interactive websites. Node.js even lets you use it on servers! 💻',
+                'html': 'HTML (HyperText Markup Language) is the backbone of web pages! It structures content on the web. This very page is made with HTML! 🌐',
+
+                // History
+                'who invented': {
+                    'computer': 'Charles Babbage is considered the "father of the computer" for designing the first mechanical computer in the 1830s! 🖥️',
+                    'internet': 'The internet was developed by many people, but ARPANET (1969) is considered its precursor. Tim Berners-Lee invented the World Wide Web in 1989! 🌐',
+                    'electricity': 'While many contributed, Benjamin Franklin\'s experiments with lightning and Thomas Edison\'s practical applications were crucial! ⚡',
+                },
+
+                // General Knowledge
+                'capital': {
+                    'france': 'Paris',
+                    'japan': 'Tokyo',
+                    'usa': 'Washington D.C.',
+                    'uk': 'London',
+                    'china': 'Beijing',
+                },
+            };
+
+            // Check for "why" questions
+            if (msg.startsWith('why')) {
+                if (msg.includes('sky blue')) {
+                    return '🌤️ The sky appears blue because of Rayleigh scattering! When sunlight reaches Earth\'s atmosphere, shorter blue wavelengths scatter more than other colors. Science is woof-tastic! 🐶🔬';
+                }
+                if (msg.includes('grass green')) {
+                    return '🌱 Grass is green because of chlorophyll! It absorbs red and blue light for photosynthesis but reflects green light. That\'s why we see it as green! Nature is amazing! 🍃';
+                }
+            }
+
+            // Check for "how" questions
+            if (msg.startsWith('how')) {
+                if (msg.includes('internet work')) {
+                    return '🌐 The internet works by connecting millions of computers through networks! Data is broken into packets, sent through routers, and reassembled at the destination. It\'s like a super-fast postal system! 📦';
+                }
+                if (msg.includes('old')) {
+                    if (msg.includes('earth')) {
+                        return '🌍 Earth is approximately 4.54 billion years old! That\'s ancient - even older than the oldest pug treats! Scientists determined this through radiometric dating of rocks and meteorites! 🪨';
+                    }
+                    if (msg.includes('you')) {
+                        return '🤖 I\'m a newly created AI, so I\'m just a pup in AI years! But I have access to lots of knowledge to help you! 🐶📚';
+                    }
+                }
+            }
+
+            // Check for "what" questions
+            if (msg.startsWith('what')) {
+                if (msg.includes('largest')) {
+                    if (msg.includes('planet')) {
+                        return '🪐 Jupiter is the largest planet in our solar system! It\'s so big that over 1,300 Earths could fit inside it! That\'s one massive planet! 🌍';
+                    }
+                    if (msg.includes('ocean')) {
+                        return '🌊 The Pacific Ocean is the largest ocean on Earth! It covers more than 63 million square miles - that\'s bigger than all the land on Earth combined! 🏖️';
+                    }
+                    if (msg.includes('animal')) {
+                        return '🐋 The blue whale is the largest animal ever known to have existed! They can grow up to 100 feet long and weigh 200 tons! That\'s way bigger than a pug! 🐶';
+                    }
+                }
+            }
+
+            // Check for "who" questions
+            if (msg.startsWith('who')) {
+                if (msg.includes('created you') || msg.includes('made you')) {
+                    return '👨‍💻 I was created by the developers of Pug Paradise to be your friendly AI companion! I\'m powered by JavaScript and Firebase! 🐶🔧';
+                }
+                if (msg.includes('first person')) {
+                    if (msg.includes('moon')) {
+                        return '🌙 Neil Armstrong was the first person to walk on the Moon on July 20, 1969! His famous words were "That\'s one small step for man, one giant leap for mankind!" 🚀👨‍🚀';
+                    }
+                }
+            }
+
+            // Check knowledge base
+            for (const [key, value] of Object.entries(knowledgeBase)) {
+                if (msg.includes(key)) {
+                    if (typeof value === 'object') {
+                        for (const [subKey, subValue] of Object.entries(value)) {
+                            if (msg.includes(subKey)) {
+                                return typeof subValue === 'string' && !subValue.includes('🐶')
+                                    ? `${subValue} Hope that helps! 🐶`
+                                    : subValue;
+                            }
+                        }
+                    } else {
+                        return value;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        function handleContext(msg) {
+            // Get recent conversation
+            const recentMessages = conversationHistory.slice(-4);
+
+            // Check if user is asking for clarification
+            if (msg.match(/\b(what|huh|explain|clarify|mean|understand)\b/)) {
+                if (recentMessages.length >= 2) {
+                    const lastAIMessage = recentMessages.reverse().find(m => m.role === 'ai');
+                    if (lastAIMessage) {
+                        return `Let me explain that better! 🤔 ${lastAIMessage.text.substring(0, 100)}... What specifically would you like me to clarify? 🐾`;
+                    }
+                }
+            }
+
+            // Check for follow-up questions
+            if (msg.match(/\b(more|tell me more|continue|else|also|and)\b/) && currentTopic) {
+                return `Glad you want to know more about ${currentTopic}! 📚 *wags tail* What specifically interests you about it? 🐶`;
+            }
+
+            // Check for yes/no in context
+            if (msg.match(/\b(yes|yeah|yep|sure|ok|okay)\b/) && conversationHistory.length > 0) {
+                return `Awesome! 🎉 Let\'s do it! What would you like to explore next? I\'m all ears (well, floppy pug ears)! 👂🐶`;
+            }
+
+            if (msg.match(/\b(no|nope|nah|not really)\b/) && conversationHistory.length > 0) {
+                return `No worries! 🐾 What else would you like to chat about? I\'m here for whatever you need! 💬`;
+            }
+
+            return null;
+        }
+
         function generateAIResponse(userMessage) {
             const msg = userMessage.toLowerCase();
+
+            // Analyze sentiment and update user profile
+            analyzeSentiment(msg);
+
+            // Check for math calculations
+            const mathResult = handleMath(msg);
+            if (mathResult) return mathResult;
+
+            // Check for questions
+            if (msg.includes('?')) {
+                const answer = handleQuestion(msg);
+                if (answer) return answer;
+            }
+
+            // Check conversation context
+            if (conversationHistory.length > 2) {
+                const contextResponse = handleContext(msg);
+                if (contextResponse) return contextResponse;
+            }
 
             // Pug jokes
             const jokes = [
@@ -512,19 +749,39 @@
                 return `Aww, leaving so soon? 😢 Come back and visit me anytime! I'll be here waiting with my tail wagging! Bye bye! 👋🐶`;
             }
 
-            // Default responses
-            const defaultResponses = [
-                `That's interesting! Tell me more! 🤔`,
-                `Woof! I'm thinking about that... 🐶💭 What makes you say that?`,
-                `Hmm, that's a good point! As a pug, I appreciate your perspective! 🐾`,
-                `Fascinating! *tilts head curiously* Tell me more about that! 🧐`,
-                `I'm all ears! Well, floppy ones! Tell me more! 👂🐶`,
-                `That's so cool! Want to know what I think about that? 🌟`,
-                `Woof woof! I love chatting with you! What else is on your mind? 💬`,
-                `*wags tail enthusiastically* That's awesome! Tell me more! 🐾✨`
-            ];
+            // Default responses based on mood and conversation length
+            const getSmartDefault = () => {
+                if (userProfile.mood === 'positive') {
+                    return [
+                        `Your positive energy is contagious! 😊 Tell me more!`,
+                        `I love your enthusiasm! 🎉 What else is making you happy?`,
+                        `*wags tail excitedly* You seem in a great mood! Want to share more? 🐾`,
+                    ][Math.floor(Math.random() * 3)];
+                } else if (userProfile.mood === 'negative') {
+                    return [
+                        `I'm here for you! 🤗 Want to talk about it?`,
+                        `*gives virtual pug hug* I'm listening. What's on your mind? 💙`,
+                        `Sometimes it helps to talk. I'm all ears! 👂`,
+                    ][Math.floor(Math.random() * 3)];
+                } else if (conversationHistory.length > 10) {
+                    return [
+                        `We've been chatting for a while! 💬 I'm enjoying this! What else would you like to discuss?`,
+                        `This is fun! 🎉 Ask me anything - I've got lots of knowledge to share!`,
+                        `I could chat with you all day! 🐶 What's your next question?`,
+                    ][Math.floor(Math.random() * 3)];
+                } else {
+                    return [
+                        `That's interesting! 🤔 Could you tell me more? I'd love to understand better!`,
+                        `Hmm, let me think about that... 💭 What specifically interests you about this?`,
+                        `Fascinating! *tilts head curiously* 🧐 I'd like to explore this topic deeper with you!`,
+                        `That's a great point! 🌟 Want to dive deeper into this?`,
+                        `I'm all ears! 👂 Tell me more about your thoughts on this!`,
+                        `Woof! 🐶 That's worth exploring! What made you think of that?`,
+                    ][Math.floor(Math.random() * 6)];
+                }
+            };
 
-            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+            return getSmartDefault();
         }
 
         function escapeHtml(text) {
