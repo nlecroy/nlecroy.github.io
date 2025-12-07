@@ -73,10 +73,38 @@ header {
     list-style: none;
     gap: 1.5rem;
     align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: calc(100vw - 300px);
+    padding: 0.5rem 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 215, 0, 0.5) transparent;
+}
+
+.nav-links::-webkit-scrollbar {
+    height: 6px;
+}
+
+.nav-links::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.nav-links::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #ffd700, #ff6b35);
+    border-radius: 10px;
+}
+
+.nav-links::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #ff6b35, #f093fb);
 }
 
 .nav-links li {
     position: relative;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .nav-links a {
@@ -88,6 +116,7 @@ header {
     padding: 0.5rem 1rem;
     border-radius: 8px;
     display: block;
+    white-space: nowrap;
 }
 
 .nav-links a:hover {

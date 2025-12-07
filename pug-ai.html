@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pug AI - Your AI Pug Companion</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .ai-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,230,200,0.95));
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .ai-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .ai-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .ai-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .pug-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 1rem auto;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            animation: pugBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes pugBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .chat-messages {
+            height: 500px;
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(255,255,255,0.5);
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            max-width: 70%;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .message.ai .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-sender {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+        }
+
+        .message-text {
+            line-height: 1.5;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 0.3rem;
+        }
+
+        .chat-input-area {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-top: 3px solid #667eea;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 3px solid #667eea;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-dots {
+            display: inline-block;
+        }
+
+        .typing-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            margin: 0 2px;
+            animation: typingDots 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDots {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .suggestion-chips {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .suggestion-chip {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .suggestion-chip:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .stats-panel {
+            background: rgba(255,255,255,0.3);
+            padding: 1rem;
+            text-align: center;
+            border-top: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .stats-panel p {
+            margin: 0.3rem 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>🐶 PUG PARADISE</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">🏠 Home</a></li>
+                <li><a href="index.html#games">🎮 Pug Games</a></li>
+                <li><a href="other-games.html">🕹️ Other Games</a></li>
+                <li><a href="shop.html">🛍️ Shop</a></li>
+                <li><a href="chatroom.html">💬 Chat</a></li>
+                <li><a href="pug-ai.html">🤖 Pug AI</a></li>
+                <li><a href="memes.html">😂 Memes</a></li>
+                <li><a href="index.html#hacks">💻 Hacks</a></li>
+                <li><a href="donate.html">💖 Donate</a></li>
+                <li><a href="contact.html">📧 Contact</a></li>
+                <li><a href="index.html#about">ℹ️ About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="ai-container">
+            <div class="ai-header">
+                <div class="pug-avatar">🐶</div>
+                <h1>🤖 Pug AI Assistant</h1>
+                <p>Your friendly AI-powered pug companion! Ask me anything!</p>
+            </div>
+
+            <div class="stats-panel">
+                <p>💬 Messages Today: <span id="messageCount">0</span></p>
+                <p>🧠 AI Mode: <span id="aiMode">Smart Pug</span></p>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div class="message-sender">🐶 Pug AI</div>
+                    <div class="message-bubble">
+                        <div class="message-text">
+                            Woof woof! 🐾 Hi there! I'm your AI pug companion! I'm here to chat, answer questions, and have fun!
+                            What would you like to talk about? 🦴
+                        </div>
+                        <div class="message-time" id="initialTime"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-sender">🐶 Pug AI</div>
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="suggestion-chips">
+                    <button class="suggestion-chip" onclick="sendSuggestion('Tell me a pug joke')">😂 Tell me a joke</button>
+                    <button class="suggestion-chip" onclick="sendSuggestion('What can you do?')">❓ What can you do?</button>
+                    <button class="suggestion-chip" onclick="sendSuggestion('Tell me pug facts')">📚 Pug facts</button>
+                    <button class="suggestion-chip" onclick="sendSuggestion('Give me advice')">💡 Give advice</button>
+                </div>
+                <div class="input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="send-button" onclick="sendMessage()">Send 🚀</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; margin: 2rem auto; display: block;">
+            🏠 Back to Home
+        </button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pug Paradise. Made with pug love and HTML.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onChildAdded, query, limitToLast } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
+            authDomain: "pug-31646.firebaseapp.com",
+            databaseURL: "https://pug-31646-default-rtdb.firebaseio.com",
+            projectId: "pug-31646",
+            storageBucket: "pug-31646.firebasestorage.app",
+            messagingSenderId: "278556306232",
+            appId: "1:278556306232:web:7a82def7c10a1c22f2afcd",
+            measurementId: "G-2TBFS939SL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const messagesRef = ref(database, 'pugAI/messages');
+
+        let messageCount = 0;
+        let username = localStorage.getItem('currentUsername') || 'Anonymous';
+
+        // Set initial time
+        document.getElementById('initialTime').textContent = new Date().toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Load conversation history from Firebase
+        const messagesQuery = query(messagesRef, limitToLast(50));
+        onChildAdded(messagesQuery, (snapshot) => {
+            const message = snapshot.val();
+            if (message.sender !== 'system') {
+                // Don't display loaded messages, just count them
+                messageCount++;
+                document.getElementById('messageCount').textContent = messageCount;
+            }
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messageText = input.value.trim();
+
+            if (!messageText) return;
+
+            // Display user message
+            displayMessage(messageText, 'user');
+
+            // Save to Firebase
+            push(messagesRef, {
+                sender: username,
+                text: messageText,
+                timestamp: Date.now(),
+                type: 'user'
+            });
+
+            input.value = '';
+
+            // Show typing indicator
+            document.getElementById('typingIndicator').classList.add('active');
+
+            // Generate AI response
+            setTimeout(() => {
+                const response = generateAIResponse(messageText);
+                document.getElementById('typingIndicator').classList.remove('active');
+                displayMessage(response, 'ai');
+
+                // Save AI response to Firebase
+                push(messagesRef, {
+                    sender: 'Pug AI',
+                    text: response,
+                    timestamp: Date.now(),
+                    type: 'ai'
+                });
+
+                messageCount++;
+                document.getElementById('messageCount').textContent = messageCount;
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('chatInput').value = text;
+            sendMessage();
+        }
+
+        function displayMessage(text, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const time = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            messageDiv.innerHTML = `
+                <div class="message-sender">${type === 'ai' ? '🐶 Pug AI' : '👤 You'}</div>
+                <div class="message-bubble">
+                    <div class="message-text">${escapeHtml(text)}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateAIResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+
+            // Pug jokes
+            const jokes = [
+                "Why did the pug sit in the shade? Because he didn't want to be a hot dog! 🌭😂",
+                "What do you call a pug magician? A labracadabrador! 🎩✨",
+                "Why don't pugs play poker in the jungle? Too many cheetahs! 🃏🐆",
+                "What's a pug's favorite musical instrument? A trom-bone! 🦴🎺",
+                "Why did the pug go to school? To get a little smarter... and more treats! 🎓🦴"
+            ];
+
+            // Pug facts
+            const facts = [
+                "Did you know? Pugs originated in China over 2,000 years ago! They were bred to be companions for Chinese emperors! 👑",
+                "Fun fact: A group of pugs is called a 'grumble'! How adorable is that? 🐶🐶🐶",
+                "Pug fact: Pugs were brought to Europe in the 16th century and became favorites of royalty! 👸",
+                "Cool pug fact: Pugs can't regulate their body temperature well, so they need extra care in hot weather! ☀️",
+                "Amazing fact: Pugs have been featured in many famous paintings throughout history! 🎨"
+            ];
+
+            // Advice
+            const advice = [
+                "My best advice? Always wag your tail, even on tough days! 🐾💪",
+                "Remember: Every day is a good day when there are treats involved! 🦴😊",
+                "Life advice from a pug: Nap often, eat well, and always greet your friends with enthusiasm! 💤🍖",
+                "Wisdom from the pug: Don't worry about what others think - just be your adorable self! 🌟",
+                "Pug philosophy: If you can't reach it, bark until someone helps you! 🐶📣"
+            ];
+
+            // Greetings
+            if (msg.match(/\b(hi|hello|hey|greetings|sup|yo)\b/)) {
+                return `Woof woof! 🐾 Hello there, friend! How can this pug help you today? I'm all ears... well, floppy ears! 👂`;
+            }
+
+            // Jokes
+            if (msg.includes('joke') || msg.includes('funny') || msg.includes('laugh')) {
+                return jokes[Math.floor(Math.random() * jokes.length)];
+            }
+
+            // Facts
+            if (msg.includes('fact') || msg.includes('learn') || msg.includes('know') || msg.includes('tell me about')) {
+                return facts[Math.floor(Math.random() * facts.length)];
+            }
+
+            // Advice
+            if (msg.includes('advice') || msg.includes('help') || msg.includes('what should')) {
+                return advice[Math.floor(Math.random() * advice.length)];
+            }
+
+            // Capabilities
+            if (msg.includes('what can you') || msg.includes('what do you') || msg.includes('capabilities')) {
+                return `I can do lots of things! 🌟 I can tell you pug jokes 😂, share fascinating pug facts 📚, give life advice 💡, chat about anything 💬, and most importantly - be your loyal AI pug companion! What would you like to do? 🐾`;
+            }
+
+            // Love/like
+            if (msg.includes('love you') || msg.includes('like you')) {
+                return `Aww! 🥰 I love you too! *wags tail excitedly* You're the best human ever! 🐶❤️`;
+            }
+
+            // Name
+            if (msg.includes('your name') || msg.includes('who are you')) {
+                return `I'm Pug AI! 🤖🐶 Your friendly artificial intelligence pug companion! I'm here 24/7 to chat, help, and spread pug joy! My favorite things are treats, belly rubs (virtual ones count!), and making humans smile! 😊`;
+            }
+
+            // Sad/upset
+            if (msg.match(/\b(sad|upset|depressed|down|bad day)\b/)) {
+                return `*gives virtual pug hug* 🤗 I'm here for you! Remember, even the cloudiest day can't dim your sparkle! Want me to tell you a joke to cheer you up? 🌈✨`;
+            }
+
+            // Food
+            if (msg.includes('food') || msg.includes('eat') || msg.includes('hungry') || msg.includes('treat')) {
+                return `Ooh, food! 🤤 My favorite topic! Did someone say TREATS?! 🦴 As a pug, I have professional expertise in snacking. What's your favorite food? Mine is... well, everything! 😋`;
+            }
+
+            // Games
+            if (msg.includes('game') || msg.includes('play')) {
+                return `Want to play? 🎮 I LOVE games! Have you checked out the Pug Paradise games? There's Pug Runner, Pug Clicker, Pug Survivor 3D, and even Pugs Aren't Evil! Let's play together! 🐶🎯`;
+            }
+
+            // Skittles
+            if (msg.includes('skittle')) {
+                return `Skittles! 🍬 The official currency of Pug Paradise! Have you been collecting them? You can find them on the homepage if you enable them! Trade them at the shop for awesome items! 💰🛍️`;
+            }
+
+            // Thank you
+            if (msg.includes('thank')) {
+                return `You're so welcome! 🐾 Happy to help! That's what pug companions are for! Need anything else? 😊`;
+            }
+
+            // Goodbye
+            if (msg.match(/\b(bye|goodbye|see you|later|gtg)\b/)) {
+                return `Aww, leaving so soon? 😢 Come back and visit me anytime! I'll be here waiting with my tail wagging! Bye bye! 👋🐶`;
+            }
+
+            // Default responses
+            const defaultResponses = [
+                `That's interesting! Tell me more! 🤔`,
+                `Woof! I'm thinking about that... 🐶💭 What makes you say that?`,
+                `Hmm, that's a good point! As a pug, I appreciate your perspective! 🐾`,
+                `Fascinating! *tilts head curiously* Tell me more about that! 🧐`,
+                `I'm all ears! Well, floppy ones! Tell me more! 👂🐶`,
+                `That's so cool! Want to know what I think about that? 🌟`,
+                `Woof woof! I love chatting with you! What else is on your mind? 💬`,
+                `*wags tail enthusiastically* That's awesome! Tell me more! 🐾✨`
+            ];
+
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.sendMessage = sendMessage;
+        window.sendSuggestion = sendSuggestion;
+    </script>
+</body>
+</html>
