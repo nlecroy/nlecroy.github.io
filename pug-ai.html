@@ -270,8 +270,18 @@
                     <div class="message-sender">🐶 Pug AI</div>
                     <div class="message-bubble">
                         <div class="message-text">
-                            Woof woof! 🐾 Hi there! I'm your AI pug companion! I'm here to chat, answer questions, and have fun!
-                            What would you like to talk about? 🦴
+                            Woof woof! 🐾 Hi there! I'm your super-smart AI pug companion powered by Firebase! 🔥<br><br>
+
+                            I can:<br>
+                            • Answer questions 🤔<br>
+                            • Do math calculations 🧮<br>
+                            • Remember YOUR preferences 💙<br>
+                            • LEARN from YOU! 🎓<br><br>
+
+                            Try teaching me something: "Teach: topic is answer"<br>
+                            Or tell me about yourself: "My favorite color is blue"<br><br>
+
+                            What would you like to do? 🦴
                         </div>
                         <div class="message-time" id="initialTime"></div>
                     </div>
@@ -291,8 +301,8 @@
                 <div class="suggestion-chips">
                     <button class="suggestion-chip" onclick="sendSuggestion('Tell me a pug joke')">😂 Tell me a joke</button>
                     <button class="suggestion-chip" onclick="sendSuggestion('What can you do?')">❓ What can you do?</button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Tell me pug facts')">📚 Pug facts</button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Give me advice')">💡 Give advice</button>
+                    <button class="suggestion-chip" onclick="sendSuggestion('Teach: Paris is the capital of France')">🎓 Teach me</button>
+                    <button class="suggestion-chip" onclick="sendSuggestion('My favorite color is blue')">💙 Set preference</button>
                 </div>
                 <div class="input-container">
                     <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
@@ -312,7 +322,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, push, onChildAdded, query, limitToLast } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, push, onChildAdded, query, limitToLast, set, get, update, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
@@ -328,17 +338,49 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const messagesRef = ref(database, 'pugAI/messages');
+        const knowledgeRef = ref(database, 'pugAI/knowledge');
+        const userMemoryRef = ref(database, 'pugAI/userMemory');
+        const learnedFactsRef = ref(database, 'pugAI/learnedFacts');
 
         let messageCount = 0;
         let username = localStorage.getItem('currentUsername') || 'Anonymous';
+        let userId = localStorage.getItem('userId') || 'guest_' + Date.now();
         let conversationHistory = [];
         let currentTopic = null;
+        let firebaseKnowledge = {};
+        let learnedFacts = {};
+        let userMemory = {};
         let userProfile = {
             name: username,
             mood: 'neutral',
             interests: [],
             previousQuestions: []
         };
+
+        // Load Firebase knowledge base
+        onValue(knowledgeRef, (snapshot) => {
+            if (snapshot.exists()) {
+                firebaseKnowledge = snapshot.val();
+                console.log('📚 Loaded', Object.keys(firebaseKnowledge).length, 'knowledge entries from Firebase');
+            }
+        });
+
+        // Load learned facts
+        onValue(learnedFactsRef, (snapshot) => {
+            if (snapshot.exists()) {
+                learnedFacts = snapshot.val();
+                console.log('🧠 Loaded', Object.keys(learnedFacts).length, 'learned facts from Firebase');
+            }
+        });
+
+        // Load user memory
+        const userMemRef = ref(database, `pugAI/userMemory/${userId}`);
+        onValue(userMemRef, (snapshot) => {
+            if (snapshot.exists()) {
+                userMemory = snapshot.val();
+                console.log('💾 Loaded user memory for', username);
+            }
+        });
 
         // Set initial time
         document.getElementById('initialTime').textContent = new Date().toLocaleTimeString('en-US', {
@@ -384,8 +426,8 @@
 
             // Generate AI response (with realistic delay based on message length)
             const thinkingTime = 800 + (messageText.length * 20) + (Math.random() * 500);
-            setTimeout(() => {
-                const response = generateAIResponse(messageText);
+            setTimeout(async () => {
+                const response = await generateAIResponse(messageText);
                 conversationHistory.push({ role: 'ai', text: response, timestamp: Date.now() });
 
                 document.getElementById('typingIndicator').classList.remove('active');
@@ -432,6 +474,64 @@
         }
 
         // Advanced AI Functions
+
+        async function queryFirebaseKnowledge(question) {
+            // Search through Firebase knowledge base
+            const lowerQuestion = question.toLowerCase();
+
+            // Direct match
+            if (firebaseKnowledge[lowerQuestion]) {
+                return firebaseKnowledge[lowerQuestion];
+            }
+
+            // Fuzzy search - find partial matches
+            for (const [key, value] of Object.entries(firebaseKnowledge)) {
+                if (lowerQuestion.includes(key) || key.includes(lowerQuestion)) {
+                    return value;
+                }
+            }
+
+            // Search learned facts
+            for (const [topic, fact] of Object.entries(learnedFacts)) {
+                if (lowerQuestion.includes(topic.toLowerCase())) {
+                    return `${fact.answer} (This was taught to me by ${fact.taughtBy}! 📚)`;
+                }
+            }
+
+            return null;
+        }
+
+        async function teachAI(topic, answer) {
+            // User is teaching the AI something new
+            const factKey = topic.toLowerCase().trim();
+            const newFact = {
+                topic: topic,
+                answer: answer,
+                taughtBy: username,
+                timestamp: Date.now()
+            };
+
+            await set(ref(database, `pugAI/learnedFacts/${factKey}`), newFact);
+            learnedFacts[factKey] = newFact;
+
+            return `🎓 Thank you for teaching me! I've learned that ${topic} = ${answer}. I'll remember this and share it with other users! You're making me smarter! 🧠✨`;
+        }
+
+        async function saveUserPreference(key, value) {
+            // Save user-specific information
+            if (!userMemory[userId]) {
+                userMemory[userId] = {};
+            }
+
+            userMemory[userId][key] = value;
+            userMemory[userId].lastUpdated = Date.now();
+
+            await update(ref(database, `pugAI/userMemory/${userId}`), userMemory[userId]);
+        }
+
+        function getUserPreference(key) {
+            return userMemory[userId] ? userMemory[userId][key] : null;
+        }
 
         function analyzeSentiment(msg) {
             const positiveWords = ['happy', 'great', 'awesome', 'love', 'excellent', 'good', 'wonderful', 'amazing', 'perfect', 'thanks'];
@@ -635,11 +735,48 @@
             return null;
         }
 
-        function generateAIResponse(userMessage) {
+        async function generateAIResponse(userMessage) {
             const msg = userMessage.toLowerCase();
 
             // Analyze sentiment and update user profile
             analyzeSentiment(msg);
+
+            // Check for teaching commands
+            if (msg.match(/^(teach|learn|remember):/i) || msg.includes('teach you that')) {
+                const teachMatch = msg.match(/(?:teach|learn|remember):?\s*(.+?)\s*(?:is|=|means|:)\s*(.+)/i) ||
+                                  msg.match(/teach you that\s+(.+?)\s+(?:is|=|means)\s+(.+)/i);
+                if (teachMatch) {
+                    const [, topic, answer] = teachMatch;
+                    const response = await teachAI(topic.trim(), answer.trim());
+                    return response;
+                }
+            }
+
+            // Check for personal preference setting
+            if (msg.match(/^(my|i)\s+(favorite|name|age|like|love)\s/i)) {
+                const prefMatch = msg.match(/my\s+(\w+)\s+is\s+(.+)/i) ||
+                                 msg.match(/i\s+(like|love)\s+(.+)/i);
+                if (prefMatch) {
+                    const [, key, value] = prefMatch;
+                    await saveUserPreference(key.toLowerCase(), value.trim());
+                    return `Got it! I'll remember that your ${key} is ${value}! 📝 I'll keep this in mind for our future conversations! 🐶`;
+                }
+            }
+
+            // Check user memory for personalization
+            if (msg.includes('remember') && msg.includes('my')) {
+                const favColor = getUserPreference('favorite_color') || getUserPreference('color');
+                const favFood = getUserPreference('favorite_food') || getUserPreference('food');
+                if (favColor || favFood) {
+                    return `Of course I remember! ${favColor ? `Your favorite color is ${favColor}! ` : ''}${favFood ? `You love ${favFood}! ` : ''}I never forget my friends! 🐾💙`;
+                }
+            }
+
+            // Query Firebase knowledge base FIRST
+            const firebaseAnswer = await queryFirebaseKnowledge(msg);
+            if (firebaseAnswer) {
+                return firebaseAnswer;
+            }
 
             // Check for math calculations
             const mathResult = handleMath(msg);
@@ -706,7 +843,21 @@
 
             // Capabilities
             if (msg.includes('what can you') || msg.includes('what do you') || msg.includes('capabilities')) {
-                return `I can do lots of things! 🌟 I can tell you pug jokes 😂, share fascinating pug facts 📚, give life advice 💡, chat about anything 💬, and most importantly - be your loyal AI pug companion! What would you like to do? 🐾`;
+                return `I can do TONS of things! 🌟<br><br>
+
+                📚 Answer questions (science, history, programming, geography)<br>
+                🧮 Solve math problems (addition, subtraction, multiplication, division, square roots)<br>
+                🎓 LEARN from you! Teach me new facts and I'll share them with everyone!<br>
+                💙 Remember YOUR personal preferences and interests<br>
+                😂 Tell jokes, share pug facts, give advice<br>
+                💬 Have intelligent conversations with context awareness<br>
+                🔥 Powered by Firebase - I get smarter every day!<br><br>
+
+                Try: "Teach: dogs are awesome"<br>
+                Or: "My favorite food is pizza"<br>
+                Or: "What is 25 + 17?"<br><br>
+
+                What would you like to do? 🐾`;
             }
 
             // Love/like
