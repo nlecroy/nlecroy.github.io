@@ -1173,9 +1173,12 @@
         }
 
         // Auto-initialize chat when page is fully loaded
-        window.addEventListener('DOMContentLoaded', () => {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initChat);
+        } else {
+            // DOM is already loaded
             initChat();
-        });
+        }
 
         function initChat() {
             // Auto-fill username from logged-in account
