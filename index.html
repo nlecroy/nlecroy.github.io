@@ -553,12 +553,21 @@
     </script>
 
     <script>
-        const ADMIN_PASSWORD = 'PUGATTACK6767';
+        const ADMIN_PASSWORD_HASH = '84aa241ff8c288fdcf931ea19595627d7a2c4e66837d41722a6c7897ee2c2af5'; // SHA-256 of CHAINSAWPUG
         const SAVED_ADMIN_CODE = localStorage.getItem('adminCode');
+
+        // Hash function for password verification
+        async function hashPassword(password) {
+            const msgBuffer = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
 
         function showAdminLogin() {
             // Check if admin code is saved
-            if (SAVED_ADMIN_CODE === ADMIN_PASSWORD) {
+            if (SAVED_ADMIN_CODE === ADMIN_PASSWORD_HASH) {
                 document.getElementById('adminPanel').style.display = 'block';
                 return;
             }
@@ -574,12 +583,13 @@
             document.getElementById('adminPasswordInput').value = '';
         }
 
-        function checkAdminPassword() {
+        async function checkAdminPassword() {
             const password = document.getElementById('adminPasswordInput').value;
+            const passwordHash = await hashPassword(password);
 
-            if (password === ADMIN_PASSWORD) {
-                // Save admin code
-                localStorage.setItem('adminCode', password);
+            if (passwordHash === ADMIN_PASSWORD_HASH) {
+                // Save admin code hash
+                localStorage.setItem('adminCode', passwordHash);
                 closeAdminLogin();
                 document.getElementById('adminPanel').style.display = 'block';
                 alert('🎉 Welcome to the PUG ADMIN PANEL! You have the power! 🐶\n\n✅ Admin code saved - you won\'t need to enter it again!');

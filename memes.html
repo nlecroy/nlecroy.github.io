@@ -394,8 +394,17 @@
         let currentFilter = 'all';
         let likedMemes = new Set();
         let deleteUnlocked = false;
-        const ADMIN_PASSWORD = 'ITSBUBBA';
+        const ADMIN_PASSWORD_HASH = '84aa241ff8c288fdcf931ea19595627d7a2c4e66837d41722a6c7897ee2c2af5'; // SHA-256 of CHAINSAWPUG
         const currentUsername = localStorage.getItem('currentUsername') || 'Anonymous';
+
+        // Hash function for password verification
+        async function hashPassword(password) {
+            const msgBuffer = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
 
         // Load liked memes from localStorage (per-user)
         function loadLikedMemes() {
@@ -669,10 +678,11 @@
             document.getElementById('passwordInput').value = '';
         }
 
-        function checkPassword() {
+        async function checkPassword() {
             const password = document.getElementById('passwordInput').value;
+            const passwordHash = await hashPassword(password);
 
-            if (password === ADMIN_PASSWORD) {
+            if (passwordHash === ADMIN_PASSWORD_HASH) {
                 deleteUnlocked = true;
                 document.getElementById('unlockButton').style.display = 'none';
                 document.getElementById('lockButton').style.display = 'inline-block';

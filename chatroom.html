@@ -726,19 +726,7 @@
     </style>
 </head>
 <body>
-    <!-- Password Screen -->
-    <div class="password-screen" id="passwordScreen">
-        <div class="password-box">
-            <h1>🔒 Pug Paradise Chatroom</h1>
-            <p style="color: #666; font-size: 1.1rem;">Enter the secret password to access the chat</p>
-            <input type="password" class="password-input" id="chatPassword" placeholder="Enter password..." onkeypress="if(event.key==='Enter') checkChatPassword()">
-            <br>
-            <button class="password-submit" onclick="checkChatPassword()">Enter Chat 🚀</button>
-            <p style="color: #999; margin-top: 1rem; font-size: 0.9rem;">Hint: A beloved character from Rapture</p>
-        </div>
-    </div>
-
-    <header style="display: none;" id="mainHeader">
+    <header id="mainHeader">
         <nav class="navbar">
             <div class="logo">
                 <h1>🐶 PUG PARADISE</h1>
@@ -757,7 +745,7 @@
         </nav>
     </header>
 
-    <main style="display: none;" id="mainContent">
+    <main id="mainContent">
         <div class="chatroom-container">
             <div class="chat-header">
                 <div>
@@ -1132,8 +1120,16 @@
         let lastMessageTime = 0;
         let replyTo = null;
 
-        const CHAT_PASSWORD = 'MRBUBBLES';
-        const ADMIN_PASSWORD = 'PUGH4XBR0';
+        const ADMIN_PASSWORD_HASH = '84aa241ff8c288fdcf931ea19595627d7a2c4e66837d41722a6c7897ee2c2af5'; // SHA-256 of CHAINSAWPUG
+
+        // Hash function for password verification
+        async function hashPassword(password) {
+            const msgBuffer = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
 
         const profanityList = [
             'fuck', 'shit', 'bitch', 'ass', 'damn', 'hell', 'crap', 'bastard',
@@ -1176,28 +1172,8 @@
             setTimeout(() => notif.remove(), 3000);
         }
 
-        // Check chat password
-        function checkChatPassword() {
-            const password = document.getElementById('chatPassword').value;
-            if (password === CHAT_PASSWORD) {
-                document.getElementById('passwordScreen').style.display = 'none';
-                document.getElementById('mainHeader').style.display = 'block';
-                document.getElementById('mainContent').style.display = 'block';
-                localStorage.setItem('chatAccess', 'granted');
-                initChat();
-            } else {
-                alert('❌ Incorrect password! Try again.');
-                document.getElementById('chatPassword').value = '';
-            }
-        }
-
-        // Check if already has access
-        if (localStorage.getItem('chatAccess') === 'granted') {
-            document.getElementById('passwordScreen').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'block';
-            document.getElementById('mainContent').style.display = 'block';
-            initChat();
-        }
+        // Auto-initialize chat on page load
+        initChat();
 
         function initChat() {
             // Auto-fill username from logged-in account
@@ -1747,10 +1723,10 @@
         }
 
         // Admin functions
-        function showAdminLogin() {
+        async function showAdminLogin() {
             // Check if admin code is saved
             const savedCode = localStorage.getItem('chatAdminCode');
-            if (savedCode === ADMIN_PASSWORD) {
+            if (savedCode === ADMIN_PASSWORD_HASH) {
                 isAdmin = true;
                 document.getElementById('adminPanel').style.display = 'block';
                 return;
@@ -1767,12 +1743,14 @@
             document.getElementById('adminPasswordInput').value = '';
         }
 
-        function checkAdminPassword() {
+        async function checkAdminPassword() {
             const password = document.getElementById('adminPasswordInput').value;
-            if (password === ADMIN_PASSWORD) {
+            const passwordHash = await hashPassword(password);
+
+            if (passwordHash === ADMIN_PASSWORD_HASH) {
                 isAdmin = true;
-                // Save admin code
-                localStorage.setItem('chatAdminCode', password);
+                // Save admin code hash
+                localStorage.setItem('chatAdminCode', passwordHash);
                 closeAdminLogin();
                 document.getElementById('adminPanel').style.display = 'block';
                 showNotification('✅ Admin access granted! Code saved for next time.');
