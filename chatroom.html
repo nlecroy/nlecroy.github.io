@@ -1172,8 +1172,10 @@
             setTimeout(() => notif.remove(), 3000);
         }
 
-        // Auto-initialize chat on page load
-        initChat();
+        // Auto-initialize chat when page is fully loaded
+        window.addEventListener('DOMContentLoaded', () => {
+            initChat();
+        });
 
         function initChat() {
             // Auto-fill username from logged-in account
