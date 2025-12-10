@@ -523,13 +523,6 @@
         // World Objects
         const platforms = [
             { x: 0, y: 600, width: WORLD_WIDTH, height: 100 }, // Ground
-            { x: 400, y: 500, width: 200, height: 20 },
-            { x: 700, y: 420, width: 150, height: 20 },
-            { x: 1000, y: 500, width: 180, height: 20 },
-            { x: 1300, y: 450, width: 200, height: 20 },
-            { x: 2000, y: 500, width: 200, height: 20 },
-            { x: 2400, y: 420, width: 150, height: 20 },
-            { x: 3000, y: 480, width: 220, height: 20 },
         ];
 
         const buildings = [
@@ -541,13 +534,13 @@
         ];
 
         const decorations = [
-            { x: 100, y: 520, emoji: '🌳', size: 60 },
-            { x: 500, y: 530, emoji: '🌲', size: 50 },
-            { x: 900, y: 540, emoji: '🌳', size: 55 },
-            { x: 1400, y: 525, emoji: '🌲', size: 60 },
-            { x: 2200, y: 530, emoji: '🌳', size: 58 },
-            { x: 2800, y: 535, emoji: '🌲', size: 52 },
-            { x: 3200, y: 520, emoji: '🌳', size: 62 },
+            { x: 100, y: 595, emoji: '🌳', size: 60 },
+            { x: 500, y: 595, emoji: '🌲', size: 50 },
+            { x: 900, y: 595, emoji: '🌳', size: 55 },
+            { x: 1400, y: 595, emoji: '🌲', size: 60 },
+            { x: 2200, y: 595, emoji: '🌳', size: 58 },
+            { x: 2800, y: 595, emoji: '🌲', size: 52 },
+            { x: 3200, y: 595, emoji: '🌳', size: 62 },
         ];
 
         // Clouds
@@ -856,7 +849,7 @@
             }
 
             const playerId = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            myPlayer = new Player(playerId, username, 100, 400, equippedSkin);
+            myPlayer = new Player(playerId, username, 100, 550, equippedSkin);
 
             document.getElementById('usernameModal').style.display = 'none';
             document.getElementById('playerName').textContent = username;
