@@ -588,13 +588,21 @@
                     if (this.velocityY >= 0 &&
                         this.x < platform.x + platform.width &&
                         this.x + this.width > platform.x &&
-                        this.y + this.height <= platform.y &&
-                        this.y + this.height + this.velocityY >= platform.y) {
+                        this.y + this.height >= platform.y - 10 &&
+                        this.y + this.height <= platform.y + platform.height) {
 
                         this.y = platform.y - this.height;
                         this.velocityY = 0;
                         this.isGrounded = true;
+                        break;
                     }
+                }
+
+                // Safety floor - don't fall below ground level
+                if (this.y + this.height > 600) {
+                    this.y = 550;
+                    this.velocityY = 0;
+                    this.isGrounded = true;
                 }
 
                 // Friction
