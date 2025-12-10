@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pug Hub - Multiplayer Paradise</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gameCanvas {
+            background: #87CEEB;
+            border: 5px solid #fff;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            image-rendering: pixelated;
+        }
+
+        /* Chat Box */
+        .chat-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px;
+            border-radius: 15px 15px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .chat-message {
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: #f0f0f0;
+        }
+
+        .chat-message .username {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #667eea;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .chat-send {
+            margin-left: 8px;
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .chat-send:hover {
+            background: #764ba2;
+        }
+
+        /* UI Overlay */
+        .ui-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .ui-overlay h3 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Controls Info */
+        .controls-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .controls-info h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+
+        .controls-info p {
+            margin: 3px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Skin Shop */
+        .skin-shop {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.4);
+            z-index: 200;
+            display: none;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .skin-shop.active {
+            display: block;
+        }
+
+        .skin-shop h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .skin-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .skin-item {
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .skin-item:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .skin-item.owned {
+            border-color: #4ecdc4;
+            background: #e8f9f7;
+        }
+
+        .skin-item.equipped {
+            border-color: #f093fb;
+            background: #fce8ff;
+        }
+
+        .skin-preview {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
+        }
+
+        .skin-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .skin-price {
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .close-shop {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Username Input */
+        .username-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .username-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+        }
+
+        .username-box h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .username-box input {
+            width: 250px;
+            padding: 12px;
+            border: 3px solid #667eea;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .username-box button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .username-box button:hover {
+            transform: scale(1.1);
+        }
+
+        .online-count {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+        }
+
+        /* Portal Labels */
+        .portal-hint {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #667eea;
+            pointer-events: none;
+            display: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- UI Overlay -->
+        <div class="ui-overlay">
+            <h3>🐶 Player Stats</h3>
+            <div class="stat">
+                <span class="stat-label">Username:</span>
+                <span id="playerName">Loading...</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">💰 Skittles:</span>
+                <span id="skittlesCount">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">👥 Online:</span>
+                <span id="onlineCount" class="online-count">0</span>
+            </div>
+            <button onclick="openShop()" style="margin-top: 10px; padding: 8px 15px; background: #f093fb; color: white; border: none; border-radius: 20px; cursor: pointer; font-weight: bold;">🎨 Skin Shop</button>
+        </div>
+
+        <!-- Controls Info -->
+        <div class="controls-info">
+            <h4>🎮 Controls</h4>
+            <p>⬆️ WASD / Arrow Keys - Move</p>
+            <p>💬 Enter - Chat</p>
+            <p>🎨 S Key near shop - Open Shop</p>
+            <p>🎮 Enter Portals - Play Minigames</p>
+        </div>
+
+        <!-- Chat Box -->
+        <div class="chat-box">
+            <div class="chat-header">
+                💬 Pug Hub Chat
+                <span class="online-count" id="chatOnlineCount">0 online</span>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Type a message..." maxlength="200">
+                <button class="chat-send" onclick="sendChatMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Skin Shop -->
+        <div class="skin-shop" id="skinShop">
+            <button class="close-shop" onclick="closeShop()">×</button>
+            <h2>🎨 Pug Skin Shop</h2>
+            <div class="stat" style="margin-bottom: 20px;">
+                <span class="stat-label">Your Skittles:</span>
+                <span id="shopSkittles" style="color: #667eea; font-size: 1.3rem;">0</span>
+            </div>
+            <div class="skin-grid" id="skinGrid"></div>
+        </div>
+
+        <!-- Username Modal -->
+        <div class="username-modal" id="usernameModal">
+            <div class="username-box">
+                <h2>🐶 Welcome to Pug Hub!</h2>
+                <p style="margin-bottom: 20px;">Enter your username to begin</p>
+                <input type="text" id="usernameInput" placeholder="Your name..." maxlength="20">
+                <br>
+                <button onclick="setUsername()">Start Playing!</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" onclick="window.location.href='../index.html'" style="position: fixed; bottom: 20px; right: 20px; z-index: 100;">🏠 Back to Home</button>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onChildAdded, onChildRemoved, onValue, set, remove, onDisconnect, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
+            authDomain: "pug-31646.firebaseapp.com",
+            databaseURL: "https://pug-31646-default-rtdb.firebaseio.com",
+            projectId: "pug-31646",
+            storageBucket: "pug-31646.firebasestorage.app",
+            messagingSenderId: "278556306232",
+            appId: "1:278556306232:web:7a82def7c10a1c22f2afcd",
+            measurementId: "G-2TBFS939SL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const playersRef = ref(database, 'pughub/players');
+        const chatRef = ref(database, 'pughub/chat');
+
+        // Canvas Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1200;
+        canvas.height = 700;
+
+        // Game State
+        let myPlayer = null;
+        let players = {};
+        let chatMessages = [];
+        let keys = {};
+        let lastUpdate = Date.now();
+        let skittles = parseInt(localStorage.getItem('pugHubSkittles')) || 0;
+        let ownedSkins = JSON.parse(localStorage.getItem('pugHubSkins')) || ['default'];
+        let equippedSkin = localStorage.getItem('pugHubEquippedSkin') || 'default';
+
+        // Skins Database
+        const skins = {
+            default: {
+                name: 'Classic Pug',
+                url: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHJ0NHBkZ3Z2cmF1Mnk1NzF1Y204dWNxMWc0YzZjczQ5eWl2NDNyZiZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/YCXA0BA0dvn3jnmVfP/giphy.gif',
+                price: 0,
+                owned: true
+            },
+            party: {
+                name: 'Party Pug',
+                url: 'https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif',
+                price: 100
+            },
+            rainbow: {
+                name: 'Rainbow Pug',
+                url: 'https://media.giphy.com/media/3o7TKHKzg46RcRuJPO/giphy.gif',
+                price: 250
+            },
+            dancing: {
+                name: 'Dancing Pug',
+                url: 'https://media.giphy.com/media/l0HlNQ03J5JxX6lva/giphy.gif',
+                price: 500
+            },
+            wizard: {
+                name: 'Wizard Pug',
+                url: 'https://media.giphy.com/media/xT9IgN8YKRhByRBzMI/giphy.gif',
+                price: 1000
+            },
+            golden: {
+                name: 'Golden Pug',
+                url: 'https://media.giphy.com/media/26ufq9mryvc5HI27m/giphy.gif',
+                price: 2000
+            }
+        };
+
+        // Load skin images
+        const skinImages = {};
+        Object.keys(skins).forEach(key => {
+            const img = new Image();
+            img.src = skins[key].url;
+            img.crossOrigin = "anonymous";
+            skinImages[key] = img;
+        });
+
+        // Map Design
+        const map = {
+            width: 1200,
+            height: 700,
+            zones: [
+                // Spawn area
+                { x: 550, y: 300, width: 100, height: 100, color: '#90EE90', label: 'Spawn' },
+
+                // Portals to minigames
+                { x: 100, y: 100, width: 120, height: 100, color: '#FFB6C1', label: '🎯 Race Track', type: 'portal', game: 'race' },
+                { x: 980, y: 100, width: 120, height: 100, color: '#87CEEB', label: '⚽ Soccer', type: 'portal', game: 'soccer' },
+                { x: 100, y: 500, width: 120, height: 100, color: '#DDA0DD', label: '🎨 Art Studio', type: 'portal', game: 'art' },
+                { x: 980, y: 500, width: 120, height: 100, color: '#F0E68C', label: '🎪 Carnival', type: 'portal', game: 'carnival' },
+
+                // Shop area
+                { x: 520, y: 50, width: 160, height: 80, color: '#FFD700', label: '🛍️ SHOP', type: 'shop' },
+
+                // Obstacles
+                { x: 400, y: 250, width: 80, height: 80, color: '#8B4513', label: 'Tree', obstacle: true },
+                { x: 720, y: 250, width: 80, height: 80, color: '#8B4513', label: 'Tree', obstacle: true },
+                { x: 560, y: 450, width: 80, height: 150, color: '#4682B4', label: 'Pond', obstacle: true },
+            ]
+        };
+
+        // Player Class
+        class Player {
+            constructor(id, username, x, y, skin = 'default') {
+                this.id = id;
+                this.username = username;
+                this.x = x;
+                this.y = y;
+                this.size = 50;
+                this.speed = 3;
+                this.skin = skin;
+                this.color = this.randomColor();
+            }
+
+            randomColor() {
+                const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#F093FB', '#4D96FF', '#FFD93D'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            move(dx, dy) {
+                const newX = this.x + dx * this.speed;
+                const newY = this.y + dy * this.speed;
+
+                // Check boundaries
+                if (newX >= 0 && newX <= map.width - this.size &&
+                    newY >= 0 && newY <= map.height - this.size) {
+
+                    // Check collisions with obstacles
+                    let collision = false;
+                    for (let zone of map.zones) {
+                        if (zone.obstacle && this.checkCollision(newX, newY, zone)) {
+                            collision = true;
+                            break;
+                        }
+                    }
+
+                    if (!collision) {
+                        this.x = newX;
+                        this.y = newY;
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            checkCollision(x, y, zone) {
+                return x < zone.x + zone.width &&
+                       x + this.size > zone.x &&
+                       y < zone.y + zone.height &&
+                       y + this.size > zone.y;
+            }
+
+            draw() {
+                // Draw player with skin or color
+                if (skinImages[this.skin] && skinImages[this.skin].complete) {
+                    ctx.drawImage(skinImages[this.skin], this.x, this.y, this.size, this.size);
+                } else {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x, this.y, this.size, this.size);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '20px Arial';
+                    ctx.fillText('🐶', this.x + 10, this.y + 35);
+                }
+
+                // Draw username
+                ctx.fillStyle = 'black';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.username, this.x + this.size/2, this.y - 5);
+            }
+        }
+
+        // Initialize player from username
+        function setUsername() {
+            const username = document.getElementById('usernameInput').value.trim();
+            if (username.length < 1) {
+                alert('Please enter a valid username!');
+                return;
+            }
+
+            // Create player
+            const playerId = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            myPlayer = new Player(playerId, username, 575, 325, equippedSkin);
+
+            // Hide modal
+            document.getElementById('usernameModal').style.display = 'none';
+            document.getElementById('playerName').textContent = username;
+
+            // Save to Firebase
+            const myPlayerRef = ref(database, `pughub/players/${playerId}`);
+            set(myPlayerRef, {
+                username: username,
+                x: myPlayer.x,
+                y: myPlayer.y,
+                skin: myPlayer.skin
+            });
+
+            // Remove player on disconnect
+            onDisconnect(myPlayerRef).remove();
+
+            // Start game loop
+            gameLoop();
+        }
+
+        // Listen for other players
+        onChildAdded(playersRef, (snapshot) => {
+            const data = snapshot.val();
+            const id = snapshot.key;
+
+            if (!myPlayer || id !== myPlayer.id) {
+                players[id] = new Player(id, data.username, data.x, data.y, data.skin || 'default');
+            }
+            updateOnlineCount();
+        });
+
+        onValue(playersRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(id => {
+                    if (myPlayer && id !== myPlayer.id && players[id]) {
+                        players[id].x = data[id].x;
+                        players[id].y = data[id].y;
+                        players[id].skin = data[id].skin || 'default';
+                    }
+                });
+            }
+        });
+
+        onChildRemoved(playersRef, (snapshot) => {
+            const id = snapshot.key;
+            delete players[id];
+            updateOnlineCount();
+        });
+
+        // Update online count
+        function updateOnlineCount() {
+            const count = Object.keys(players).length + (myPlayer ? 1 : 0);
+            document.getElementById('onlineCount').textContent = count;
+            document.getElementById('chatOnlineCount').textContent = count + ' online';
+        }
+
+        // Chat System
+        onChildAdded(chatRef, (snapshot) => {
+            const msg = snapshot.val();
+            displayChatMessage(msg);
+        });
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (message.length > 0 && myPlayer) {
+                push(chatRef, {
+                    username: myPlayer.username,
+                    message: message,
+                    timestamp: Date.now()
+                });
+                input.value = '';
+            }
+        }
+
+        function displayChatMessage(msg) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'chat-message';
+            messageEl.innerHTML = `<span class="username">${msg.username}:</span> ${msg.message}`;
+            messagesDiv.appendChild(messageEl);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Keep only last 50 messages
+            while (messagesDiv.children.length > 50) {
+                messagesDiv.removeChild(messagesDiv.firstChild);
+            }
+        }
+
+        // Chat input enter key
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        // Keyboard controls
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+
+            // Prevent default for arrow keys
+            if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        // Update skittles display
+        function updateSkittlesDisplay() {
+            document.getElementById('skittlesCount').textContent = skittles;
+            document.getElementById('shopSkittles').textContent = skittles;
+            localStorage.setItem('pugHubSkittles', skittles);
+        }
+
+        // Earn skittles (for demo - earn 1 skittle per 5 seconds of play)
+        setInterval(() => {
+            if (myPlayer) {
+                skittles += 1;
+                updateSkittlesDisplay();
+            }
+        }, 5000);
+
+        // Skin Shop
+        function openShop() {
+            document.getElementById('skinShop').classList.add('active');
+            renderShop();
+        }
+
+        function closeShop() {
+            document.getElementById('skinShop').classList.remove('active');
+        }
+
+        function renderShop() {
+            const grid = document.getElementById('skinGrid');
+            grid.innerHTML = '';
+
+            Object.keys(skins).forEach(key => {
+                const skin = skins[key];
+                const owned = ownedSkins.includes(key);
+                const equipped = equippedSkin === key;
+
+                const item = document.createElement('div');
+                item.className = 'skin-item';
+                if (owned) item.classList.add('owned');
+                if (equipped) item.classList.add('equipped');
+
+                item.innerHTML = `
+                    <img src="${skin.url}" class="skin-preview">
+                    <div class="skin-name">${skin.name}</div>
+                    <div class="skin-price">${owned ? (equipped ? '✓ EQUIPPED' : 'OWNED') : skin.price + ' 💰'}</div>
+                `;
+
+                item.onclick = () => {
+                    if (owned && !equipped) {
+                        equipSkin(key);
+                    } else if (!owned && skittles >= skin.price) {
+                        buySkin(key, skin.price);
+                    } else if (!owned) {
+                        alert(`Not enough skittles! You need ${skin.price - skittles} more.`);
+                    }
+                };
+
+                grid.appendChild(item);
+            });
+
+            updateSkittlesDisplay();
+        }
+
+        function buySkin(skinKey, price) {
+            if (skittles >= price) {
+                skittles -= price;
+                ownedSkins.push(skinKey);
+                localStorage.setItem('pugHubSkins', JSON.stringify(ownedSkins));
+                updateSkittlesDisplay();
+                renderShop();
+                alert(`🎉 You bought ${skins[skinKey].name}!`);
+            }
+        }
+
+        function equipSkin(skinKey) {
+            equippedSkin = skinKey;
+            localStorage.setItem('pugHubEquippedSkin', skinKey);
+            if (myPlayer) {
+                myPlayer.skin = skinKey;
+                // Update in Firebase
+                set(ref(database, `pughub/players/${myPlayer.id}/skin`), skinKey);
+            }
+            renderShop();
+        }
+
+        window.openShop = openShop;
+        window.closeShop = closeShop;
+        window.setUsername = setUsername;
+        window.sendChatMessage = sendChatMessage;
+
+        // Game Loop
+        function gameLoop() {
+            const now = Date.now();
+            const delta = now - lastUpdate;
+            lastUpdate = now;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw map zones
+            map.zones.forEach(zone => {
+                ctx.fillStyle = zone.color;
+                ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
+
+                // Draw label
+                ctx.fillStyle = 'black';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(zone.label, zone.x + zone.width/2, zone.y + zone.height/2 + 5);
+            });
+
+            // Handle player movement
+            if (myPlayer) {
+                let moved = false;
+                let dx = 0, dy = 0;
+
+                if (keys['w'] || keys['arrowup']) dy = -1;
+                if (keys['s'] || keys['arrowdown']) dy = 1;
+                if (keys['a'] || keys['arrowleft']) dx = -1;
+                if (keys['d'] || keys['arrowright']) dx = 1;
+
+                if (dx !== 0 || dy !== 0) {
+                    moved = myPlayer.move(dx, dy);
+                }
+
+                // Update position in Firebase if moved
+                if (moved) {
+                    set(ref(database, `pughub/players/${myPlayer.id}`), {
+                        username: myPlayer.username,
+                        x: myPlayer.x,
+                        y: myPlayer.y,
+                        skin: myPlayer.skin
+                    });
+                }
+
+                // Check for portal interactions
+                map.zones.forEach(zone => {
+                    if (zone.type === 'portal' && myPlayer.checkCollision(myPlayer.x, myPlayer.y, zone)) {
+                        // Show portal hint
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                        ctx.fillRect(myPlayer.x - 50, myPlayer.y - 70, 150, 30);
+                        ctx.fillStyle = '#667eea';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`Press ENTER to play!`, myPlayer.x + 25, myPlayer.y - 50);
+
+                        if (keys['enter']) {
+                            alert(`🎮 ${zone.label} minigame coming soon!`);
+                        }
+                    }
+                });
+
+                // Draw my player
+                myPlayer.draw();
+            }
+
+            // Draw other players
+            Object.values(players).forEach(player => {
+                player.draw();
+            });
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize
+        updateSkittlesDisplay();
+
+        // Focus username input
+        document.getElementById('usernameInput').focus();
+    </script>
+</body>
+</html>
