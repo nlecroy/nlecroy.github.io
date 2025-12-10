@@ -9,7 +9,7 @@
         body {
             margin: 0;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #1a1a2e;
         }
 
         .game-container {
@@ -22,11 +22,9 @@
         }
 
         #gameCanvas {
-            background: #87CEEB;
             border: 5px solid #fff;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
-            border-radius: 10px;
-            image-rendering: pixelated;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            image-rendering: crisp-edges;
         }
 
         /* Chat Box */
@@ -297,17 +295,63 @@
             font-size: 0.9rem;
         }
 
-        /* Portal Labels */
-        .portal-hint {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            color: #667eea;
-            pointer-events: none;
+        /* Minigame Modal */
+        .minigame-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
             display: none;
-            z-index: 50;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+        }
+
+        .minigame-modal.active {
+            display: flex;
+        }
+
+        .minigame-container {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .minigame-container h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        #minigameCanvas {
+            border: 3px solid #667eea;
+            border-radius: 10px;
+        }
+
+        .close-minigame {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .minigame-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -336,10 +380,10 @@
         <!-- Controls Info -->
         <div class="controls-info">
             <h4>🎮 Controls</h4>
-            <p>⬆️ WASD / Arrow Keys - Move</p>
+            <p>⬅️➡️ A/D or Arrows - Move</p>
+            <p>⬆️ W/Space - Jump</p>
+            <p>🚪 E - Enter Building</p>
             <p>💬 Enter - Chat</p>
-            <p>🎨 S Key near shop - Open Shop</p>
-            <p>🎮 Enter Portals - Play Minigames</p>
         </div>
 
         <!-- Chat Box -->
@@ -376,13 +420,23 @@
                 <button onclick="setUsername()">Start Playing!</button>
             </div>
         </div>
+
+        <!-- Minigame Modal -->
+        <div class="minigame-modal" id="minigameModal">
+            <div class="minigame-container">
+                <button class="close-minigame" onclick="closeMinigame()">×</button>
+                <h2 id="minigameTitle">Minigame</h2>
+                <canvas id="minigameCanvas" width="800" height="600"></canvas>
+                <div class="minigame-info" id="minigameInfo"></div>
+            </div>
+        </div>
     </div>
 
     <button class="back-button" onclick="window.location.href='../index.html'" style="position: fixed; bottom: 20px; right: 20px; z-index: 100;">🏠 Back to Home</button>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, push, onChildAdded, onChildRemoved, onValue, set, remove, onDisconnect, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, push, onChildAdded, onChildRemoved, onValue, set, remove, onDisconnect } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPHVHk397y7MpeEZFPuskOqp-IEdiRJ5k",
@@ -403,18 +457,24 @@
         // Canvas Setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 1200;
+        canvas.width = 1400;
         canvas.height = 700;
 
         // Game State
         let myPlayer = null;
         let players = {};
-        let chatMessages = [];
         let keys = {};
-        let lastUpdate = Date.now();
+        let cameraX = 0;
         let skittles = parseInt(localStorage.getItem('pugHubSkittles')) || 0;
         let ownedSkins = JSON.parse(localStorage.getItem('pugHubSkins')) || ['default'];
         let equippedSkin = localStorage.getItem('pugHubEquippedSkin') || 'default';
+        let currentMinigame = null;
+
+        // Physics
+        const GRAVITY = 0.6;
+        const JUMP_STRENGTH = 12;
+        const MOVE_SPEED = 5;
+        const WORLD_WIDTH = 4000;
 
         // Skins Database
         const skins = {
@@ -460,29 +520,46 @@
             skinImages[key] = img;
         });
 
-        // Map Design
-        const map = {
-            width: 1200,
-            height: 700,
-            zones: [
-                // Spawn area
-                { x: 550, y: 300, width: 100, height: 100, color: '#90EE90', label: 'Spawn' },
+        // World Objects
+        const platforms = [
+            { x: 0, y: 600, width: WORLD_WIDTH, height: 100 }, // Ground
+            { x: 400, y: 500, width: 200, height: 20 },
+            { x: 700, y: 420, width: 150, height: 20 },
+            { x: 1000, y: 500, width: 180, height: 20 },
+            { x: 1300, y: 450, width: 200, height: 20 },
+            { x: 2000, y: 500, width: 200, height: 20 },
+            { x: 2400, y: 420, width: 150, height: 20 },
+            { x: 3000, y: 480, width: 220, height: 20 },
+        ];
 
-                // Portals to minigames
-                { x: 100, y: 100, width: 120, height: 100, color: '#FFB6C1', label: '🎯 Race Track', type: 'portal', game: 'race' },
-                { x: 980, y: 100, width: 120, height: 100, color: '#87CEEB', label: '⚽ Soccer', type: 'portal', game: 'soccer' },
-                { x: 100, y: 500, width: 120, height: 100, color: '#DDA0DD', label: '🎨 Art Studio', type: 'portal', game: 'art' },
-                { x: 980, y: 500, width: 120, height: 100, color: '#F0E68C', label: '🎪 Carnival', type: 'portal', game: 'carnival' },
+        const buildings = [
+            { x: 800, y: 400, width: 180, height: 200, color: '#FF6B6B', name: '🎯 Race Track', type: 'race' },
+            { x: 1600, y: 380, width: 200, height: 220, color: '#4ECDC4', name: '⚽ Soccer Field', type: 'soccer' },
+            { x: 2600, y: 360, width: 220, height: 240, color: '#FFD93D', name: '🎨 Art Studio', type: 'art' },
+            { x: 3400, y: 340, width: 240, height: 260, color: '#F093FB', name: '🎪 Carnival', type: 'carnival' },
+            { x: 200, y: 480, width: 160, height: 120, color: '#FFD700', name: '🛍️ SHOP', type: 'shop' },
+        ];
 
-                // Shop area
-                { x: 520, y: 50, width: 160, height: 80, color: '#FFD700', label: '🛍️ SHOP', type: 'shop' },
+        const decorations = [
+            { x: 100, y: 520, emoji: '🌳', size: 60 },
+            { x: 500, y: 530, emoji: '🌲', size: 50 },
+            { x: 900, y: 540, emoji: '🌳', size: 55 },
+            { x: 1400, y: 525, emoji: '🌲', size: 60 },
+            { x: 2200, y: 530, emoji: '🌳', size: 58 },
+            { x: 2800, y: 535, emoji: '🌲', size: 52 },
+            { x: 3200, y: 520, emoji: '🌳', size: 62 },
+        ];
 
-                // Obstacles
-                { x: 400, y: 250, width: 80, height: 80, color: '#8B4513', label: 'Tree', obstacle: true },
-                { x: 720, y: 250, width: 80, height: 80, color: '#8B4513', label: 'Tree', obstacle: true },
-                { x: 560, y: 450, width: 80, height: 150, color: '#4682B4', label: 'Pond', obstacle: true },
-            ]
-        };
+        // Clouds
+        const clouds = [];
+        for (let i = 0; i < 15; i++) {
+            clouds.push({
+                x: Math.random() * WORLD_WIDTH,
+                y: Math.random() * 200 + 50,
+                width: Math.random() * 100 + 80,
+                speed: Math.random() * 0.3 + 0.1
+            });
+        }
 
         // Player Class
         class Player {
@@ -491,71 +568,286 @@
                 this.username = username;
                 this.x = x;
                 this.y = y;
-                this.size = 50;
-                this.speed = 3;
+                this.width = 50;
+                this.height = 50;
+                this.velocityY = 0;
+                this.velocityX = 0;
+                this.isGrounded = false;
                 this.skin = skin;
-                this.color = this.randomColor();
+                this.facingRight = true;
             }
 
-            randomColor() {
-                const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#F093FB', '#4D96FF', '#FFD93D'];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
+            update() {
+                // Apply gravity
+                this.velocityY += GRAVITY;
 
-            move(dx, dy) {
-                const newX = this.x + dx * this.speed;
-                const newY = this.y + dy * this.speed;
+                // Apply movement
+                this.x += this.velocityX;
+                this.y += this.velocityY;
 
-                // Check boundaries
-                if (newX >= 0 && newX <= map.width - this.size &&
-                    newY >= 0 && newY <= map.height - this.size) {
+                // Keep in world bounds
+                if (this.x < 0) this.x = 0;
+                if (this.x > WORLD_WIDTH - this.width) this.x = WORLD_WIDTH - this.width;
 
-                    // Check collisions with obstacles
-                    let collision = false;
-                    for (let zone of map.zones) {
-                        if (zone.obstacle && this.checkCollision(newX, newY, zone)) {
-                            collision = true;
-                            break;
-                        }
-                    }
+                // Platform collision
+                this.isGrounded = false;
+                for (let platform of platforms) {
+                    if (this.velocityY >= 0 &&
+                        this.x < platform.x + platform.width &&
+                        this.x + this.width > platform.x &&
+                        this.y + this.height <= platform.y &&
+                        this.y + this.height + this.velocityY >= platform.y) {
 
-                    if (!collision) {
-                        this.x = newX;
-                        this.y = newY;
-                        return true;
+                        this.y = platform.y - this.height;
+                        this.velocityY = 0;
+                        this.isGrounded = true;
                     }
                 }
-                return false;
+
+                // Friction
+                this.velocityX *= 0.8;
             }
 
-            checkCollision(x, y, zone) {
-                return x < zone.x + zone.width &&
-                       x + this.size > zone.x &&
-                       y < zone.y + zone.height &&
-                       y + this.size > zone.y;
+            jump() {
+                if (this.isGrounded) {
+                    this.velocityY = -JUMP_STRENGTH;
+                    this.isGrounded = false;
+                }
             }
 
-            draw() {
-                // Draw player with skin or color
+            moveLeft() {
+                this.velocityX = -MOVE_SPEED;
+                this.facingRight = false;
+            }
+
+            moveRight() {
+                this.velocityX = MOVE_SPEED;
+                this.facingRight = true;
+            }
+
+            draw(offsetX) {
+                const screenX = this.x - offsetX;
+
+                // Draw player with skin
+                ctx.save();
+                if (!this.facingRight) {
+                    ctx.translate(screenX + this.width, this.y);
+                    ctx.scale(-1, 1);
+                    ctx.translate(-screenX - this.width, -this.y);
+                }
+
                 if (skinImages[this.skin] && skinImages[this.skin].complete) {
-                    ctx.drawImage(skinImages[this.skin], this.x, this.y, this.size, this.size);
+                    ctx.drawImage(skinImages[this.skin], screenX, this.y, this.width, this.height);
                 } else {
-                    ctx.fillStyle = this.color;
-                    ctx.fillRect(this.x, this.y, this.size, this.size);
-                    ctx.fillStyle = 'white';
-                    ctx.font = '20px Arial';
-                    ctx.fillText('🐶', this.x + 10, this.y + 35);
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(screenX, this.y, this.width, this.height);
+                    ctx.font = '30px Arial';
+                    ctx.fillText('🐶', screenX + 10, this.y + 35);
                 }
+
+                ctx.restore();
 
                 // Draw username
                 ctx.fillStyle = 'black';
-                ctx.font = 'bold 12px Arial';
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.font = 'bold 14px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(this.username, this.x + this.size/2, this.y - 5);
+                ctx.strokeText(this.username, screenX + this.width/2, this.y - 8);
+                ctx.fillText(this.username, screenX + this.width/2, this.y - 8);
             }
         }
 
-        // Initialize player from username
+        // Draw World
+        function drawWorld(offsetX) {
+            // Sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F6FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Sun
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(1200 - offsetX * 0.1, 100, 50, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Clouds
+            clouds.forEach(cloud => {
+                cloud.x += cloud.speed;
+                if (cloud.x > WORLD_WIDTH + 200) cloud.x = -200;
+
+                const cloudX = cloud.x - offsetX * 0.5;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.ellipse(cloudX, cloud.y, cloud.width/2, cloud.width/3, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(cloudX + 30, cloud.y - 10, cloud.width/2.5, cloud.width/3.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(cloudX - 30, cloud.y - 5, cloud.width/3, cloud.width/4, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Mountains (background)
+            ctx.fillStyle = '#8B7355';
+            ctx.beginPath();
+            ctx.moveTo(-offsetX * 0.3, canvas.height);
+            ctx.lineTo(200 - offsetX * 0.3, 300);
+            ctx.lineTo(400 - offsetX * 0.3, canvas.height);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(300 - offsetX * 0.3, canvas.height);
+            ctx.lineTo(600 - offsetX * 0.3, 250);
+            ctx.lineTo(900 - offsetX * 0.3, canvas.height);
+            ctx.fill();
+
+            // Buildings
+            buildings.forEach(building => {
+                const screenX = building.x - offsetX;
+
+                // Building body
+                const buildingGradient = ctx.createLinearGradient(screenX, building.y, screenX + building.width, building.y + building.height);
+                buildingGradient.addColorStop(0, building.color);
+                buildingGradient.addColorStop(1, adjustBrightness(building.color, -20));
+                ctx.fillStyle = buildingGradient;
+                ctx.fillRect(screenX, building.y, building.width, building.height);
+
+                // Building outline
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(screenX, building.y, building.width, building.height);
+
+                // Roof
+                ctx.fillStyle = adjustBrightness(building.color, -40);
+                ctx.beginPath();
+                ctx.moveTo(screenX - 10, building.y);
+                ctx.lineTo(screenX + building.width / 2, building.y - 30);
+                ctx.lineTo(screenX + building.width + 10, building.y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Windows
+                const windowRows = 3;
+                const windowCols = 3;
+                const windowWidth = 25;
+                const windowHeight = 30;
+                const windowSpacingX = (building.width - windowCols * windowWidth) / (windowCols + 1);
+                const windowSpacingY = (building.height - 50 - windowRows * windowHeight) / (windowRows + 1);
+
+                for (let row = 0; row < windowRows; row++) {
+                    for (let col = 0; col < windowCols; col++) {
+                        const wx = screenX + windowSpacingX + col * (windowWidth + windowSpacingX);
+                        const wy = building.y + 40 + windowSpacingY + row * (windowHeight + windowSpacingY);
+
+                        ctx.fillStyle = '#87CEEB';
+                        ctx.fillRect(wx, wy, windowWidth, windowHeight);
+                        ctx.strokeStyle = '#333';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(wx, wy, windowWidth, windowHeight);
+                    }
+                }
+
+                // Door
+                const doorWidth = 50;
+                const doorHeight = 70;
+                const doorX = screenX + building.width / 2 - doorWidth / 2;
+                const doorY = building.y + building.height - doorHeight;
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(doorX, doorY, doorWidth, doorHeight);
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(doorX, doorY, doorWidth, doorHeight);
+
+                // Door handle
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.arc(doorX + doorWidth - 10, doorY + doorHeight / 2, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Building name
+                ctx.fillStyle = 'white';
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 3;
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.strokeText(building.name, screenX + building.width / 2, building.y + 25);
+                ctx.fillText(building.name, screenX + building.width / 2, building.y + 25);
+            });
+
+            // Platforms
+            platforms.forEach(platform => {
+                const screenX = platform.x - offsetX;
+
+                if (platform.y >= 600) {
+                    // Ground - grass
+                    const grassGradient = ctx.createLinearGradient(0, platform.y, 0, platform.y + platform.height);
+                    grassGradient.addColorStop(0, '#7CFC00');
+                    grassGradient.addColorStop(0.3, '#32CD32');
+                    grassGradient.addColorStop(1, '#228B22');
+                    ctx.fillStyle = grassGradient;
+                } else {
+                    // Floating platforms - brick
+                    const brickGradient = ctx.createLinearGradient(screenX, platform.y, screenX, platform.y + platform.height);
+                    brickGradient.addColorStop(0, '#D2691E');
+                    brickGradient.addColorStop(1, '#8B4513');
+                    ctx.fillStyle = brickGradient;
+                }
+
+                ctx.fillRect(screenX, platform.y, platform.width, platform.height);
+                ctx.strokeStyle = '#654321';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(screenX, platform.y, platform.width, platform.height);
+
+                // Grass texture on top of ground
+                if (platform.y >= 600) {
+                    for (let i = 0; i < platform.width; i += 15) {
+                        ctx.fillStyle = '#228B22';
+                        ctx.fillRect(screenX + i, platform.y - 5, 2, 5);
+                        ctx.fillRect(screenX + i + 5, platform.y - 8, 2, 8);
+                        ctx.fillRect(screenX + i + 10, platform.y - 6, 2, 6);
+                    }
+                }
+            });
+
+            // Decorations (trees)
+            decorations.forEach(dec => {
+                const screenX = dec.x - offsetX;
+                ctx.font = `${dec.size}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.fillText(dec.emoji, screenX, dec.y);
+            });
+        }
+
+        function adjustBrightness(color, amount) {
+            const hex = color.replace('#', '');
+            const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+            const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+            const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        // Check building proximity
+        function checkBuildingProximity() {
+            if (!myPlayer) return null;
+
+            for (let building of buildings) {
+                const doorX = building.x + building.width / 2;
+                const doorY = building.y + building.height;
+
+                if (Math.abs(myPlayer.x + myPlayer.width / 2 - doorX) < 80 &&
+                    Math.abs(myPlayer.y + myPlayer.height - doorY) < 100) {
+                    return building;
+                }
+            }
+            return null;
+        }
+
+        // Initialize player
         function setUsername() {
             const username = document.getElementById('usernameInput').value.trim();
             if (username.length < 1) {
@@ -563,27 +855,29 @@
                 return;
             }
 
-            // Create player
             const playerId = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            myPlayer = new Player(playerId, username, 575, 325, equippedSkin);
+            myPlayer = new Player(playerId, username, 100, 400, equippedSkin);
 
-            // Hide modal
             document.getElementById('usernameModal').style.display = 'none';
             document.getElementById('playerName').textContent = username;
 
-            // Save to Firebase
             const myPlayerRef = ref(database, `pughub/players/${playerId}`);
-            set(myPlayerRef, {
-                username: username,
-                x: myPlayer.x,
-                y: myPlayer.y,
-                skin: myPlayer.skin
-            });
 
-            // Remove player on disconnect
+            function updateFirebase() {
+                set(myPlayerRef, {
+                    username: username,
+                    x: myPlayer.x,
+                    y: myPlayer.y,
+                    skin: myPlayer.skin,
+                    facingRight: myPlayer.facingRight
+                });
+            }
+
+            updateFirebase();
+            setInterval(updateFirebase, 100);
+
             onDisconnect(myPlayerRef).remove();
 
-            // Start game loop
             gameLoop();
         }
 
@@ -594,6 +888,7 @@
 
             if (!myPlayer || id !== myPlayer.id) {
                 players[id] = new Player(id, data.username, data.x, data.y, data.skin || 'default');
+                players[id].facingRight = data.facingRight !== undefined ? data.facingRight : true;
             }
             updateOnlineCount();
         });
@@ -606,6 +901,7 @@
                         players[id].x = data[id].x;
                         players[id].y = data[id].y;
                         players[id].skin = data[id].skin || 'default';
+                        players[id].facingRight = data[id].facingRight !== undefined ? data[id].facingRight : true;
                     }
                 });
             }
@@ -617,7 +913,6 @@
             updateOnlineCount();
         });
 
-        // Update online count
         function updateOnlineCount() {
             const count = Object.keys(players).length + (myPlayer ? 1 : 0);
             document.getElementById('onlineCount').textContent = count;
@@ -652,13 +947,11 @@
             messagesDiv.appendChild(messageEl);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            // Keep only last 50 messages
             while (messagesDiv.children.length > 50) {
                 messagesDiv.removeChild(messagesDiv.firstChild);
             }
         }
 
-        // Chat input enter key
         document.getElementById('chatInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendChatMessage();
@@ -669,8 +962,24 @@
         window.addEventListener('keydown', (e) => {
             keys[e.key.toLowerCase()] = true;
 
-            // Prevent default for arrow keys
-            if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            if (myPlayer) {
+                if ((e.key === 'w' || e.key === ' ' || e.key === 'ArrowUp') && myPlayer.isGrounded) {
+                    myPlayer.jump();
+                }
+
+                if (e.key === 'e' || e.key === 'E') {
+                    const nearBuilding = checkBuildingProximity();
+                    if (nearBuilding) {
+                        if (nearBuilding.type === 'shop') {
+                            openShop();
+                        } else {
+                            openMinigame(nearBuilding.type, nearBuilding.name);
+                        }
+                    }
+                }
+            }
+
+            if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
                 e.preventDefault();
             }
         });
@@ -686,7 +995,6 @@
             localStorage.setItem('pugHubSkittles', skittles);
         }
 
-        // Earn skittles (for demo - earn 1 skittle per 5 seconds of play)
         setInterval(() => {
             if (myPlayer) {
                 skittles += 1;
@@ -756,8 +1064,6 @@
             localStorage.setItem('pugHubEquippedSkin', skinKey);
             if (myPlayer) {
                 myPlayer.skin = skinKey;
-                // Update in Firebase
-                set(ref(database, `pughub/players/${myPlayer.id}/skin`), skinKey);
             }
             renderShop();
         }
@@ -767,78 +1073,487 @@
         window.setUsername = setUsername;
         window.sendChatMessage = sendChatMessage;
 
-        // Game Loop
-        function gameLoop() {
-            const now = Date.now();
-            const delta = now - lastUpdate;
-            lastUpdate = now;
+        // Minigames
+        function openMinigame(type, name) {
+            currentMinigame = type;
+            document.getElementById('minigameModal').classList.add('active');
+            document.getElementById('minigameTitle').textContent = name;
 
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            switch(type) {
+                case 'race':
+                    startRaceGame();
+                    break;
+                case 'soccer':
+                    startSoccerGame();
+                    break;
+                case 'art':
+                    startArtGame();
+                    break;
+                case 'carnival':
+                    startCarnivalGame();
+                    break;
+            }
+        }
 
-            // Draw map zones
-            map.zones.forEach(zone => {
-                ctx.fillStyle = zone.color;
-                ctx.fillRect(zone.x, zone.y, zone.width, zone.height);
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
+        function closeMinigame() {
+            currentMinigame = null;
+            document.getElementById('minigameModal').classList.remove('active');
 
-                // Draw label
-                ctx.fillStyle = 'black';
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(zone.label, zone.x + zone.width/2, zone.y + zone.height/2 + 5);
-            });
+            if (window.minigameInterval) {
+                clearInterval(window.minigameInterval);
+            }
+            if (window.minigameAnimationFrame) {
+                cancelAnimationFrame(window.minigameAnimationFrame);
+            }
+        }
 
-            // Handle player movement
-            if (myPlayer) {
-                let moved = false;
-                let dx = 0, dy = 0;
+        window.closeMinigame = closeMinigame;
 
-                if (keys['w'] || keys['arrowup']) dy = -1;
-                if (keys['s'] || keys['arrowdown']) dy = 1;
-                if (keys['a'] || keys['arrowleft']) dx = -1;
-                if (keys['d'] || keys['arrowright']) dx = 1;
+        // Race Game
+        function startRaceGame() {
+            const mgCanvas = document.getElementById('minigameCanvas');
+            const mgCtx = mgCanvas.getContext('2d');
+            const info = document.getElementById('minigameInfo');
 
-                if (dx !== 0 || dy !== 0) {
-                    moved = myPlayer.move(dx, dy);
+            let raceX = 0;
+            let raceSpeed = 0;
+            let obstacles = [];
+            let score = 0;
+            let gameOver = false;
+
+            for (let i = 0; i < 10; i++) {
+                obstacles.push({
+                    x: 1000 + i * 400,
+                    y: 500,
+                    width: 40,
+                    height: 40
+                });
+            }
+
+            const raceKeys = {};
+            const keyHandler = (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'd') raceSpeed = 8;
+                if (e.key === 'ArrowLeft' || e.key === 'a') raceSpeed = -3;
+            };
+            const keyUpHandler = (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'ArrowLeft' || e.key === 'a') {
+                    raceSpeed = 0;
                 }
+            };
 
-                // Update position in Firebase if moved
-                if (moved) {
-                    set(ref(database, `pughub/players/${myPlayer.id}`), {
-                        username: myPlayer.username,
-                        x: myPlayer.x,
-                        y: myPlayer.y,
-                        skin: myPlayer.skin
-                    });
-                }
+            window.addEventListener('keydown', keyHandler);
+            window.addEventListener('keyup', keyUpHandler);
 
-                // Check for portal interactions
-                map.zones.forEach(zone => {
-                    if (zone.type === 'portal' && myPlayer.checkCollision(myPlayer.x, myPlayer.y, zone)) {
-                        // Show portal hint
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                        ctx.fillRect(myPlayer.x - 50, myPlayer.y - 70, 150, 30);
-                        ctx.fillStyle = '#667eea';
-                        ctx.font = 'bold 12px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(`Press ENTER to play!`, myPlayer.x + 25, myPlayer.y - 50);
+            function raceLoop() {
+                if (gameOver) return;
 
-                        if (keys['enter']) {
-                            alert(`🎮 ${zone.label} minigame coming soon!`);
-                        }
+                mgCtx.fillStyle = '#87CEEB';
+                mgCtx.fillRect(0, 0, mgCanvas.width, mgCanvas.height);
+
+                // Track
+                mgCtx.fillStyle = '#444';
+                mgCtx.fillRect(0, 500, mgCanvas.width, 100);
+
+                // Track lines
+                mgCtx.strokeStyle = '#FFD700';
+                mgCtx.lineWidth = 5;
+                mgCtx.setLineDash([20, 15]);
+                mgCtx.beginPath();
+                mgCtx.moveTo(0, 550);
+                mgCtx.lineTo(mgCanvas.width, 550);
+                mgCtx.stroke();
+                mgCtx.setLineDash([]);
+
+                raceX += raceSpeed;
+                score = Math.floor(raceX / 10);
+
+                // Draw player
+                mgCtx.fillStyle = '#FF6B6B';
+                mgCtx.fillRect(100, 520, 50, 50);
+                mgCtx.font = '30px Arial';
+                mgCtx.fillText('🐶', 105, 555);
+
+                // Draw obstacles
+                obstacles.forEach(obs => {
+                    obs.x -= raceSpeed;
+
+                    const screenX = obs.x - raceX + 100;
+                    mgCtx.fillStyle = '#8B4513';
+                    mgCtx.fillRect(screenX, obs.y, obs.width, obs.height);
+                    mgCtx.font = '30px Arial';
+                    mgCtx.fillText('🪨', screenX + 5, obs.y + 30);
+
+                    // Collision
+                    if (screenX < 150 && screenX + obs.width > 100 &&
+                        520 < obs.y + obs.height && 570 > obs.y) {
+                        gameOver = true;
+                        skittles += Math.floor(score / 10);
+                        updateSkittlesDisplay();
+                        window.removeEventListener('keydown', keyHandler);
+                        window.removeEventListener('keyup', keyUpHandler);
+                        alert(`Game Over! You earned ${Math.floor(score / 10)} skittles! Final score: ${score}`);
+                        closeMinigame();
                     }
                 });
 
-                // Draw my player
-                myPlayer.draw();
+                // Score
+                mgCtx.fillStyle = 'white';
+                mgCtx.font = 'bold 24px Arial';
+                mgCtx.fillText(`Distance: ${score}m`, 20, 40);
+                mgCtx.fillText(`Press → to accelerate`, 20, 70);
+
+                info.innerHTML = `<strong>🎯 Race Track:</strong> Press → to speed up! Avoid obstacles. Score: ${score}m`;
+
+                window.minigameAnimationFrame = requestAnimationFrame(raceLoop);
             }
+
+            raceLoop();
+        }
+
+        // Soccer Game
+        function startSoccerGame() {
+            const mgCanvas = document.getElementById('minigameCanvas');
+            const mgCtx = mgCanvas.getContext('2d');
+            const info = document.getElementById('minigameInfo');
+
+            let ballX = 400;
+            let ballY = 500;
+            let ballVx = 0;
+            let ballVy = 0;
+            let playerX = 200;
+            let score = 0;
+
+            const soccerKeys = {};
+            const keyHandler = (e) => { soccerKeys[e.key] = true; };
+            const keyUpHandler = (e) => { soccerKeys[e.key] = false; };
+
+            window.addEventListener('keydown', keyHandler);
+            window.addEventListener('keyup', keyUpHandler);
+
+            function soccerLoop() {
+                mgCtx.fillStyle = '#228B22';
+                mgCtx.fillRect(0, 0, mgCanvas.width, mgCanvas.height);
+
+                // Field lines
+                mgCtx.strokeStyle = 'white';
+                mgCtx.lineWidth = 3;
+                mgCtx.strokeRect(50, 50, 700, 500);
+                mgCtx.beginPath();
+                mgCtx.arc(400, 300, 80, 0, Math.PI * 2);
+                mgCtx.stroke();
+
+                // Goals
+                mgCtx.strokeStyle = '#FF6B6B';
+                mgCtx.lineWidth = 5;
+                mgCtx.strokeRect(20, 220, 30, 160);
+                mgCtx.strokeRect(750, 220, 30, 160);
+
+                // Player movement
+                if (soccerKeys['a'] || soccerKeys['ArrowLeft']) playerX -= 5;
+                if (soccerKeys['d'] || soccerKeys['ArrowRight']) playerX += 5;
+
+                playerX = Math.max(50, Math.min(700, playerX));
+
+                // Draw player
+                mgCtx.fillStyle = '#4ECDC4';
+                mgCtx.fillRect(playerX, 500, 40, 40);
+                mgCtx.font = '30px Arial';
+                mgCtx.fillText('🐶', playerX + 5, 535);
+
+                // Ball physics
+                ballVy += 0.5; // gravity
+                ballX += ballVx;
+                ballY += ballVy;
+
+                // Ball ground collision
+                if (ballY > 520) {
+                    ballY = 520;
+                    ballVy *= -0.7;
+                    ballVx *= 0.9;
+                }
+
+                // Ball wall collision
+                if (ballX < 60 || ballX > 730) {
+                    ballVx *= -1;
+                    if (ballY > 220 && ballY < 380) {
+                        // GOAL!
+                        score += 10;
+                        skittles += 5;
+                        updateSkittlesDisplay();
+                        ballX = 400;
+                        ballY = 300;
+                        ballVx = 0;
+                        ballVy = 0;
+                        alert('⚽ GOAL! +5 skittles!');
+                    }
+                }
+
+                // Player kicks ball
+                if (Math.abs(ballX - playerX - 20) < 40 && Math.abs(ballY - 520) < 40) {
+                    ballVy = -15;
+                    ballVx = (ballX - playerX - 20) / 3;
+                }
+
+                // Draw ball
+                mgCtx.fillStyle = 'white';
+                mgCtx.beginPath();
+                mgCtx.arc(ballX, ballY, 15, 0, Math.PI * 2);
+                mgCtx.fill();
+                mgCtx.strokeStyle = 'black';
+                mgCtx.lineWidth = 2;
+                mgCtx.stroke();
+                mgCtx.font = '20px Arial';
+                mgCtx.fillText('⚽', ballX - 10, ballY + 7);
+
+                // Score
+                mgCtx.fillStyle = 'white';
+                mgCtx.font = 'bold 24px Arial';
+                mgCtx.strokeStyle = 'black';
+                mgCtx.lineWidth = 3;
+                mgCtx.strokeText(`Score: ${score}`, 340, 40);
+                mgCtx.fillText(`Score: ${score}`, 340, 40);
+
+                info.innerHTML = `<strong>⚽ Soccer:</strong> Use A/D to move. Kick the ball into the goals! Score: ${score}`;
+
+                window.minigameAnimationFrame = requestAnimationFrame(soccerLoop);
+            }
+
+            soccerLoop();
+        }
+
+        // Art Game
+        function startArtGame() {
+            const mgCanvas = document.getElementById('minigameCanvas');
+            const mgCtx = mgCanvas.getContext('2d');
+            const info = document.getElementById('minigameInfo');
+
+            mgCtx.fillStyle = 'white';
+            mgCtx.fillRect(0, 0, mgCanvas.width, mgCanvas.height);
+
+            let drawing = false;
+            let currentColor = '#000000';
+            let brushSize = 5;
+
+            const colors = ['#000000', '#FF6B6B', '#4ECDC4', '#45B7D1', '#F093FB', '#FFD93D', '#4D96FF', '#FFFFFF'];
+
+            // Draw palette
+            function drawPalette() {
+                colors.forEach((color, i) => {
+                    mgCtx.fillStyle = color;
+                    mgCtx.fillRect(10 + i * 50, 10, 40, 40);
+                    mgCtx.strokeStyle = currentColor === color ? '#FFD700' : '#333';
+                    mgCtx.lineWidth = 3;
+                    mgCtx.strokeRect(10 + i * 50, 10, 40, 40);
+                });
+
+                // Brush size controls
+                mgCtx.fillStyle = 'white';
+                mgCtx.fillRect(600, 10, 180, 40);
+                mgCtx.strokeStyle = '#333';
+                mgCtx.lineWidth = 2;
+                mgCtx.strokeRect(600, 10, 180, 40);
+                mgCtx.fillStyle = '#333';
+                mgCtx.font = 'bold 16px Arial';
+                mgCtx.fillText(`Brush: ${brushSize}px`, 610, 35);
+            }
+
+            drawPalette();
+
+            const mouseDownHandler = (e) => {
+                const rect = mgCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Check color palette
+                colors.forEach((color, i) => {
+                    if (x >= 10 + i * 50 && x <= 50 + i * 50 && y >= 10 && y <= 50) {
+                        currentColor = color;
+                        drawPalette();
+                    }
+                });
+
+                if (y > 60) {
+                    drawing = true;
+                }
+            };
+
+            const mouseMoveHandler = (e) => {
+                if (drawing) {
+                    const rect = mgCanvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    mgCtx.fillStyle = currentColor;
+                    mgCtx.beginPath();
+                    mgCtx.arc(x, y, brushSize, 0, Math.PI * 2);
+                    mgCtx.fill();
+                }
+            };
+
+            const mouseUpHandler = () => {
+                drawing = false;
+            };
+
+            const wheelHandler = (e) => {
+                e.preventDefault();
+                brushSize += e.deltaY > 0 ? -1 : 1;
+                brushSize = Math.max(1, Math.min(20, brushSize));
+                mgCtx.clearRect(600, 10, 180, 40);
+                drawPalette();
+            };
+
+            mgCanvas.addEventListener('mousedown', mouseDownHandler);
+            mgCanvas.addEventListener('mousemove', mouseMoveHandler);
+            mgCanvas.addEventListener('mouseup', mouseUpHandler);
+            mgCanvas.addEventListener('wheel', wheelHandler);
+
+            info.innerHTML = `<strong>🎨 Art Studio:</strong> Click colors to change brush. Draw on canvas! Scroll to change brush size. <button onclick="document.getElementById('minigameCanvas').getContext('2d').fillStyle='white'; document.getElementById('minigameCanvas').getContext('2d').fillRect(0, 0, 800, 600); window.dispatchEvent(new Event('redrawArtPalette'));" style="margin-left: 10px; padding: 5px 10px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">Clear Canvas</button>`;
+
+            window.addEventListener('redrawArtPalette', drawPalette);
+        }
+
+        // Carnival Game (Whack-a-Mole)
+        function startCarnivalGame() {
+            const mgCanvas = document.getElementById('minigameCanvas');
+            const mgCtx = mgCanvas.getContext('2d');
+            const info = document.getElementById('minigameInfo');
+
+            let score = 0;
+            let timeLeft = 30;
+            let moles = [];
+
+            for (let i = 0; i < 9; i++) {
+                moles.push({
+                    x: 100 + (i % 3) * 250,
+                    y: 150 + Math.floor(i / 3) * 200,
+                    visible: false,
+                    timer: 0
+                });
+            }
+
+            window.minigameInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(window.minigameInterval);
+                    skittles += score;
+                    updateSkittlesDisplay();
+                    alert(`🎪 Time's up! You scored ${score} points and earned ${score} skittles!`);
+                    closeMinigame();
+                }
+            }, 1000);
+
+            const clickHandler = (e) => {
+                const rect = mgCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                moles.forEach(mole => {
+                    if (mole.visible &&
+                        x >= mole.x - 40 && x <= mole.x + 40 &&
+                        y >= mole.y - 40 && y <= mole.y + 40) {
+                        mole.visible = false;
+                        score += 10;
+                    }
+                });
+            };
+
+            mgCanvas.addEventListener('click', clickHandler);
+
+            function carnivalLoop() {
+                mgCtx.fillStyle = '#F093FB';
+                mgCtx.fillRect(0, 0, mgCanvas.width, mgCanvas.height);
+
+                // Random mole appearance
+                moles.forEach(mole => {
+                    if (!mole.visible && Math.random() < 0.02) {
+                        mole.visible = true;
+                        mole.timer = 60;
+                    }
+
+                    if (mole.visible) {
+                        mole.timer--;
+                        if (mole.timer <= 0) {
+                            mole.visible = false;
+                        }
+                    }
+
+                    // Draw hole
+                    mgCtx.fillStyle = '#654321';
+                    mgCtx.beginPath();
+                    mgCtx.ellipse(mole.x, mole.y + 20, 45, 25, 0, 0, Math.PI * 2);
+                    mgCtx.fill();
+
+                    // Draw mole if visible
+                    if (mole.visible) {
+                        mgCtx.font = '60px Arial';
+                        mgCtx.fillText('🐶', mole.x - 30, mole.y + 10);
+                    }
+                });
+
+                // Score and timer
+                mgCtx.fillStyle = 'white';
+                mgCtx.strokeStyle = 'black';
+                mgCtx.lineWidth = 3;
+                mgCtx.font = 'bold 28px Arial';
+                mgCtx.strokeText(`Score: ${score}`, 20, 40);
+                mgCtx.fillText(`Score: ${score}`, 20, 40);
+                mgCtx.strokeText(`Time: ${timeLeft}s`, 620, 40);
+                mgCtx.fillText(`Time: ${timeLeft}s`, 620, 40);
+
+                info.innerHTML = `<strong>🎪 Carnival:</strong> Click the pugs! Score: ${score} | Time: ${timeLeft}s`;
+
+                window.minigameAnimationFrame = requestAnimationFrame(carnivalLoop);
+            }
+
+            carnivalLoop();
+        }
+
+        // Game Loop
+        function gameLoop() {
+            if (!myPlayer) return;
+
+            // Handle movement
+            if (keys['a'] || keys['arrowleft']) {
+                myPlayer.moveLeft();
+            }
+            if (keys['d'] || keys['arrowright']) {
+                myPlayer.moveRight();
+            }
+
+            // Update player
+            myPlayer.update();
+
+            // Update camera (follow player)
+            cameraX = myPlayer.x - canvas.width / 2 + myPlayer.width / 2;
+            cameraX = Math.max(0, Math.min(WORLD_WIDTH - canvas.width, cameraX));
+
+            // Draw everything
+            drawWorld(cameraX);
+
+            // Check for building proximity
+            const nearBuilding = checkBuildingProximity();
+            if (nearBuilding) {
+                const doorX = nearBuilding.x - cameraX + nearBuilding.width / 2;
+                const doorY = nearBuilding.y + nearBuilding.height - 20;
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 3;
+                const textWidth = 180;
+                ctx.fillRect(doorX - textWidth/2, doorY - 80, textWidth, 35);
+                ctx.strokeRect(doorX - textWidth/2, doorY - 80, textWidth, 35);
+                ctx.fillStyle = '#667eea';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Press E to Enter!', doorX, doorY - 58);
+            }
+
+            // Draw my player
+            myPlayer.draw(cameraX);
 
             // Draw other players
             Object.values(players).forEach(player => {
-                player.draw();
+                player.draw(cameraX);
             });
 
             requestAnimationFrame(gameLoop);
@@ -846,8 +1561,6 @@
 
         // Initialize
         updateSkittlesDisplay();
-
-        // Focus username input
         document.getElementById('usernameInput').focus();
     </script>
 </body>
